@@ -1,0 +1,70 @@
+---
+title: "Session 5: Quarto"
+format: html
+---
+
+In this session, we introduce **Quarto**, an open-source publishing system for creating reproducible data science reports, presentations, and websites. Quarto allows you to combine code, results, and narrative in a single document and render professional outputs directly from your analysis.
+
+Unlike traditional notebooks or word-processor-based reporting, Quarto is designed to support reproducibility, clarity, and collaboration. Analyses written in Quarto can be rerun from start to finish, ensuring that results are transparent and verifiable. Quarto also supports multiple programming languages including R, Python, and Julia, making it well suited for both individual work and interdisciplinary collaboration.
+
+**Book chapter reading.** We will learn about Quarto by reading **Chapter 28** in *R for Data Science*. You are not required to complete any exercises this week (though if you find working in Quarto a bit confusing, it may be a good idea to work through the exercises in the chapter).
+
+**Tutorials.** There is no *r4ds.tutorials* Quarto tutorial. Instead, we will use Quarto's own web tutorials. There are three, rather short, parts; [Hello, Quarto](https://quarto.org/docs/get-started/hello/rstudio.html){target="_blank"}, [Computations](https://quarto.org/docs/get-started/computations/rstudio.html){target="_blank"}, and [Authoring](https://quarto.org/docs/get-started/authoring/rstudio.html){target="_blank"}. These tutorials are not interactive, but you can follow along step by step in your own environment by downloading the `.qmd` file for each tutorial.
+
+Again, we are not asking you to complete any exercises, and you do not need to show your work from the tutorials. Instead, your task is to create a report by populating a `.qmd` document and rendering it as an HTML file. More details are provided below.
+
+**One-on-one meetings.** Individual meetings are no longer a mandatory requirement, but as always, you can schedule a meeting with Hasse at any time.
+
+**Wednesday group meeting.** We will meet next on Wednesday, January 21, and during this meeting you will each have 10–15 minutes to **present** your Quarto report. You do not need to send anything to Hasse beforehand.
+
+**Create a report.** This is the most important part of the Quarto training. We want you to use real Marcus data and create a report that includes real-world, meaningful analyses. If using real data is not possible for some reason, it is acceptable to work with one of the datasets used during the training (such as `palmerpenguins` or `babynames`). While the main goal is to familiarize you with creating reports for your Marcus work, we also want to ensure that you gain exposure to, and practice with, the various useful features of Quarto and HTML rendering. Therefore, we have put together a list of elements that we want you to include in your report. Note that this is not an exhaustive list, and you should add headers, text, code, and output as you see fit to generate a complete report.
+
+-   Begin by creating a new Quarto document using *File \> New File \> Quarto Document*.
+
+-   As described in subchapters 28.3 and 28.4, there are two different ways of working with Quarto documents; the *visual editor* and the *source editor*. It is up to you to decide which one you prefer, but if you end up primarily using the *visual editor* it is a good idea to occasionally take a look at what the raw code looks like in the *source editor*.
+
+-   In the YAML header (the top part of the document surrounded by `---`), add a title, date and author (read about how to add author information [here](https://quarto.org/docs/authoring/front-matter.html){target="_blank"}). Make sure the *format* is set to `html`. Note that common YAML errors include inconsistent indentation, missing colons after keys, incorrect boolean values (use lowercase `true`/`false`) and missing quotes around strings.
+
+-   Write an introductory text, describing why you will be performing the analyses you are about to show.
+
+    -   Give this section an appropriate [header](https://quarto.org/docs/authoring/markdown-basics.html#headings){target="_blank"} (and continue to do so for all subsequent sections of your report).
+    -   Include at least one [reference](https://r4ds.hadley.nz/quarto.html#bibliographies-and-citations){target="_blank"}. This will be easiest to do using the *visual editor*.
+    -   Add a centered [image](https://quarto.org/docs/authoring/figures.html){target="_blank"} with 80% width.
+    -   Include a [bulleted list](https://quarto.org/docs/authoring/markdown-basics.html#lists){target="_blank"} somewhere in the intro.
+    -   Add a [link](https://quarto.org/docs/authoring/markdown-basics.html#links-images){target="_blank"} to a website.
+
+-   Add a [code chunk](https://r4ds.hadley.nz/quarto.html#code-chunks){target="_blank"} in which you load the packages you will use for your analyses. Make sure that package loading messages are suppressed using the `message: false` chunk option.
+
+-   Throughout your report, [label](https://r4ds.hadley.nz/quarto.html#chunk-label){target="_blank"} all code chunks.
+
+-   Include a [flowchart](https://quarto.org/docs/authoring/diagrams.html){target="_blank"} describing your analysis plan.
+
+-   Add a code chunk for data import. Again, make sure that messages and/or warnings are suppressed so they do not clutter your rendered output.
+
+-   In a separate code chunk, clean/wrangle your data so that it is ready for downstream analyses.
+
+-   Edit the YAML to include the [theme](https://quarto.org/docs/output-formats/html-themes.html){target="_blank"} option and pick a theme from this [list](https://bootswatch.com){target="_blank"} to control the visual appearance of your rendered document.
+
+-   Display a preview of the data in an interactive table using either the [DT](https://rstudio.github.io/DT/){target="_blank"} or [reactable](https://glin.github.io/reactable/articles/examples.html#sorting){target="_blank"} package. Interactive tables are particularly useful for displaying large tables without taking up excessive space on the page, as they support pagination, searching, and sorting, making the data easier to explore. DT tables are more styled and include a search box by default. Reactable tables are more bare-bones out of the box but can be customized to include a wide range of functionality and can look quite polished (here is one [example](https://glin.github.io/reactable/articles/womens-world-cup/womens-world-cup.html){target="_blank"}). If you decide to work with reactable, add a search bar as described [here](https://glin.github.io/reactable/articles/examples.html#searching){target="_blank"}. Regardless of which type of interactive table you choose, remember to install the package and load it in the code chunk dedicated to this purpose, and use a separate code chunk to generate the table.
+
+-   Use a code chunk to calculate some summary statistics and present the results in a table. Summaries of this kind typically do not contain a large number of rows or columns, so using an interactive table is usually not necessary. However, the default table output from a code chunk often looks rather unattractive, so it is worthwhile to learn how to create better-looking static tables. There are several options for doing this, but we recommend working with either the [kableExtra](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html){target="_blank"} or [gt](https://gt.rstudio.com/articles/gt.html){target="_blank"} package.
+
+-   [Tabsets](https://quarto.org/docs/output-formats/html-basics.html#tabsets){target="_blank"} are useful when you want to organize related content without making a document long or cluttered. They let readers switch between views while keeping everything in the same place. Include a tabset in your report and let for example each tab show different plots of the same data or table view vs. a plot.
+
+-   When working with plots in Quarto, it is important to use chunk options to ensure that aspect ratios and the sizes of visual elements are set correctly. How to do this is described well in the [book chapter](https://r4ds.hadley.nz/quarto.html#figure-sizing){target="_blank"}. Try different options until you are happy with how your plots are displayed in the HTML output.
+
+-   When you render your report as HTML, it will appear in the *Viewer pane*. Make sure to click the *Show in new window* button to open it in a web browser, which makes it easier to check that everything looks the way you want.
+
+-   Edit the label of a code chunk in your report that generates a plot to start with the prefix `fig-` and add a caption with the chunk option `fig-cap`. Then, edit the text above the code chunk to add a [cross-reference](https://quarto.org/docs/authoring/cross-references.html#computations){target="_blank"} to the figure. In the *visual editor*, you can use *Insert \> Cross Reference* for this.
+
+-   Do the same as above but for a table instead of a plot, using the `tbl-` prefix and `tbl-cap` chunk option.
+
+-   Use the `ggplotly()` function from the [plotly](https://plotly.com/ggplot2/){target="_blank"} package to make at least one of your plots *interactive*. This adds several useful capabilities on top of a regular ggplot such as: hover tooltips showing data values, zooming and panning, box/lasso selection of points, and the ability to toggle layers on and off via the legend. Note that some ggplot themes, geoms, or annotations may not translate perfectly to plotly, so be sure to evaluate the interactive plot in the HTML output.
+
+-   Using a table of contents (TOC) is helpful because it improves navigation, readability, and usability, especially in longer or more complex documents. Edit the YAML to add a TOC to your document as described [here](https://quarto.org/docs/output-formats/html-basics.html#table-of-contents){target="_blank"}.
+
+-   When sharing your report with others, they are often not particularly interested in seeing your code, so it can be a good idea to make code viewing optional. This is easy to do in Quarto using [code folding](https://quarto.org/docs/output-formats/html-code.html#folding-code){target="_blank"}. You can either edit the YAML to hide all of the code or control this on a chunk-by-chunk basis.
+
+-   In general when sharing reports, it is recommended to make them [self-contained](https://r4ds.hadley.nz/quarto.html#self-contained){target="_blank"}. A self-contained Quarto report can be viewed anywhere by anyone, without relying on additional files or setup, making it a more robust and portable way to share your work.
+
+-   There are [many](https://quarto-tdg.org){target="_blank"}, [many](https://www.productive-r-workflow.com/quarto-tricks){target="_blank"}, [many](https://quarto.org/docs/guide/){target="_blank"} more things you can do in Quarto. We strongly encourage you to go beyond the instructions and experiment with at least one new Quarto feature that has not been explicitly covered. Think of this as a chance to be creative and make the report your own. Try out something you find interesting, useful, or visually appealing, such as callout blocks, layout tools, advanced table styling, or additional interactive elements. Exploring something new is a great way to deepen your understanding of Quarto and build confidence in creating polished, professional reports.

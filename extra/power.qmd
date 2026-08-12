@@ -1,0 +1,91 @@
+---
+title: "Error rates, statistical power & power analysis"
+format: html
+editor: visual
+---
+
+## Hypothesis testing and committing errors
+
+1 - We'll start this week's StatQuest by discussing the concept of error when performing hypothesis testing. Watch this Khan academy [video](https://www.khanacademy.org/math/ap-statistics/xfb5d8e68:inference-categorical-proportions/error-probabilities-power/v/introduction-to-type-i-and-type-ii-errors) (Introduction to Type I and Type II errors). Below we have provided code that simulates `reps` number of trials in which samples are either drawn from the same distribution (namely, the null or `H0`) or different distributions, a null and alternative (`H1`).
+
+```{r}
+simulate_error_rates <- function(n = 50, 
+                            mu_null = 0, mu_alt = 2, 
+                            sd = 5, reps = 1000, alpha = 0.05) {
+  truth <- rep(c("H0_true", "H1_true"), round(reps/2))
+  results <- map(1:reps, \(i) {
+    
+    if (truth[i] == "H0_true") {
+      x <- rnorm(n, mean = mu_null, sd = sd)
+      y <- rnorm(n, mean = mu_null, sd = sd)
+    } else {
+      x <- rnorm(n, mean = mu_null, sd = sd)
+      y <- rnorm(n, mean = mu_alt, sd = sd)
+    }
+    
+    test <- t.test(x, y, var.equal = TRUE)
+    
+    decision <- ifelse(test$p.value <= alpha, "reject_H0", "fail_reject_H0")
+    
+    tibble(truth = truth[i], decision = decision)
+  }) %>% list_rbind()
+  
+  counted <- results %>% group_by(truth,decision) %>% summarise(count = n(),.groups="drop")
+  
+  error_rates <- counted %>%
+  pivot_wider(names_from = decision, values_from = count, values_fill = 0)
+
+  error_rates
+
+}
+
+
+
+```
+
+-   Study what the code is doing and then inspect the output with the default arguments set. What does each field in the output table show?
+
+-   Now try writing an iteration that varies `mu_alt` between 0 and 5, pulling out the type I and II error rates. Plot these rates with respect to `mu_alt`.
+
+-   Try doing the same while changing `sd` instead, setting `mu_alt` constant at 1. Set `sd` to values in a range of 0.5-5.
+
+## Statistical Cohen's d and Power
+
+2 - In question 1, we empirically quantified the number of type I and II errors we saw with respect to standard deviation, sample size and mean difference. We saw how, for a given mean difference, changing the standard deviation and sample size influenced the number of times we falsely failed to reject the null hypothesis (type II errors). If we were interested in determining whether two samples truly came from separate distributions, knowing only the difference in means wouldn't be enough. Just as we grounded covariance into correlation by normalising it against the scales of each variable's variance, we need to do something similar to quantify the *effect size*. We achieve this feat using `Cohen's d`. - Watch Steven Bradburn's video on calculating Cohen's d [here](https://www.youtube.com/watch?v=IetVSlrndpI) (**What Is And How To Calculate Cohen's d?**) and take a look at [this](https://rpsychologist.com/cohend/) illustration from RPsychologist.
+
+
+-   Implement a function in R that takes the means, sample sizes and standard deviations of any two random variables (`sd1` and `sd2`) and calculates Cohen's d.
+
+-   Set both standard deviations in your function to 1. What do you notice about the effect size?
+
+-   Given the formula you've implemented as a function, how would you calculate the mean difference for a given Cohen's d?
+
+-   Let's confirm this works: for a Cohen's d of 0.5 and a pooled standard deviation of 3, determine the mean difference you would theoretically expect. Then write a map function that generates 1000 samples for `x` and `y` respectively set to 0 and the mean difference you calculated. Both should be set to the pooled standard deviation. In your map function, calculate the Cohen's d for your `x` and `y` samples and return the mean Cohen's d. Calculate the mean Cohen's d and plot a density plot of the distribution of d values. We'll return to this concept when we talk about the winner's curse, but for now, notice how you see inflated d values (i.e. \> 0.5).
+
+3 - Let's now turn back to Josh and watch this [video](https://www.youtube.com/watch?v=Rsc5znwR5FA) (**Statistical Power, Clearly Explained!!!)**. Just like we did last week, transform the map code you wrote for the previous question into a function that accepts `n` observations, a Cohen's `d`, a pooled `sd` and an `alpha` value with a default of 0.05. Adapting the code from Q1, add a line that runs a t-test for each random draw, returning just the p-values.
+
+-   Once you have understood what each line in the code is doing, add a line that calculates the proportion of p-values that are $\leq alpha$. What does this proportion correspond to? Try changing the effect size. What impact does this have on this value
+
+4 - Brilliant! Let's now explore the concept of statistical power in the dataset we have come to know and love: palmerpenguins. Using different dplyr functions, filter the penguin dataset to return just Adelie and Gentoo species. Extract the bill_length_mm for penguins in each species. For ease, summarize the mean, sd and sample size.
+
+-   Use this information to calculate the Cohen's d of mean bill length in Adelie and Gentoo penguins.
+
+-   Now, using what we did two weeks ago and the function you just created, use simulation to calculate the power of the observed data. Wait a moment, did this analysis make sense? What are the problems of calculating statistical power in a post hoc manner (namely, after you have already collected data)? Does it actually give you any new information?
+
+5 - Watch this *StatQuest* [video](https://www.youtube.com/watch?v=VX_M3tIyiYk) on running power analyses. It's now time to introduce `pwr` , a package for doing precisely that in R.
+
+-   Let's start by rerunning the last part of Q3. For each set of `n` and effect sizes chosen, print the proportion of p-values <= 0.05. Then use the n and d values you chose within `pwr.t.test`:
+
+```{r}
+#| eval: FALSE
+
+theoretical_power <- pwr.t.test(n = n, d = d, sig.level = alpha, 
+                                type = "two.sample", alternative = "two.sided")$power
+
+
+```
+
+What do you notice? 
+
+## Winner's Curse and inverted effect sizes
+

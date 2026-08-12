@@ -1,0 +1,100 @@
+---
+title: "Session 8: Variance & Standard Deviation"
+format: html
+---
+
+This week we will begin our statistics adventure by learning about population and estimated parameters (video 1), variance and standard deviation (video 2) and why dividing by N underestimates the variance (video 3). 
+
+You will learn about the topics listed above by first studying the theory, provided via YouTube videos (this week all 3 videos are from StatQuest). Then you will work through some exercises, utilizing the R language to demonstrate various topics in a more "hands on" way, hopefully cementing the ideas presented in the videos. We have designed the exercises in ways we hope will help you to think statistically and generate discussion points. We will use the Wednesday group meetings to discuss the exercises and how conclusions drawn from them relate to the theory presented in the videos. 
+
+Let's jump in and get started with [Video 1](https://youtu.be/vikkiwjQqfU?si=j4jlYP6YbJD6LOgu){target="_blank"} (*Population and Estimated Parameters, Clearly Explained!!!*). 
+
+1. Probably the most important concept introduced in video 1 is the idea that when estimating population parameters from samples, the sample size affects how confident we can be in the accuracy of the estimates. To illustrate this point, take a look at the code below. This code chunk will draw random samples (5 different samples) from a normally distributed population with population parameters `mean = 20` and `sd = 10` (these parameters correspond to the values used by Josh in the video). 
+
+```{r}
+#| eval: false
+five_samples <- map(1:5, \(i) tibble(values = rnorm(n = 5,
+                                                    mean = 20, 
+                                                    sd = 10))) |>
+  list_rbind(names_to = "sample")
+```
+
+   * Run the code on your own machine in RStudio (be sure to load the `tidyverse` package first). Study the code and make sure you understand what each part does so you can explain it to the group when we meet on Wednesday. Specifically, consider: What does `map()` do in this case? What does the `\(i)` notation indicate? What does the output look like before piping to `list_rbind()`? What does the `names_to` argument in `list_rbind()` do?
+
+   * Next, calculate the mean and standard deviation of each of the samples in the `five_samples` object (using a combination of `group_by()`, `summarize()`, `mean()` and `sd()`). Take note of these values. How spread out are the values when you compare the estimates from the five different samples? Can you think of a way to quantify the spread? 
+
+   * Change the code in the code chunk above so that instead of generating five samples with `n = 5` the code gives you five samples with `n = 50`. As before, estimate the mean and standard deviation for each of the five samples. Repeat the process, this time using `n = 500`. What conclusions can you draw about the relationship between sample size and the confidence we can have regarding the accuracy of estimates? How about the relationship between samples size and how spread out estimates are across different samples? 
+
+2. In Video 1, Josh showed how we can use a population distribution (histogram) to calculate probabilities and statistics. In the video example a population of 240 billion liver cells was used. This is a lot of observations, and even modern computers struggle a bit when working with such large numbers. Many times in statistics we rely on the assumption that samples around 10,000 observations generate population estimates close to the true population parameters.    
+
+   Generate a large sample (n = 10,000) using the same population parameters as in Exercise 1. Name the object `samp_10k`. Do you need to use `map()` in this case? Why/why not? 
+
+  * Check the assumption stated above, that estimates of the mean and standard deviation from samples with 10,000 observations are close to the true population parameters (in this case `mean = 20` and `sd = 10`).
+
+  * Use `ggplot()` to draw a histogram of the values in `samp_10k`. Make a density plot using `geom_density()` and adjust the `bw = ` argument to make the curve look smooth and bell shaped. Compare the y-axis of these two plots. What is the difference?   
+
+  * Calculate the proportion of values in `samp_10k` that fall within the range defined by the mean plus or minus 1, 2, and 3 standard deviations. How do your findings align with the so-called [68–95–99.7 rule](https://en.wikipedia.org/wiki/68–95–99.7_rule){target="_blank"}? Use `ggplot` to create a visualization of your findings.  
+
+  * What is the probability of observing a value that is equal to or greater than 35, given population parameters `mean = 20` and `sd = 10` (in other words using the values in `samp_10k`)? This can be calculated in the same way as the histogram example in Video 1 (around the 2:30 mark). 
+
+  * What is the probability of observing a value equal to 35 or *more extreme*? How do you interpret *more extreme* in this case? Is there a difference between *greater than* and *more extreme*? Be prepared to discuss your reasoning when we meet on Wednesday.  
+
+
+We will now move on to [Video 2](https://youtu.be/SzZ6GpcfoQY?si=h6xo5NFTmbMbLhxf){target="_blank"} (*Calculating the Mean, Variance and Standard Deviation, Clearly Explained!!!*)
+
+3. What does the `fun_x()` function in the code chunk below calculate? Explain what each line of the code is doing. 
+
+```{r}
+fun_x <- function(x){
+  dev <- x - mean(x)
+  dev_sq <- dev ^ 2
+  s_dev_sq <- sum(dev_sq)
+  s_dev_sq / length(x)
+}
+```
+
+  * Using `fun_x()` as a starting point, write a function that *estimates* the population standard deviation.  
+
+
+4. Using the `tibble()` function, create a tibble with two columns, `x` and `y`, each containing six observations with no duplicated values, following the instructions below.
+
+  * Copy the code from the chunk below and fill in the blanks so that the variable `x` has a mean of `0` and a variance of exactly `6`. To do this, it helps to think about what a variance of `6` corresponds to in terms of the sum of squares, given the number of observations, and then consider how much of that sum of squares is already accounted for by the four values provided and how much is “left.” Why are pairs of values with opposite signs provided? If you apply this idea to the missing observations, their values are determined; you then just need to solve for the missing values using the variance formula. Once you have completed the vector, show that `x` has a variance of exactly `6` by using the `summarize()` and `var()` functions.
+ 
+  
+```{r}
+#| eval: false
+tibble(x = c(1, -1, -3, 3, _____, _____))
+```
+
+  
+  * Next, add another variable (`y`) to the `tibble()` code. This variable should have a mean of `10` and a standard deviation of `5`. You now need to determine six values yourself by working backwards from the standard deviation formula. Check the standard deviation of `y` using the function you created for Exercise 3.
+ 
+  
+  * Use the `mutate()` function to create the variable `z` based on the variable `y` by subtracting the mean of `y` from all values of `y` and then dividing by the standard deviation of `y`. What are the mean and standard deviation of `z`?
+
+We will now go a bit deeper into the theory of variance, focusing in particular on why we divide by `n − 1` when estimating the population variance. Watch [Video 3](https://youtu.be/sHRBg6BhKjI?si=9BhhL_Y-QTzrN9v3){target="_blank"} (*Why Dividing by N Underestimates the Variance*). In this video, Josh does a great job explaining why using the sample mean leads to an underestimation of the variance, but the explanation is somewhat theoretical. We can use a simple simulation to *demonstrate empirically* that dividing by `n − 1` performs better than dividing by `n` (and other alternatives we might want to try).
+
+5. Study the function in the code chunk below and explain what each part does. Fill in the blanks so that the `samples_df` object contains 10,000 samples, each of size 10, drawn from a population with a mean of 5 and a variance of 4. Next, complete the code so that the five columns generated in `summarize()` use values of `a` ranging from −2 to 2. What does the output tell us? Finally, visualize the results.
+
+```{r}
+#| eval: false
+var_a <- function(x, a){
+  ssq <- sum((x - mean(x)) ^ 2)
+  ssq / (length(x) + a)
+}
+
+samples_df <- map(1:_____, \(i) tibble(values = rnorm(n = _____, 
+                                                      mean = _____, 
+                                                      sd = _____))) |> 
+  list_rbind(names_to = "sample")
+
+samples_df |>
+  group_by(sample) |>
+  summarize(n_minus_2 = var_a(values, a = _____),
+            n_minus_1 = var_a(values, a = _____),
+            n = var_a(values, a = _____),
+            n_plus_1 = var_a(values, a = _____),
+            n_plus_2 = var_a(values, a = _____)) |>
+  summarize(across(2:6, mean))
+```
+

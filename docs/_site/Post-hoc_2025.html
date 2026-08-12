@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Session 15: Post hoc tests &amp; multiple comparisons – Data Science and Statistics in R for Fellowship</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./stats_journal_club.html" rel="next">
+<link href="./anova_2025.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-08799928d293638fe9563d5c5a2794e5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/font-awesome-6.7.2/js/script.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating fullcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Variance_2025.html">R for Statistics 2026</a></li><li class="breadcrumb-item"><a href="./Post-hoc_2025.html">Session 15: Post hoc tests &amp; multiple comparisons</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Data Science and Statistics in R for Fellowship</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">R for Data Science 2025-26</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome to R4DSS25</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 1: Data visualization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session 2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 2: Data transformation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session 3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 3: Data tidying and import</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 4: Regular expressions &amp; Joins</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session 5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 5: Quarto</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 6: Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 7: Iteration</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">R for Statistics 2026</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Variance_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 8: Variance &amp; Standard Deviation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./cov.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 9: Covariance &amp; Correlation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Standard_error_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 10: Standard error, Bootstrapping and Confidence intervals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Permutation_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 11: Hypothesis testing, p-values &amp; Permutation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./power_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 12: Cohen's d &amp; Statistical power</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./project_work_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 13: Project work I</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./anova_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 14: One-way ANOVA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Post-hoc_2025.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Session 15: Post hoc tests &amp; multiple comparisons</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stats_journal_club.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 16: Stats Journal Club</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rm-anova_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 17: Repeated measures ANOVA &amp; paired post hoc tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chisq_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 18: chi-square tests, odds ratios &amp; Cramer's V</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./project_work_2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 19: Project work II</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./linear_regression_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 20: Linear Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Multiple_regression_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 21: Multiple Regression</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Variance_2025.html">R for Statistics 2026</a></li><li class="breadcrumb-item"><a href="./Post-hoc_2025.html">Session 15: Post hoc tests &amp; multiple comparisons</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Session 15: Post hoc tests &amp; multiple comparisons</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Last week we introduced a new type of statistical test that helps us determine whether there is a significant difference in means when comparing more than two groups: one-way Analysis of Variance (ANOVA). We discussed that the null hypothesis in this case states that all group means are equal (that is, they come from the same population). Therefore, if we run an ANOVA and reject the null hypothesis, we conclude that at least one group mean differs from the others. Put differently, we can say that the <a href="https://www.statology.org/omnibus-test/" target="_blank">omnibus test</a> is significant.</p>
+<p>However, that is all we can conclude from the ANOVA alone. To gain a more fine-grained understanding of the differences in our data, we need to conduct follow-up analyses, referred to as <em>post hoc</em> tests. This short <a href="https://youtu.be/qrJI8BFbhyA?si=CgWyw7HeJhdS0ro3" target="_blank">video</a> explains the main concepts. The idea is straightforward: we perform individual comparisons between every possible pair of groups (often referred to as <em>pairwise comparisons</em>) to identify exactly where the differences lie. These comparisons can be carried out using tests you are already familiar with, such as t-tests or, preferably, permutation tests.</p>
+<p>To illustrate the most important aspects of post hoc testing, we introduce a new data set that can be downloaded by clicking the button below.</p>
+<div class="cell">
+<div class="cell-output-display">
+<button class="btn btn-default" onclick="
+    async function downloadFile(event) {
+      event.preventDefault();
+      try {
+        const response = await fetch('data:text/csv;base64,Z3JvdXAseQpBLDAuNTIwNTg5MDcyOTE4NTIzMQpBLC0xLjA3OTY5MDc2MjM1MjI4CkEsMC4xMzkyMzgxMTUwMTkyNzM0CkEsLTAuMDg0NzQ4Nzg0OTQ4NTc2NTMKQSwtMC42NjY2Mzk2MTUyODQ1OTYxCkEsLTIuNTE2MDg5MDMyMDA5NDU2NApBLC0wLjczNTE0Njc5NzQ1NjY3NwpBLC0xLjAyMDEyMjI2MzEzNTA5MwpBLDAuMTEzNTU0NDQxMjk3MzA2OQpBLC0wLjQ3Mzc5MDk4MTg0MDA5NDkKQSwtMC40MDgyMTQ3MDQzMzc5MjgyCkEsLTAuNzMwNDMzMjc4NTkzNjE0NApBLC0wLjIyMTQzNjU5OTQwNjE3MzU4CkEsLTAuMjI1ODE2NTI0NDI4OTUxNDIKQSwtMi41NDY4ODE0NDYxMjgyOTU2CkEsMS4zNDcwMDE0OTkyOTcwMzE2CkEsMC42MTY0MDgxNDU4NDk5NjkxCkEsMC4yMTc1NjQzMzgzMDc4ODc2OApBLC0wLjgwNDcxODgzMDQwMDI2MzIKQSwwLjY4OTc0Njc3NzYyNTgxOTYKQiwtMC4zMjg2NzIwMTQwOTAyMzk2NgpCLC0wLjE2NDY4MTU3NjkyNTg0MDI2CkIsLTEuMzkyMDI4ODc5NzcxMzA0CkIsMS40NjU4MjQ3NjEyMDEzOTE1CkIsMC4wNDgyMDY4MDgyMjU0NDM3ODUKQiwxLjkwODA4MzgzNDY0MTk4OQpCLDEuNzMwOTQ0NTI3MjM3MzIxMgpCLDAuMDU4MTQ1ODM3MjU5Mjk2MjM2CkIsMC42NDUzMjgxNjE3NzUxNzEyCkIsMS43MjU2Mjg5ODY1MDYzMDI4CkIsLTAuNTI4OTY2OTE3NDU2MjQ1OApCLDAuMTY2MzkyMDI1NjEyNTUwODcKQiwtMC4yNTQ3MjM1NzQ3NjM5NDY0NwpCLDAuMzMyNzgyMzU5NDM3OTA5MzUKQiwwLjE4MjQzMjgxMjgyNzYzNDYzCkIsMS4xNjQ1OTM3NDk1MTgwMDE5CkIsMC41OTM0OTI4NTA3Mjc4Njc1CkIsLTAuODkxNzc5NzI5MjE3MzY5MQpCLDAuNTc3MjUzMzEwMzU3NDAyNwpCLC0wLjgyNDkwNTU4MTA1ODA0MjgKQywtMS4xNTcyNTM4NTc2MjM0NDI2CkMsMC43Nzc5OTg3NzQwMDYyMTM1CkMsLTEuMjA0MjIxNzg1OTczMDY3MwpDLDAuMzA2NzE0MTAyMTQ3NjgwMTMKQywtMC44MzM2NTg1NDA2NDIwNTU5CkMsMS40MTgxNDExNjM1MDM3NDgyCkMsMC43MTE3ODYxMTc4NTA3MTgzCkMsLTAuNDAyNDk3NzIyODYyMzczNApDLDAuNzk5MzYyMjE4NzE0NTA4NgpDLDAuNDI2NDg0NDM1NTU2OTQ4MgpDLC0xLjE2OTg5ODY2OTkzNTYyMjQKQywtMC4yMDYyMDAxNjAyOTMwMTg1OApDLC0wLjkzMDYxMDMwOTI0MzYxMTkKQywwLjQ0OTM5NzU2NTc5MTczNzMKQywtMC42NDQ4MDY0NTQ1NjIzMTMxCkMsLTAuMjMxNDIyNjg5ODEwOTU4MTUKQywtMS4yMzYzNjgwMTE0NDUzNwpDLC0wLjk2MDk1NTI5ODIyMzAxNTQKQywwLjEzMzk1NjI4MTU2OTU2MTMKQywtMC45OTkwNTI3MjI5NjkyODM3CkQsLTAuMTQxNDcwNjkwODEzMjEzMzQKRCwwLjE2NzMyOTg5OTY0ODgxMwpELC0wLjE5ODc4ODYxMjY3MTY4MDc0CkQsLTAuMjkxMjA3MTg4MDkyMDk3MDYKRCwtMS43MzQzOTcwMzQyNDkyODgKRCwtMC4yNzI3MjgzMzE3MzI2MDM3CkQsLTEuNzk5OTI5NDgxNjk2ODIzNApELDEuMTUyNzQwOTc2ODAzMDM3OQpELC0xLjAwMzMxOTQ4NTU5MjAwNApELDAuMTQ4MjEwMDQ0MjkyNTM4NTYKRCwwLjUxOTQ5NjY4MDc0OTE3NjMKRCwwLjAwNTQzNjI5NDQ3NTc2MTI4MTQKRCwxLjM0NzAyMDgzNDY1Mzk0MDcKRCwtMC44NDcwMzM0MTcyOTU5OTU2CkQsMC40NDMzOTgwMTczMTU3NzE4MwpELC0wLjk3NzE0OTQ2ODMyMzMxMzUKRCwyLjEyNDQ5MTEzNTUxMzYwNjUKRCwwLjY4NzY5ODk2MDU2MTU0MTUKRCwtMC4zNDMzNjgyMjAxODAzOTY0CkQsMC43ODUxNjk0NzI2NzM5NDU4CkUsLTEuMTU1NTc3NDYwNzcwNTE3NApFLDEuNTA4OTE2MzQ2MzkyNjk4CkUsLTEuMTU1NDk2MTYwMjU3MzU2CkUsLTEuNTU2ODExODEwMjA2Njg0MQpFLC0wLjA1NTI0NzkyNTIyMzU1NjY0CkUsMC44NDkxOTMxNjI3MDI3MTQ5CkUsLTAuMDExMDk2NzIyNTAzNjU5MjE3CkUsLTAuNzYwMzEzODMxNzgwNzE4NQpFLDEuMTc1Nzk5MjUxNjc2MjM5NwpFLDIuNDE0NDQ5NzA5MDM0NzU4CkUsLTEuOTU4NTEyNzY4MjI2MTMxMgpFLDEuNDczNTg5ODkzNDI5ODAwMgpFLC0wLjQ3NDg4Mzk2MTQ5ODczMDM2CkUsMC45ODExNzA5ODM3ODU4NzM4CkUsLTEuODI0MzU1MjE5NTM2NTYwNwpFLC0wLjI2MDYxMDgxNzM1MjI2NzkzCkUsLTAuOTU4ODQ1MzEyNTczNjYwMgpFLC0wLjQ5MDI5NTcxMDA2NjUyNDkKRSwtMS4wNzcyOTY3MTM2MDA2NTY0CkUsMC4zNjk0MjU5MTA1NDQ0NDYzNQpGLDEuMjE2MjY2NDgxMTM5MzUwMgpGLC0wLjQ5Mzg0MzIzNTYxNDEwMzA0CkYsLTAuMjI3Nzg0NzIwOTc3MTg3NjYKRiwtMS4xMTE2NDg4ODcwNDcyNzM0CkYsMC45OTU4MzMwODk0MDk2MjQKRiwwLjU2MTgyODg5MDk0NjA4NzEKRiwtMS41NjQyNzg1NTY1MTU4Nzg1CkYsMS40ODEwNzcwMTkxMDUzMDk4CkYsLTEuMTY5MjA1MTUwMTEyMjMzOApGLC0xLjA1MjAxMzUzNzQ2NjM1NTMKRiwtMS40NzE4NDU1MjQ4MjkwMjUKRiwtMS4xOTM0MzY5MjA3NjQxODUKRiwtMC4zNDc5Nzk0MjQ2OTE5MzY3NwpGLDAuNTMyODIyNTQzMTQ5NDE4MwpGLC0wLjcxMDk4ODU3NTg1MDg0MjYKRiwtMC4xOTg5ODkxMzc2MzI0MDM1NgpGLC0wLjI4MTM3MzMyMzUxODQ2NDQ1CkYsMS4xNzA5MjYyNzUyMDQ5NzkKRiwyLjI4ODczMzE4NTkyCkYsLTEuMDY4ODU2NjE0NDk5MDc2OApHLDEuOTA2MjA0MTg4NTYyNDIxMgpHLDIuMTMxNzk3NzE4NDc4ODY5CkcsMC4yMzE0NTYzNjMwMTUzNTIxMwpHLDAuODk2OTQ1NzM3ODI3MTk2CkcsLTEuNzM4NzkyNzEyMzUxNTIKRywwLjQ2ODg0Nzk0MDEzNTUzMTU1CkcsLTAuNTQ0MTQ3NjczMTk3NzM4NgpHLC0wLjE2NTQxNDE1MzgwODQ0NzA3CkcsMC41NTIxNjY1NjI1NzI4MTMKRywxLjAzMzMzMDIxMTYwMzQ5NjQKRywtMC4wNDYxNzg4MDQ3ODM1NDU2MQpHLDIuNjM4NzA3MzEyNTk1Nzg5CkcsMC41ODkwMDU3NDkyMjUwMTc4CkcsLTAuMjAyMzc3MzM0MjI5MjExNwpHLDAuNDQxNTYwMTM4MDAyMzgyMjUKRywtMC4xMDAyNTc3MDIwODI4MzQ0NwpHLC0xLjA5MzQwMzk5MTk5MTEwODcKRywwLjUwMzI0NzMzODU4MjY0OTkKRywwLjk0OTI0MDA5MTExNzYzNTMKRywwLjM4MjgwMjA1NjAyMjMxMjE1CkgsMC4zNzE1NzgyMTA4OTgwNTMwNApILDAuMTU3MjE2NDAxNjUxNDI0NgpILDAuODQ3OTM5ODg5OTc1Mzc0NwpILC0xLjI4MzM5MjY1NjUwNTE3NgpILDEuMTU4Mjc4NjA4MDg5NjAxCkgsLTAuOTA5MTA2MjEzMTY1OTg4MwpILDAuMzM0OTkwNzA1MTY4NTgxNApILDAuNzc1ODU0MDgxOTE2NDA3NQpILDAuMjM3MTQwMTUyMjc2MDA4NDYKSCwtMS41NTk4NzAxMzQ1ODcxOTk3CkgsMC4wMjQzMjY3NTExODg4ODIwODgKSCwwLjMzNDYzNTE4OTE1ODI4NjkKSCwwLjk4OTQxMDk5OTE0NzEzODgKSCwwLjUwMDM3NTExMzU0MTU5NzUKSCwwLjU3NjkwNzg2NTQ1NTQ1MTQKSCwxLjE0MjY5MDk0MDExOTEwNTQKSCwtMC43MDc0NDc4MTQ0MjI5Nzc3CkgsLTAuNjE4NTU5NjQwOTgxMTI3OQpILC0wLjAwODMxNDE5NjE0MjQ1NTcKSCwwLjMzODkxOTczMzk1MjY4OTA0Cg==');
+        if (!response.ok) throw new Error('Network response failed');
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = 'df1.csv';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.dispatchEvent(new MouseEvent('click'));
+        document.body.removeChild(a);
+        setTimeout(() => {
+          window.URL.revokeObjectURL(blobUrl);
+        }, 100);
+        return false;
+      } catch (error) {
+        console.error('Download failed:', error);
+        alert('Download failed. Please try again.');
+      }
+    }
+    downloadFile(event);
+  " has_icon="TRUE"><i class="fa fa-save"></i> Download df1 as csv</button>
+</div>
+</div>
+<p><br>
+</p>
+<ol type="1">
+<li><p>Read in the <code>.csv</code> file and plot each group’s mean with its standard error of the mean (SEM). Next, run an ANOVA to assess whether there is any overall evidence of differences among the group means. Based on the p-value from the ANOVA, would you consider it appropriate to proceed with post hoc tests in this case? Briefly justify your answer.</p>
+<p>Even when the omnibus ANOVA is not statistically significant, it is still possible to obtain “significant” results from multiple pairwise comparisons. In fact, the lack of a significant ANOVA suggests that any apparent differences between groups are small and consistent with random variation, which makes any isolated significant post hoc result especially likely to be a false positive. Because each comparison carries its own chance of a Type I error, running many tests increases the probability that at least one will appear significant purely by chance. Let us see how this plays out in the data at hand.</p></li>
+</ol>
+<ul>
+<li><p>How many unique pair-wise comparisons do we need to perform in this case (remember that for example testing A vs B will be the same as testing B vs A)? Can you figure out a formula that will calculate the number of comparisons for any number of groups?</p></li>
+<li><p>We will not ask you to run manual pairwise permutation tests for all groups in the data you just analysed with ANOVA. Instead, use the <code>rcompanion</code> package and the <code>pairwisePermutationTest()</code> function, which implements computational optimizations to perform these tests efficiently. Apply this function to carry out permutation based post hoc tests. The <code>p.value</code> column in the output reports the unadjusted significance level for each pairwise comparison (you can ignore the <code>p.adjust</code> column for now). Are there any significant pairwise comparisons in these data?</p></li>
+<li><p>Plot a histogram of the p values (you may need to ensure that the p-values from <code>pairwisePermutationTest()</code> are coded as numeric). What pattern would you expect to see if there were an enrichment of true positive comparisons in the data? How might the distribution look if there were no true differences between groups? Which of these patterns does your histogram most closely resemble?</p></li>
+<li><p>Watch <a href="https://youtu.be/HLzS5wPqWR0?si=3rzQc7B53h7NzOca" target="_blank">this video</a>. Steven explains how multiple comparisons affect the family wise error rate and introduces the Bonferroni method, which adjusts the significance threshold by dividing the original alpha by the number of tests. Instead of adjusting the alpha level, we want you to calculate Bonferroni adjusted p-values. As a hint, think about how the adjustment to the alpha could be mirrored by scaling the original p-values in a similar way. Use the <code>mutate()</code> function to add the adjusted p-values to the output from the <code>pairwisePermutationTest()</code> function. Make sure no adjusted value exceeds 1, for example using <code>ifelse()</code> to set any value greater than 1 to 1.</p></li>
+<li><p>Set the <code>method =</code> argument in <code>pairwisePermutationTest()</code> to <code>bonferroni</code> and compare the output (this time focusing on the <code>p.adjust</code> column) to the adjusted p-values you calculated manually above.</p></li>
+<li><p>What are your conclusions from the analyses you have just performed? In your answer, consider the ANOVA result, the unadjusted pairwise comparisons, the histogram of p-values, and the effect of the Bonferroni correction.</p></li>
+</ul>
+<p>Applying a correction for multiple comparisons, such as the Bonferroni adjustment, controls the inflated Type I error rate and typically removes spurious results. However, as Steven briefly mentioned in the video, this comes at a cost in terms of statistical power. Because the correction becomes more stringent as the number of tests increases, it can make it difficult to detect real differences, increasing the risk of Type II errors (failing to detect a true effect). While the Bonferroni method is easy to understand and straightforward to apply, it is often overly conservative and can be suboptimal when many comparisons are performed or when tests are not independent. Pairwise tests are not independent because they are based on the same underlying data and share observations across comparisons (for example, the comparison between A and B and the comparison between A and C both involve group A), which introduces correlations between tests.</p>
+<p>We will demonstrate how the Bonferroni adjustment compares to other multiple comparisons correction methods using a data set that can be downloaded by clicking the button below.</p>
+<div class="cell">
+<div class="cell-output-display">
+<button class="btn btn-default" onclick="
+    async function downloadFile(event) {
+      event.preventDefault();
+      try {
+        const response = await fetch('data:text/csv;base64,Z3JvdXAseQpBLDAuNzkyOTM0MjUwNjE0NTc5MQpBLDIuMjc3NDI5MjQyMTEwNjYKQSwzLjA4NDQ0MTE3NjY4MzA1NTcKQSwtMC4zNDU2OTc3MDI2MjkzNDkzCkEsMi40MjkxMjQ2ODg4MTEwNQpBLDIuNTA2MDU1ODkyMTU3NTc0CkEsMS40MjUyNjAwMzk4NjUzNTEyCkEsMS40NTMzNjgxNDQyMTU4MTI4CkEsMS40MzU1NDgwMDA5MDY3MTcKQSwxLjEwOTk2MjE3MDk1NTg5NjIKQSwxLjUyMjgwNzMwMDI0NjQ1MwpBLDEuMDAxNjEzNTU1MTQwMjk2CkEsMS4yMjM3NDYxMDUzNjIwMQpBLDIuMDY0NDU4ODE3Mjc2MjY5NQpBLDIuOTU5NDk0MDU4OTcwNzcxMgpBLDEuODg5NzE0NTA1NjA5MjI1NwpBLDEuNDg4OTkwNDk0MTkzMzU3OApBLDEuMDg4ODA0NTgzMzcwMTg4NwpBLDEuMTYyODI4MzE5NzMxMDYwNQpBLDQuNDE1ODM1MTc4NDg5MzQxCkEsMi4xMzQwODgyMjAxNTIwMzEKQSwxLjUwOTMxNDEwMzMwOTA1NzEKQSwxLjU1OTQ1MjEyNzY0Njc3MwpBLDIuNDU5NTg5NDQxMDA1ODUzNApBLDEuMzA2Mjc5NzUzMDYyNTI0NQpBLDAuNTUxNzk1MDg5NjEzNTI4CkEsMi41NzQ3NTU3MjA5MDA3MjgKQSwwLjk3NjM0NDI3NzAzNjEyMQpBLDEuOTg0ODYxNjk5NjM1ODE4NApBLDEuMDY0MDUxMzk4ODMxNjA2NQpBLDMuMTAyMjk3NTQ2MjAwMjYzCkEsMS41MjQ0MDY5MjExMzA5NDI2CkEsMS4yOTA1NTk5NjI0ODc0OTM3CkEsMS40OTg3NDE5Mzk0MDUyMzg2CkEsMC4zNzA5MDY1MzA5MjEyOTYKQSwwLjgzMjM4MDczNzkwNTgxMzcKQSwtMC4xODAwMzk2NDg5NDg2NzM3NQpBLDAuNjU5MDA2ODA3ODk5OTcxNgpBLDEuNzA1NzA2MTQxMjM2Mjg2OApBLDEuNTM0MTAyNDU5NTkzODg5NwpBLDMuNDQ5NDk2MjY1Mjg3MTMxNwpBLDAuOTMxMzU3Mjc2MzI1NDE5CkEsMS4xNDQ2MzUzNjYyNjI0OTI4CkEsMS43MTkzNzY5OTgwNDI1NDYyCkEsMS4wMDU2NTk5MjM3MDQzMzUKQSwxLjAzMTQ4NTY4MjEyNzk1MQpBLDAuODkyNjgxODA3MzU4MjM0MQpBLDAuNzQ4MDE0MTE0MzYxMDU5OQpBLDEuNDc2MTcxODgxMDEyNjQ0MwpBLDEuNTAzMTUwMDQyNzMzMwpBLDAuMTkzOTY4NzQzMTk4MDUxMjQKQSwxLjQxNzkyNDA3NTMxMDY2NzIKQSwwLjg5MTExMDM3NTU3MzIxODYKQSwwLjk4NTAzNzk5MDUwNzk5MDcKQSwxLjgzNzY5MDQ3NjQ0MzE4MDcKQSwyLjU2MzA1NTgxODk5NDUxNzQKQSwzLjY0NzgxNzQ3MjgxNTA2MTYKQSwxLjIyNjY0NjU3NjA1NjMwNQpBLDMuNjA1OTA5NjI4ODU3Mjk2NQpBLDAuODQyMTkxNDUyMzA1NTkKQSwyLjY1NjU4ODQ2NDMzMjgwNwpBLDQuNTQ4OTkxMDcwNzE3ODU2NQpBLDEuOTY1MjM5NjEwMTk2MTYyNApBLDEuMzMwMzY2NDIwMzM4MDQyNQpBLDEuOTkyMzk1MjQ0Mjg5MDI1NApBLDMuNzc3MDg0NDQ4MTQzNDI2MwpBLDAuODYxMzkyMjYzMjQ5MDkxMzUKQSwzLjM2NzgyNzE3OTQyMzI2MjYKQSwzLjMyOTU2NDc5MDc4MjM2CkEsMi4zMzY0NzI3OTcyMDM4MTczCkEsMi4wMDY4OTI4Mzg0NDE5NTc4CkEsMS41NDQ1MzEyNjE4Mzg1NzE4CkEsMS42MzM0NzYwNjcxMjYwNjY5CkEsMi42NDgyODY1Njc1MDMxNDc3CkEsNC4wNzAyNzA4NjEzMzA5NDMKQSwxLjg0NjYwMTU4NzUzMzAzCkEsMC42MDkyOTkwNTMyOTg1MDkKQSwxLjI3NjQxODIyMjg4OTg0NTcKQSwyLjI1ODI2MTc2MjE2Nzg1MzMKQSwxLjY4Mjk0MDg4NTAzODgwMQpBLDEuODIyMjEwMDQyMzM1NzA1NwpBLDEuODMwMDA1OTIzMTQ1NDU5NQpBLDAuNjI3Njk4MTE0MTIzMzA2MgpBLDEuODI2MjEyODI5NTg1OTY2OApBLDIuODUwMjMyMjU3MTIxODg0MwpBLDIuNjk3NjA4NzExNjY4MjUzCkEsMi41NDk5OTczNTEwOTExMDE0CkEsMS41OTcyNjgwMjQ1NTIzNzcyCkEsMS44MDg0MDYyMjk1MjE1MjMzCkEsMC44MDU0NzIxMjAzOTc0ODY4CkEsMS45NDY4NDExODEyNTY2NzYyCkEsMi4yNTUxOTYwMDA5OTU4MzM0CkEsMy43MDU5NjQwMDcyNDAwNzUKQSwzLjAwMTUxMzI1MjM2MzQ0ODUKQSwxLjUwNDQxNjU1Njk5ODU0CkEsMi4zNTU1NTAyOTY5OTk3NDkzCkEsMC44NjUzOTE5NTY0NjYxNTIxCkEsMi44NzgyMDM2MjY5NTIyOTE1CkEsMi45NzI5MTY3NTMzNzYxMjI1CkEsNC4xMjExMTcxMDUzNzU2NzYKQiwyLjQxNDUyMzUzNDM3NDk4NTYKQiwxLjUyNTI4MTUyNjQ3MDYzOTkKQiwyLjA2NTk5MzQ5MzcwNDQ2MTUKQiwxLjQ5NzUyMjIxNzYwNjEzNApCLDEuMTc0MDAxNDEyODcwNjY0NApCLDIuMTY2OTg5Mjc5NzUyOTgzNQpCLDEuMTAzNzM1MzczNzU1MjQxMwpCLDIuMTY4MTg1Mzg3NjU1NzU3CkIsMi4zNTQ5NjgyNjEwMTQ4NTQ2CkIsMS45NDc4OTQ4ODMxMjg4NjY1CkIsMS44MDQwNjUzODEyODM3NDY4CkIsMS4zNTA5MzAyNDgzOTQyMzk4CkIsMC44OTAyMzI3Njg2MDEyNjgzCkIsMi44NDkyNzQyMDI2NTUwNTg0CkIsMi4wMjIzNjI1MjYwNzYwMjQKQiwyLjgzMTE0MDYxNzMwNjgzNTQKQiwwLjc1NTcxMjE0ODY1NTc3MjMKQiwyLjE2OTAyNjQxMzc2NjE3NQpCLDIuNjczMTY2MzA2OTQ3Njc5NApCLDEuOTczNzIzNjIzNTUxNDc0CkIsMS44MDg2MDc4MzE0NDM5NzYyCkIsMS4yMTgwOTMzNTMzMDAxMjM1CkIsNC4wNTgxNjE5ODc3NjM0OTEKQiwyLjc1MDUwMTQ1MzE1NTgzMQpCLDMuODI0MjA4MzAyMzc4Mjg5CkIsMi4wODAwNTk2NDEwOTE5ODgKQiwxLjM2ODU5MDcwMTAzMzYzNDIKQiwwLjQ4NjcxMTg3OTk2NjI3Mjg1CkIsMS4zNjM5MDAxNjg5MTQ5NDg4CkIsMi4yMjYzMDE1MzI0OTcxNjEKQiwzLjAxMzY5MDM0NzQ2NTc0OApCLDIuMjUyNzUwMTM1MDY2MzQyCkIsMC44MjgwNTE2ODcxNTg4NzkyCkIsMi42Njg3MTQzMjg1MjUwMzM0CkIsMC4zNDk4OTkwNjUxNTU2MzkzCkIsMS42MzQxNDc3NTE4MDgwOTkxCkIsMS42ODM4ODE2NzExNjY5MjAyCkIsMC4wNTE3NTM5NTI2Nzg2MzEwMwpCLDIuOTIwMDU3NTIyMzkwOTA1CkIsMS4zNzcxMjg0MDUxMjExMjUyCkIsMS42NjU5NjMzNTAwMDI1NDE3CkIsMy4zOTUxNDc4OTI1Mjk2MjMKQiwyLjYzNjY3NDQxMTAzODk0OTcKQiwxLjg5MTU2ODMwMzAwOTYxNzMKQiwyLjUxMzc2Mjc3ODQwNDY3MzQKQiwyLjM5OTI3MTgwNzI3Mzk1ODUKQiwzLjY2Mjg1NjQ0NzQzMDQwNQpCLDIuMjc1ODkzNDAzNTg1NDgyOApCLDIuNTA2MjcyNjIzMjA3Njg3MwpCLDIuMzQ3NTUxOTc1MDIzODExNgpCLDEuNjIyNzYyMzUyNTAzNjg2NwpCLDIuMDk3NjE5NDYzMTA5MjM3NQpCLDMuNjM4NzQ0NjQ1MTIxNzI3NgpCLDEuMTI0NDA3NTI1ODEwNDMxNApCLDIuMTIxNzU5OTk4NjQxMDQ2CkIsMy4zNjIxMzA2NjA4NDQ5ODIKQiwxLjc2NTM3ODkxMzA3NzI5CkIsMC45NDY2MTcxOTIwNTY5MTQKQiwxLjEzMDIxNjM5NDM2NDA4ODQKQiwxLjYwOTg3Mjk3MDM1Mjk0NQpCLDEuMTUyNjQ5OTI2ODcwNDI4MgpCLDEuNzM5MzYwNjA3OTAwNjAwOApCLDEuNTg1NTgwMjkzNjU4MTA2NwpCLDEuODE2OTQ5MjAyMjgwNTY2NApCLDIuNDA3MDU2MDk3ODgwNTc3NwpCLDIuNjI0NjMzMTI4MjAyMTQ2NApCLDMuNjc4MjA1NzQzNzA0NzEyCkIsMS45MzEzMDYzNDY0MzUwMDkzCkIsMS42NzkxNjAwODczNDE4MjI2CkIsMy40NzEwMDU3MTcwNDg5MDUKQiwzLjcwNDMyOTM5NzgyNzA5ODQKQiwyLjA0MzI0NDAzNzU1NzUyOQpCLDEuNjY3MzQyNjgwODY2NDgxCkIsMC4xNzc3NjQ1ODI0MzY5MDQzCkIsMy40MTEyNjIzOTg3NDY3ODAzCkIsMS4xNjI0MTc1NjU5MjMxMzkKQiwwLjg3NjIzNzIwNTYwNDY4MzcKQiw1LjA0Mzc2NTg4NjA5NTI4OApCLDIuMjM1MDIxMzA4MjUwNjcxCkIsMS45NjY3NDEzODk4ODY2OTQzCkIsLTAuNzMyMjE5NTIyOTU1ODAzMwpCLDEuOTAwMjA5NDExNTU4MTAzOQpCLDIuOTc2MDMxNzM0OTIyMzk2NgpCLDIuNDEzODY4OTE1NDUxMDk3NQpCLDIuOTEyMzIyMTYxNjEwMTEzNApCLDMuOTgzNzMyMjAwNjg0Mzg1CkIsMy4xNjkxMDg1MTQwMTM2MjY0CkIsMS40OTEyNjI5ODQ1ODQ3ODA1CkIsMi43MDQxODAxNzg0NjU1MTIKQiwxLjgwMTU4MzcyNjE3NzkyMTMKQiwxLjQ2MTkyOTIxMTExNTEzNzIKQiwtMC44NTU3NTg2NTUwMTkyMzQ2CkIsMS4yMTAzNTMxNDc3MzYyMzg4CkIsMi40ODc4MTQ2MzUxNjM2ODQ1CkIsNC4xNjgwMzI1Mzk1MTkzMjcKQiwyLjUwMDY5NDYxNDI4MDc4NgpCLDIuNjIwMjEwMjAzNjY3MzE5NgpCLDEuMDM0MDk2Nzg5ODY2NDI0NgpCLDIuMTYyNjU0NzA4MTE4MjY1CkIsLTAuMDc4MjM3NTQxODg3Mzc2ODYKQywyLjQ4NTIyNjgyMDU2OTI1MjUKQywyLjY5Njc2ODc3ODU2NDkxMjYKQywyLjE4NTUxMzkxNTU4MzA1NwpDLDIuNzAwNzMzNTE1NTQ0NDYxCkMsMi4zMTE2ODEwMjg2NjEzNTkKQywyLjc2MDQ2MjM2MTk2NzgzODMKQywzLjg0MjQ2MzYyNjIwNzY2MQpDLDMuMTEyMzYyODQxMjYyNTk1NwpDLDIuMDMyNjYzOTU3NTAxNDQ0MgpDLDAuODg1NTUxMDM1MjAyNjM1NwpDLDIuNDE4MDU3ODIyMzg1MDgzCkMsMS41OTk3NjQ3NjI2NTY4MzcKQywzLjQ5MzQ5MzEwMjYxNzQ4MDcKQywwLjM5MjkxOTA2MDE1MDI4MzQ0CkMsMS41ODQyNDgyMTE1OTg0ODQ2CkMsMi40MjIwMDgzNzMyMTc0MgpDLDEuODQ4MjYzNDYzNDY1MDIyOApDLDEuMzkzODQ4ODg0NzM1NzgwNApDLDEuNjk1Mjc4OTMxMDMzMjg1OQpDLDIuNjI5NTM2MDk5ODg0NDcxNwpDLDIuODk1MTcxOTgwMjc1NTM4NQpDLDIuNjYwMjEyNjMxODIwNDA1MwpDLDQuMjczNDgzNTIwNDQ3NDc5NQpDLDMuMTczNDk3NTcyNjMyMzkxNQpDLDIuMjg3NzA5NzI4MzEzNzg3CkMsMS4zNDAyMjk5MDYxNzg2OTQ0CkMsNC45MTkxNDAxMzA3MTc2MTYKQywyLjY3NzQxNTUwMDQzODMyOApDLDEuMzE1Njc5NjU1ODYzOTkzMgpDLDIuMTg2NDkyMDgzMDgwOTcwNApDLDEuNjc1NjA2Njk5NTE2MzQyOApDLDEuNzI1Mjk1NzgxNzc0MTkzNgpDLDEuMDY2NDk2NjU5NDEwMTMyMgpDLDIuMTE2ODQ1MzQ0OTg2MDgxNgpDLDIuMzE5MTYwMjM4NjQ4MTE3CkMsMC45MjI0NTc4NzcyNDA1NzAzCkMsLTEuMjMzMTUyMTMyOTIzMTM3NApDLDEuNzQ1MTI1MzQ3MzQ1NDY2CkMsMi4wMjk1MTc4MzAzMjE0OApDLDIuNTk0MjczNzc0MTEwNTEyNApDLDIuMDU5MTM1MTY4MTc4Nzk3CkMsMi40MTMzOTg4OTQ3MzcwNDU3CkMsMC45MDIyMjc4MjU0Mjk1NzkyCkMsMi43MTExNzUyNTcyNzA0NDA0CkMsMi43MTg4ODg3Mjk4NTQxNDI2CkMsMi4yNTE2NTEwNjkwMjg5Njc3CkMsMy4zNTcyNzQ0MzYxNTE3NzQ2CkMsMi40MDQ0Njg0NzEyNzg2MDczCkMsMi4yNjQzNjQyNjk4Mzc5Mzg3CkMsMi4yNjgwNDM5MDQxNDM2OTczCkMsMi40MzY5MzA1NzcwMzk0ODMKQywzLjA2MDEyMzkwNTQ4NzM2NApDLDIuNDUyMTkwMzk2NTI4NzE1CkMsMi42NjMxOTg2MTU2ODcwNjUKQywwLjg2MzYyNjQ0NjAwOTE2NDkKQywxLjYyOTUwMjQ4MjkwNzg4MjgKQywzLjQ3Njk2OTU4OTc5MjQ3MDQKQywwLjc3NjA5NjI0OTQ4NjI0NApDLDIuMjU4MDY4Mzg3Mzk2MTA1NgpDLDIuNDA1MDAyODA1NDMzNTE2NApDLDIuOTc1ODAzMzIxODA5NDQ5NwpDLDEuNjUxMTIzMjYzNDYwMDkxMgpDLDIuMTU4NjI1NDM5NDkxMjYyMwpDLDAuMjM2NzQ0OTMzNDU4ODQ2NQpDLDIuMzM4NTk2MDQ3MDk5OTA1CkMsMS4zMzM0MzQ5NzA0NDA3MjcKQywxLjc2MTM1MzM3NTY3MjM1NTgKQywwLjgxMjIzNDcxNzU0MjgwNjIKQywyLjM4NDkzNTMyMTc2ODU3ODUKQywyLjY2NjU3OTUxNTY1NDQ3OTYKQywxLjY5NTM4NjExMDU0MjI2NDcKQywzLjgyNTAxMTA2NDA4NjI5NTgKQywyLjY3MDU1OTM3MDU2NzU4NzYKQywyLjk0ODYzMjU3MzI1NTE1MwpDLDQuMDQ5NDAzMDAxNjcwOTEKQywxLjM0ODg4NjM5MDc2MjQ2NTMKQywyLjgwODYxOTI3Mjg0NjI5MzMKQywyLjk4NjU4MDYxMzk1NDU2MjgKQywxLjk5MzgyOTIwMzkwOTMKQywyLjMxOTA1MjM1NzkzMTkxMgpDLDAuOTg4MTc4MDk3MjU4MTU1OApDLDIuNDcwMTY3NTQ3NzI2Mzg4NwpDLDEuMjk5MDI5NjY4MzcwOTAyNgpDLDIuODEzNjgyODYyNTI2NDkxCkMsMS4xODg1NjkyMTYwMDcyMjc5CkMsMi4zMTkzOTc0ODcwOTk0NjAzCkMsMS4xNTM0NzczNDY4MzYzNzU3CkMsMS43NTQyMzY4MjA4NzEyNjc1CkMsMC40NDcxNDA5ODg4OTQ1MzkKQywyLjEyODQzNDAzMjkyNTc1MwpDLDIuOTg1NDQzMzg5NDA0ODY3NQpDLDIuMTgzMjQ3NTIzMDY3MTkxNQpDLDAuMjMzNzcwNzg2NTY5NTQxMwpDLDEuMzc5NDY2MzAzMzg0MDU2NApDLDMuNjU2MDQzMDM2OTk4NzM2CkMsMy44MDk4MDUzODU1ODM4NzYzCkMsMC44MjQ5NjMyMzE5ODc4NjQ4CkMsMS42MzMyOTY3NDExNzIzNTkKQywyLjM1MzYyNTQ0ODkyNzI4NjUKQywyLjMxOTE1NjIyMDg2Nzg5NzcKRCwxLjQyMDA0MzAxMDk4MDU5ODQKRCwxLjA0NjcyMTI5ODA1MzA5MzYKRCwxLjgyMDU3MTQxMzA1NDM3OQpELDMuMDA5ODA4MjE0OTQ0MzAzMwpELDIuMDIzNjI2NjE0OTIxNDA4NgpELDEuMzUwOTcxNzgwNDE2MDk5NApELDEuNDk1NjI1Nzc3OTUxODA5MgpELDMuNjE0MzkxNDk1NDU4MzYzCkQsMS41NTMwNDAxODg3NDQzMzcKRCwyLjc2MzE3Njc2MTExMzMxNQpELDMuNDcxNzE4Njg2MTg1Nzk5CkQsMi40NDM2NjQ5MDM2ODc0MTU2CkQsMS41NzgyNzgxMjk5Mjk4MTEyCkQsMS45NTk5OTgzNzM3OTM5MjY0CkQsMS41MDc3MjAwMzE3NzIxMTI3CkQsMy4yMjc3MTcxMTczMTI3NTEyCkQsMS44NTA0NDY0MzQ3NTU2MDc4CkQsMy41NDk5ODMzODM5ODI0NjMzCkQsMS40MzgzODc0NjQ2MTg2ODYzCkQsMS4zNTI4ODI3NDkzNjc2MzkyCkQsMi4xNDMxMzIxNTkwNTA0MjY2CkQsMi4wMjQxODg2NDc5OTEwNTEKRCwxLjQ5NTU0ODQ3NTQxOTEzMQpELDAuNDE4NjAzMTkwMDY5NjYxMgpELDIuMDMwMDY2NDIxMjU1NDE4CkQsMS4yODM0MjMzMDA5MjkyOTg4CkQsMy4wODI2MTA5NTU0NzYxMTkKRCwxLjA0NzMxNDU0NTA2MDcwNjYKRCwzLjEyNjQ4MjcyOTAwOTE1NzIKRCwxLjM1MDk1Njk4MjYyMDg4NApELDIuMjkyNDcwMDc4NDA2NzI2MgpELDIuODk4NzAyNzI0NDAyNzM3CkQsMS40ODEyNTc2NDMyMDgxMjYxCkQsMi41NTQ0Mzg1NTIzNDUxMjU0CkQsMS45MTIwMjYzMjg4MTU5ODczCkQsMC44NjQ3ODcwNzA1OTI0NzgzCkQsMS43Mjk5MjAzODkwMDAwOTgzCkQsMy42MTk3ODk4Nzc1MzQ5MzYKRCwxLjc4NTg2ODgyNjMwMzM1OTcKRCwxLjE4MjIxNzUzNzA3NTA0MzIKRCwxLjk0NTk3NzA3NTkxODM5MjgKRCwyLjMzMDE0MTYwOTg1Nzg2OTMKRCwyLjk1NTMyNDYxNDY1NzM5OTMKRCwzLjE0Mzk1OTg3Nzc5MjQ0MQpELDIuMTAwNTIyMzk4Mzc1MDYzNApELDMuMTY0NTc1MjQ1NjU3MzgzCkQsMS4yMzU3NDAwNTIyMDA4NTI0CkQsLTAuMzQ0NTEzNDA0NjkwMzAzNTYKRCwxLjUyODMxNjU3NDQ3MDQ2NDMKRCwxLjQ4NDE0NDUxMDQ5MjYxCkQsLTAuMzE2MDM2MTUxNTAyNTYwNwpELDIuNTYyNDcxNzU2OTY5NTMyOApELDEuMjE2MjI0ODYwNTc3NjE5NApELDEuNzczOTQ2MDEzNzcxODM0OApELDAuNDEyODk3MDEyMzQ1OTU4MQpELDIuNTQ3NTI0MjAxODY4MzE2CkQsMy44OTEyMjcwMTczNTU0ODA0CkQsMS4xMjE5MjI4ODk3NzU5NTYxCkQsMS44ODc0NDEwODg5NTUyMTMxCkQsMy45NDg3MTMwNjQ5NzU5OTEKRCwyLjkzMzgxNjMzMjIwNzcyNwpELDMuOTEzMDU5NDIxNjk3MDQ4CkQsMS45OTQ3NjU5NDIwNjgwNjAzCkQsMS44NDc3Mzk5NTEwNzgzNjUKRCwxLjQ5MDM2ODM0MjgyMDg4MTgKRCwzLjQzNDU3MzcwMzQyNjExNzIKRCwwLjcxNDE2MTQ2NzY2NzAxMTYKRCwyLjMwNzMxNDIxNTI1NTAxOApELDEuOTUzNjgxNDY2NzIyNjE3CkQsNC4yNTE4NDE4MDAxMjY4NzgKRCwxLjM5MTk2NjI3MTM5MDI5MjMKRCwwLjQ5MDcxMTgzMDE0ODk2NDEzCkQsMi4yMzI2MzE3Njk1MDg1NzU2CkQsMS45NjAzNTEzMDM5NDg5MDY3CkQsMS4xNjA4NzQ5MzI0OTQ2NTQ2CkQsMi4xMzIyOTEwODgyNDQxNTYKRCwxLjcyNDQ3NTI1MzI5NDA2MQpELDEuMzIxMjQxMzU4NzMxOTY4MgpELDIuNTAwODM1OTMxNzc1ODI1MwpELDEuNjY4MzM3Njg3OTkzMjExNQpELDAuMTY1MDE5NzQ5MjI3NDczNjQKRCwtMC42NTE3NDEyNDgzNzI2ODE0CkQsMS40MTk0MTc4Mjc5MTU1ODUxCkQsMy40NTQxODY4NzA4NzExODk0CkQsMi44MzgxMjkzNzk5NjQ2OTI1CkQsMy4yMTUwNTM1ODA0NDYxMzU4CkQsMi45ODI1MDU0NDI3MzI3OTQ2CkQsMi4zMTU3NjQwMjQwMTg0MzA1CkQsMC40OTI5MzczNzIyODM2NzkyCkQsMi4yMDU1Njk3ODcxNjYyNzcKRCwzLjU5NzIyODA5MDM0MzgxCkQsLTEuMzk2MDYzNTM0NTc0MzYzNwpELDEuMjE4NjQ3NzE1Njk3OTE4CkQsMy4xMDI0NjQ2NDA3NTE5MDcKRCwyLjUyODc0NTAxOTQ0NTI5MjcKRCwyLjc4OTM5NDQwMzUxNDg1NApELDIuNDU3MDk5NTA1ODU2MDgxNApELDIuNTM4ODMzMTE1NjU4MTIyNQpELDIuMDE0NjQzMTIyNDExMTAxCkQsMS4wODM1MTA4NjQyOTY5MDY1CkUsMC43NzMxODQ5MDkyMzIzNDQ4CkUsMi4wMzYxNTI4NjgxMzAyMjMyCkUsMS41Nzg2MDY4ODY0Mjg2MTAyCkUsMS4xMDA2MzU1OTE1MzcwOTUzCkUsMi40MTc0NDEzMTc0ODY1NjE3CkUsMi4xNTM0NDQ3MzY4NjQwMDk3CkUsMy40NjMyODMwNDUxOTMyNDYKRSwwLjg3ODQ5NzUwMjY3NDQ1ODEKRSwxLjQ4MjIxMTkxNjk0NDk3NgpFLDEuOTI1MDUyOTExNjYxNDc2NwpFLDAuNTkyMjA5OTE4NTYwOTE5MQpFLDEuNzE1Mjk0MTMxODg5NTIyNwpFLDEuMjkxODI4ODIxNzg2NjIzNgpFLC0wLjE0NzYzOTAwMTEzNzUxNjE2CkUsMS43MTYxNjI4MzkzODg2NDIzCkUsMS40NjU5Mjc4MzYwMjM5MTMKRSwzLjEzMzAxMDE5NDE1NDE5NTUKRSwxLjM5NTkzMTA3NzE1MjM0NDUKRSwyLjU1NzUxMTU5NTU5MjQ3MgpFLDIuMTQyNjI5MjkzMjU1MDg2OApFLDAuNzYzMTM5Nzg1MTU0Njc1NQpFLDIuMzc0MTQzOTcyNTAzMTg5NgpFLDEuODkzOTEzODc2NTMzNTQ2NgpFLDIuMTY2MDYxOTg2NTA5MDQ5CkUsMi42NTgwMzQ4NDgzNDI0MDYzCkUsMi4xMTM5NjI5MTk5NzEzODU2CkUsMy41ODUxNTkxNjQwMzExOTEKRSwyLjExNTU1MzQ0MDQ0MzMyNDMKRSwwLjc0NjAwMDk2MDcxNjQ4NDgKRSwyLjc0MTg2NDc3OTMwMDc0CkUsMC43NzcwOTgzODUwMDAxNTE0CkUsMC4wODExMDU4NjgyMzc4ODY0NgpFLDEuMTkwMDYzNjEwMDc5MjA2NgpFLDEuMjU1MzIyNzcxMjE0NzIyNApFLDEuMzkyNDk0MDc3MzA2ODAwOQpFLDMuNjA2NzU5NTY2MDY0OTM2NQpFLDMuNjM1NTk5NDQ2MjgzNjI4CkUsMi43MjYwOTEwOTY2OTg0OTIKRSwwLjcyNjE2NTA3NDk1NjU0MTYKRSwyLjAyMzE0NjU1NTQzMzM0MDMKRSwyLjQ4NzEyMTIzMzgyNjQ3ODMKRSwxLjg2Mjk3MjQ5NjczMDI2OQpFLDIuMTcxNzQ1NDgyNDU2MDA5NApFLDEuMDU1MjA2MDg1MTAwMDEzMwpFLDAuNzEyMzc5NjkzOTkzNzg3NgpFLDMuNDA3NzY1NzM4NzUxMDMxCkUsMi4yNjczNzI2ODkwNTMxNgpFLDEuNTkxNjAyMzU3ODUzOTg3NwpFLDIuMzI1MjcxMjE5OTE2OTQwNQpFLDQuMDYyNDgwOTczMTE5MzUzCkUsMi4zNjI2NjY5NTU2NjM5NTA2CkUsMy40MTE0MDQ2NDQ3MDM4OTc1CkUsMy4zNjc1NDQzMTQ1NzU0Mjc2CkUsMS41OTI4MjM4NTI4Nzg0NjEKRSwyLjc2MjU0MTczMDg4NTg1MwpFLDEuMzQ4Nzk5MTc2OTY4Mjc3NApFLDAuNTI2MzQ0MjIwNTMxNjgyNApFLDAuNzk4MzM0MjAzNTk0ODkwMgpFLDEuODUxMjc5NTIxODY5OTA3NgpFLDMuNzk3MDYyNDI4NTUyMzA4NwpFLDIuMTA0ODA4NzE3ODU1NTcxNwpFLDEuMTk3MTYyMDI2NjQ4NTI0CkUsMi4yMzAzNzQ5NjQxNjM2NzQ1CkUsMi42OTc5NzUxOTMyMTgwODc4CkUsMC43MDQ3OTgyNjgwNTQxMTk0CkUsMC45NDUzMTk3ODIwMjIzMzUxCkUsMC4wNTgzOTI1MTAzMjQ5Mjg1NApFLDAuNzMwNDM5NDA2OTk2Mjc4MwpFLDEuMTEyNTYxMTg5MTgzODkyNQpFLDEuNzA4MDg0MjM3Mjk2ODA2CkUsMy40MTAwOTQwNTI5NzMwMjk1CkUsMi44ODg2NDE0MzAyNjM5NApFLDIuMjcyOTc0MzE5NjkwMjYxNApFLDEuNDMzMzU4NTMzOTczODEwNgpFLDEuOTU5NzkzMDYyNTYzNDI1NApFLDIuNTQ3NjEyMjQ1MzAxMDYzCkUsMS40OTU5NjY2NzgzOTQ0NjQzCkUsMy4wNTkwNzAxMjk1NTg3OTk0CkUsMy4wOTc0NTM1NjY0MzU3ODc0CkUsMC44MzM0OTUzNzAzNzQ0MTQxCkUsMS4yNTMwODg2ODk5MTM5Mzk1CkUsMy4yMDY3Mzg3MzMzMzkyNjcKRSwwLjMxMjc4MDExOTQ1NjY0OTc0CkUsMi40MTk3MDk4OTQ5MDYzMjc0CkUsMi4yMzM0OTg3NjE2Mzg3OTY1CkUsNS4xOTU5MDExOTc4NTczODcKRSwtMC43Mjk2ODAzNDEyMjY5NTEyCkUsMS4xNTkyMDQxOTg1NzU5NTM0CkUsMi42NzQwMjg2Njg2NTA0NTU3CkUsMy42NzQzMjY1MDk2NzEzODkzCkUsMi44Mzk2ODcwODM4NDA0OTQKRSwwLjU3MTYzMTU2NDQ0NDgwOTMKRSw0LjIzOTM4ODE2OTE2NzgyMQpFLDAuMjQyNzMzNzc1ODk4MjQ1MwpFLDAuODg2OTgzOTEyMDk1MzQxOApFLDEuOTU2ODU5NjA5Mzg2NjY2NApFLDQuMjI1NTg2OTA4OTA2NjAzCkUsMi41MDYzMTY1ODczMzgyMgpFLDIuNzMwMzk2MDUxNDM1NzY4CkUsMy43MjgwNzc1OTQ3MzY4MTcKRiwyLjk4NDc3OTk2ODMxNDU1NTcKRiwwLjc3NTI2MjEyNDAzNTczMzYKRiwyLjcwOTcyNjIxODA2NTgyNTMKRiwxLjg5MDc4MDAwNzQyMTkzNTkKRiwzLjc4MjYwNzg5NTM4ODMzMzMKRiwxLjc1NjU1NTMyMDM5NzAyNDgKRiwwLjQ3Mjg5Mjk3Nzc0NTM4OTIKRiwyLjQ5MTgzNDM3MTQ2NjYyMgpGLDIuMzU0NTAzNjYwOTI2OTkyCkYsMS45ODIzNzM2NTIzNjk2MjI1CkYsMC45NDM0NDk2Nzc4ODI3NzQ4CkYsMS4xNjEwODUzMzM5MjE3MzEKRiwxLjk4NzM3NDI4MzUwOTU3NApGLDMuMDM4MTEwMTQ2MDA0MzI5CkYsMS42MzU1NDIyODYwOTQ5MzkzCkYsMS4xMjg1NTA1Mjc4MTQ2MDUzCkYsLTAuNzA0MjAzMDI1NDQ2Njk4MgpGLDIuNDk0MjQ5ODM2NTQwNjQ3CkYsMi40MjczNDAzMjQ5OTkxMTMKRiwzLjMwOTE5MDg2MDEwOTY4NQpGLDMuNDY2NzIyNjQyMzEwNjk4CkYsMS44NTY5NDM5MzM3MDUzODM3CkYsMy4yOTg1MTM3MjYyMTA3NDAyCkYsMi4wMDEzMTM1NDc1NTU5MjIKRiwxLjMyMzU4OTkyNDMxNDQxOTQKRiwxLjE1MTgwMzQwMzExNDUzMgpGLDEuNjUzMDU4ODk5NTkyNTY0NApGLDIuMjI3NDc5NDQzMDI3MDcxMgpGLDEuOTcyNTk4NTk2Mzg4ODg4OApGLDIuMjAwODc3NzkwNTg1MDMyNwpGLDIuMTk4OTQyNjcxODIyNzk2CkYsMi43MTQ1OTkzNTYwODM2OQpGLDEuNzI2ODE4MjI1MTEwMTUwNwpGLDMuNjM1MzQ3NDU3OTMxNzI4NApGLDIuNDM3NjkzODg2NDc5NjQzNApGLDAuODA2NDY0MTQ5MjUwOTE5OQpGLDEuNzIzMzUwMTk1ODAwODE5NQpGLDIuNTE1ODgzMDUwNTM1MTE5CkYsMS41ODg5NDQ2Njc5MTM2NTcyCkYsMi4zNDQ5OTUwNDk0NzI1NzQ0CkYsMi40MzQzOTU4NjA4MzExMzgyCkYsMy4zMDM0Nzc2ODMwMDUwMjkKRiwxLjM0ODMwNDA4OTI2NjkyNApGLDEuOTgzMTE5MTM3NjcyMDExNgpGLDEuNDMyMzA3NTQ0NzA2NDA4OQpGLDAuODcyODY3MTMwMjM2NzE1NwpGLDAuMTUxMDI5Njg4ODIwOTY3NDYKRiwyLjE5NTUyOTA1NTE4MTg5MDIKRiwyLjYwMTU2NTIyNTE5NTU4NzQKRiwyLjYzOTE1ODE1OTc4OTkzMzQKRiwwLjYxMDAwNzE4MjUzNzkxOTIKRiwwLjg3MDMyMjE0NjYwMjQxNTQKRiwwLjg1ODg0NTgwNTE2MjQzMjEKRiwxLjMxMTMyODUwMDM5OTExMzUKRiwyLjE3MDE5NzgxODE1MjEyOQpGLDIuNTk0NDgzNDI3MjU3NDA5MwpGLDEuMTg0OTY3MzQ5Mjc1MDQyNQpGLC0wLjg2NDM0NjgzNzA2NjcyOTUKRiwyLjk1MzgyMzQ4MTcwODI2CkYsMi42MTUyODQ3NzA2MTM0NDM3CkYsMS4yOTkxMjkyOTk0NDk3MzY4CkYsMC45MjYzMzg2NTg1MzAyMTAyCkYsMS43MDAwMDg4MDMyMDAyNjM2CkYsMi4xMDgxMDY1NjI4MDI1NzA2CkYsMi43MjMyMDA3NjM1ODc2NzQzCkYsMy4zOTAwOTUwOTYwNzQyNjY0CkYsMS4xNTExMTY2MDE2MjE1OTY2CkYsMi4yOTA3MjI4NDQ2NDM0OTgKRiwzLjMzNDE3NjAzMzcwMjQyMjQKRiwxLjA5ODY1Nzg0NDc0MDkxNzQKRiwxLjc3NzIzNjU4NzA2NzE0OTIKRiwwLjIyODUzMTk3MTc5NjYwMTIzCkYsMi4yODc0MjIyNTAxMTQ0NDU0CkYsMS4zNTg4MDgyMzc2NzYwMDEKRiwxLjA3NTA2MjM1Nzc2MTA1MzIKRiwxLjIyMDAyMjUzMDgxNDY3NjYKRiwyLjQ0NDUwMzM3MzU5NDM3MQpGLC0wLjE2MjQ2OTAwMjYxMTY2MDQyCkYsMS41NzQ0ODkxMDAwNzkwNTQ2CkYsMC45ODYyODIzNDA3OTU0NTQyCkYsMS4wMzc4ODA5NzE2OTYyNTMyCkYsMi40NzQ2MzQ2MjcyNzczNjQzCkYsMi4zNTE3NTQyNjk2MDQ1Mzc1CkYsMS44OTI5Nzk2NDM3NTMwMTkKRiwyLjUzNzUxNzI1NjYwMDM0NTcKRiwxLjM5Nzg5NTEwMTU1MTg2OTcKRiwtMC4wMjMyOTc2NDUzMzM2ODEwNgpGLDMuMTU0NDIxMjgwNTk4MTM4NgpGLDEuNzY5MzA3MDAyMzA1ODkxCkYsMS42MzQ5MTEyMzE3ODUwODkzCkYsMi4xNTc1MTc5MjkzNzU3MjI1CkYsMi43NjU5MzIyMjI5ODQzOTU3CkYsMi40MjYwODY5NjYyMDIzMTM1CkYsMi45MjcyNjUzOTk5NjUzMTEKRiwyLjA0NjEzNDU5Mjg0MDQ4NzMKRiwxLjQ5NTcxNDM1NjkwODg4OQpGLDEuNjk5NTUwNTkxNjQ0NDM4NApGLDIuODIyOTE1OTc4NjQ1ODcxCkYsMS4xNTA3MzEyMDM4NzA5NjEKRiwxLjA0NjM4OTkwNDMxODgwMzkKRywyLjMxMzQ3ODcxNTg4MjU3NgpHLDIuNjEyNDczMzA3NDMzMzE0CkcsMC4zMDg5MTY3NzI0NjMxMTc5CkcsMi43ODQ2OTg2Mjc0NDIzMjUKRywyLjAxMTkyNTEzNTI2MDAyMwpHLDEuODE4NzQ0NzEyMTMwMDM5MwpHLDMuMTA2OTU0NDAyNDgwNjcKRywzLjQ3OTM5NDg3MDk4ODI2MwpHLDAuODUyNjAwNTU5MDAwMTU4NApHLDMuMDExNjU0Mzc2NTEzOTk1CkcsMS4zNjc5MzA4MDUwMjUxMTg0CkcsMi4xMzIzNjEzMTk1MTkwOQpHLDIuNDgwOTI2MDY0NzI1MzI0CkcsMi4xMzMxNzc2Mjc1ODQ2MDczCkcsMC41MzcxMzU1Mzc2NzE4MDYzCkcsMS40OTM1OTgyMTk1MjUyNTg4CkcsMy41Mzk2NjMyMzczMzc1NDUKRywyLjE3Mjc5MzYxODM4NzI5MQpHLDEuMTY0MTc2MDc1OTIwMzIyCkcsMS4zNDQwNzEyOTYxMjAzOTE4CkcsMy4wNTc1NjYwODY1MzUzMgpHLDIuMzQ2MDgzNDg5ODY1MzY3CkcsMS4xMDI4MTM0NTgwMDYzMDU2CkcsMi4wMDYyNjUyMTEyNTU2MzAzCkcsMi41OTY2NzA1MDkwNzU3MzA1CkcsMy43MjI1NTE4MDc5NDQwMDk2CkcsMS4xMTgyNTA1MTY1OTA2NTQ0CkcsMS42MjAwNTQwNDQ4MzMxMzI0CkcsMi45OTYxMTAwMTU4NzM3NjI2CkcsMS41NDA4NzkxMDcwNTYxNTkyCkcsMy40NjAyNjU3NDYyMTI1NjgKRywzLjA0MzI0NjE3Njk1MDM1MgpHLDAuMzQwOTU5MDI5NjUzMTY1NQpHLDIuNDIzOTU3Nzc2MjI3Mzk1NApHLDAuNTgwODM3MDczODE0NzYwOApHLDAuNTM1MzA3NTQzMzI5MzE3NQpHLDIuMDcwNDIwOTcyMTQ3ODMyCkcsMi4wNTY2OTgyMjE5ODAyNzE0CkcsMS45NjcyOTE4MjI3MzQ0MTI1CkcsMy4yNjQyODEyMjQwNjYzNzQ4CkcsMi4yOTQ5ODc4ODU3MzAyMzkKRywxLjMyNjkxMzE3OTQ5NTUxMTEKRywyLjExOTU4ODI5MTQ5MDk1NgpHLDEuNDg1NjAzNDkxMDA4NzA2CkcsMS45MzE4ODg0MjYxMzM0NjMKRywwLjg1MTk4ODA4ODE2MzI1NzEKRywxLjg4NDc1NTUxOTg3MDgzMDgKRywyLjEwMjkzNjM5MTg0OTAwODUKRywxLjI5ODI1NjUxMjg5Njg2MDQKRywyLjA0MTIzMDYyNDI3MDI5NApHLDEuMzUxMjMxNjQ5NDAxNTIxMwpHLDEuMzU1OTkyMTQwNTMzNTU3MwpHLDEuNzk1NTYxMTc0OTMzNjI4CkcsMi40OTA4NDA5MTc2NjE1OTI0CkcsMS43OTQ2NjMwMTI3Mjk0NzAzCkcsMi4xOTA2OTEzMjM5MjUyNTU3CkcsMi45NzAwMjQxOTI2NjExMjQKRywxLjcxNDczODkyMjE1MjkzMDYKRywxLjg5NjM4MDczMTQ1ODIzMzcKRywyLjUxMTI1NDU0MTIwMzcwNgpHLDAuNzQxODM3NTQ5OTg0Mjc4NApHLDIuNTQzODI1OTY4OTU2MTk0NApHLDEuNDY1MDM2NDEzNDE3MDEwOQpHLDAuODYxOTUzOTczMjE5OTI3NwpHLDAuMjMxOTk2MjI5MTI0MzQ2MjUKRywxLjI4NTAyMTc5NzEzMjI1OApHLDAuODI5Nzk3NzM1NjQwMzc4NwpHLDAuODIxNTUxODUxNTgwNTQwNwpHLDMuNjI3MjkxMzM3OTUzMzMyNQpHLDAuNzg3ODUzMzM0MzcxNDY2OQpHLDIuOTk3NTA5OTE3NDQxMjg1CkcsMi41NDUyNDU2NDE0MjAxNzEKRywxLjExNTIxMDg4NDgyNDg3OTQKRywxLjM4ODc2OTMwMjExODYyOTEKRywxLjU4OTgwMDQ4NzE2NjY0MzEKRywyLjE5MDQwOTM2OTgzNjgxNDMKRywxLjY1MTY3NTA3MTA0MDY2MgpHLDIuODI2ODQ3NTMwMjg0OTg4MwpHLDEuNzA3MzEzMDk3Njk3Mjc3NQpHLC0wLjE2NTM0NjIwOTk2MzI0MQpHLDEuOTAzNzgzMjIzNzk2NjE5NwpHLDAuMTQ4MDQzMTUzNzUxNDE1MwpHLDIuOTM3ODExMTM1MjMyMDg5NQpHLDEuMjUyMzEzNTE4NTYwNTAzMgpHLDAuODg0NzU4NTY0Mjk5ODM0NgpHLDEuNDA4NDkzNTg0NzAxMTc1NwpHLDIuNTg1MjMwNjgzOTA5MTkzCkcsMC4wODE0NDE4MDA2OTAxMzY5NgpHLDIuMjUzODE2NzkxNTA0MDkyNQpHLDEuMDI3NzU4MjMzNzUzODMxMQpHLDEuOTkxNDg2NTUxOTYxOTgzCkcsMi42NzkwNDE5MTEwMDc0NzkKRywyLjU2OTYzMTM2NjY5MjQyMjQKRywzLjUwMjk2MTY2MTEyODM5NjUKRywyLjEyOTA4NTQwMTE2NTQ3NDUKRywxLjI5ODgxNzA0ODMyMzM4MgpHLDQuMTUzNzA3MjE1OTc3MjMxNQpHLDEuNjk2NzUzODYxNzM4MjUwNQpHLDIuODA3NTc5Nzc2OTA4MDEyNgpHLDIuOTMwOTkxNDY2MTI2NDE1CkgsMi40NTQ5MDIwOTgyNzI5MzI2CkgsMy40MjU0MjA2OTAwNjM2MDEKSCwxLjc5MTAwODgyNzQ4NzI1CkgsMC43Njg1OTcyMjA5MDkzOTIxCkgsMS42MzkzOTY0MjI4NDY2NTMKSCwxLjQ1Mjc4NjcwMDUxNTk0MzYKSCwyLjMyNzk5NjAwNzUxNDQ2NwpILDEuMDY2NzAwMTY3OTA2MzQzNQpILDIuNjgwODEwODI0ODAwMTc1NApILDAuODM2MTE3NTk5ODEzNjQyNQpILDMuNzU1NDQ5NTA5ODgzMzQ3NgpILDMuNDQ5NjM3MzY0MjU0OTA4CkgsMS41NTEyMDUwNTg3ODg5MTYKSCwyLjE0MDA2NzI4ODkzMDQ2NDYKSCwxLjYyNjM0OTY3MTgyMjQxODIKSCwwLjc5MzU2NTg4Mjc2MTkxNTQKSCwtMC42NjEzNDU5NzQ5NDEwMTI3CkgsMS45NzQ5MDU1MDY3MzQ0MDk1CkgsMS45NjU2MjY3NDI3NTA5MzY0CkgsMy42NDIzNTkwMzkwNDQ4NDczCkgsMC4wMDQ1Mzc4NTI0NjExNjkwMDEKSCwxLjMzNzgyOTI0MTM5NzU5MDUKSCwyLjg4MDAzNzk5MjMxMDAzMjUKSCwyLjM0MjM4NzQyMDAwMTY0MzIKSCwyLjEyMTc1Mzg1NTUyMzc4NTYKSCwxLjM3OTIzODk2NTQ4ODE4NjcKSCwyLjIwMDk0NTI2NzU3NDAyMwpILDEuNzY0MDk0NjUxOTc2NjU5MgpILDIuMTEzNjYxMTE0OTcwMjI2NwpILDEuNDIyMDcwODA0NzEyMTgyCkgsMy4xODg1NjQ4ODU4MzgzMzEKSCwzLjA1OTkzNjI3ODEyMTQ3NApILDMuMzM2NzU4MjEwODY0Njc2NQpILDEuNjMyODMwODI4ODY5NzgzCkgsMS42OTU2NjMyOTUyMjE2MDUKSCwxLjY0OTcyMDM3NTc2NDI4NjcKSCwzLjM3NDE0NDc2MjcyODAyNQpILDEuNzAwMjc5NTA4MTI0OTMxCkgsMi4wOTc2MzUxNDQyMjUyMzIKSCwyLjM4MTE4ODAyODcyMzcyMgpILDIuNjc4MjEyNTU2ODE4NzgzMwpILDEuNzMyMzI2NzI3NzY1NzMwNApILDQuMzQ1OTY1NjY0MzM0OTEzCkgsMS4wNzI1MDUzNDQ0NzUxNzA3CkgsMC41NzM0NDI4MjYzMDIyNjE3CkgsMi4wNDIzMDI2NjQzODk4MTMKSCwzLjc2NzQ0MzQ3MDAwNDgxNDMKSCwyLjA1Mjc1MDMyNzE0NTM2NwpILDIuMTA5NzI2MDM5OTY5OTY3NQpILDIuODYzMjAyNjE1NTU4MTUzCkgsMS45MDEwMjY3OTUyMzAzODI4CkgsMi4xMDM2OTY1NDYwODYyMjA1CkgsMy4yMDg0ODQ4NzU2ODQ2Mzk0CkgsMi4wOTM3NDYwMjEwNTI3NzIKSCwxLjI0NzgwMzQ4MTA1MzkxNjcKSCwyLjM5NDkyNDIxOTg3MjY2MDYKSCwwLjkwODQ3OTU2NjAxMjU4MTMKSCwwLjU0MTcwNzU3NTAwNDMwNTkKSCwxLjg3NzI4NzcxNTA0NDI0NTcKSCwwLjg5OTA3MDgwODMzMTYwMzcKSCwyLjU4MDkyMzA3MTgzOTc1NjcKSCwxLjg1MzA1MjUxMDY0MDIxMjMKSCwxLjIzMzY2NTM4NDkyNzY0NgpILDMuNjIyODk3NTc4NTQ0NjIzCkgsMS44OTAwNTk0NTU5NjQwMDk0CkgsMy40MjE3MDQ4NTQyNjIwNTc2CkgsMS44ODY1Nzg5NTEwMDM2MDIKSCwxLjY3MDcxOTA1ODQxODg0NzQKSCwyLjM3MzQ2MDk4MzU5NzE0MzQKSCwzLjAyOTg4ODEzMDkzOTgxMTYKSCw0LjcwNTc3NTA0NzE5OTM0MgpILDAuOTY1MDU0MTI4NzUwNzU1NQpILDEuODE2NTcwMTQxMzU5MjcyNwpILDMuMDc3NzcxMzA3NDUxMzI1CkgsMi4zNDE2MjAyMjUyOTg3OTI4CkgsMS44MTI2NTYzNzU4ODEzMjYKSCwwLjY5NzE0MDg5MTQ3MDUyNTUKSCwxLjcyMTM0MTczODAyNDMzMzkKSCwxLjgxNTI0NjA5MTU0MTczMzcKSCwxLjkxODIyMjUwMjgyNjQzNjEKSCwzLjYxMjI0MTc5MzcyNzA2NjgKSCwxLjUzODA2MDE2MDQ5NTMzMgpILDAuNDIzOTQ5Njk5MTgxMzY0MjcKSCwyLjQ5NjQzMzA3MzUzMTEyNzUKSCwxLjg4ODA0NjIxNjE4MTAzMTQKSCwxLjc5NTY1MzU5OTc4ODAyNwpILDIuNjM1NTY4MTYyODU2NDAxNApILC0wLjkwNjY3Mzk1NDA3MTU0NjMKSCwxLjQ0NjM0MTc0NzIzOTA0NDcKSCwxLjg0NjU0ODE3MTc0OTA3NjgKSCwyLjYwNTI5MDUxNTc2MDQ0CkgsMS43Mzg5OTM0MDM4MTU2MzkKSCwwLjk5NDg2MTUzNzU4ODc0ODQKSCwyLjM3MjU2NjExNDMxMjU4MzQKSCwyLjAxOTQ0NjE3NjUyMDEyNApILDIuMTEwNTI4ODE1Mzk1Mjc1NwpILDMuMTU2NTcwNDM2OTIzNTc4NQpILDEuNDU3Nzc5NTM5Nzg4MjM3NgpILDAuNzUwNzk4NzE2NTgwOTE4NQpILDAuNzE5OTg3NDAzMjQ2ODA5MgpJLDEuMzc2MDY3MjEyMjA5NjE2CkksMS4wMTIzNDk0MjAwMTE5MzY3CkksMi4zNTA3Nzg4ODU1OTM4NzM0CkksNC4yMTA5NjA3MzA0ODMxMzgKSSwyLjMwMDQ4OTkzNDI5MTczMzUKSSwzLjE3NzIzNzEyNDI5NzM4MwpJLDEuMjk3NDAzNjc0ODE5OTg2NgpJLDIuMTc4MzU1MjE3Mjk4MjA1NQpJLDIuOTY2MDk0OTYyNTk1OQpJLDIuMDQ1MDQwNjU0NzQ0OTM2NwpJLDMuMTg1MjYyNjAxNDY4MDQzNgpJLDMuMDk0MDQ3Mzc4NTk5NDAzNgpJLDEuNzY3MjcwMTA0NDE1MDQ0NwpJLDEuNjI4MDQxMzU4MDM4NjkyCkksNC43NTc4MTczODc2MDExMDIKSSwyLjIwNzQ1MDY2MzY0MDE5CkksMi40MDY2MTkzMzQyMTQxOTczCkksMi4zNDU0NTM5NzUzNzI2Mzg3CkksMS44MzE3OTMxMTk0NTk2MjM4CkksMS40NzMwMjQwNTYzMDMzNTUKSSwxLjI2NDI2NDgxODYxOTI5NzUKSSwzLjMxMzk2MjMzOTA1NDQ1MgpJLDEuNDEzOTM3MTY2Njc3MTI3NApJLDMuMDY3NDg1NDEzNDg5NjMKSSwzLjgwNjU5NTQ4OTcwNjYxOTQKSSwzLjU1Nzc3ODk2MDExNzg3NwpJLDIuMjYxMjQ2ODAyNDI2NDY2NQpJLDEuODYwNjc4MTQ5MDM5ODYyMwpJLDEuMzIxMTA2NTAwOTM4NDgzNQpJLDIuMzgxNDM3ODYwMDQ4ODkxCkksMi4xNjczODQzMTQzMjEyOTU0CkksMi41NTYyOTM1NDI1MTQxNjA0CkksMS43OTU5OTAyNDUyNDU5NjY4CkksMy4wMjkwMzUxMjAxMjE2NjUKSSwzLjExNDE2OTU3MDg1MjAyMgpJLDMuNDc1ODg2MTAxMjg4NzU4MwpJLDQuNjQ5NzU1NTE3Mzc5MzIzCkksMi41OTc4OTA1OTg4NzkyOTI0CkksMS44MjQ0NTM2ODE1MjEyOTYKSSwyLjMyMjY3OTEzNDk5NTQwNTUKSSwwLjc3MjA4MDExMDg5ODk4MQpJLDIuNTI5OTIzMTUzOTY5MDM3CkksMS45NzQzMjY4NjY3Mzk5MzkyCkksMi44MDYwMTE3NDg1MjExMjUzCkksMi4xMzExODk4MTQzNjE5Mjg2CkksMS4wMTkwMTU0NjM3MDIyOTQ4CkksMi40MzY1ODMzMjEzNDQ1NTkKSSwxLjA0Njc1NTQ2ODgyMzYxMzQKSSwzLjI5NzAwNjE5Mzk0MjI1ODQKSSwwLjU3MDY0MDI4NzczNjA3NDYKSSwyLjI1ODEyMzA1NTgyODAwOQpJLDIuODU3OTgxNzc3ODQyNzc5NgpJLDAuODgwMzgyNDg2OTEwMDEzNgpJLDMuNzk5MDU1MzE0NjYwMjY4NgpJLDEuNTE0NjYwODA5MDk2OTc2NgpJLDEuODkzNjY5NzA4Nzc4Njc5MQpJLDIuNTYzMzMyMTA1OTY2MzMwOApJLDIuMDYyODU2MTQzNzQxNjA4CkksMS4zNjQwNDg0Njc5OTAxNzQ1CkksMi44MDkzMzc5MjgyMTY3MTUKSSwxLjg3NTc3NjU0MTc4MzExMzYKSSwyLjkwNjUwMDM3MzUyNDE4NDgKSSwxLjg5NTI3NzEzNzIyNTI5MTcKSSwxLjQ0Mjc0OTY3MTA0NjQ5NgpJLDIuMzA1MzY1NjQxNTQ2NzQ0CkksMy4wNDk0MzkzMTc2MTA1ODM2CkksMi42NDIzMjE3OTkzMjcwNjYKSSwyLjM0MTA2NTkwOTczODI4NgpJLDAuNDUyMjA1OTI4NDIzODIzOApJLDMuODUxNDQzNjMxODkxNDk1MwpJLDIuMzYwMDYwMzIyMzYyMjc3NgpJLDEuNTM2MDAyMzA4OTMwMDg5CkksMi4xOTgzMDk3NjAyODc0ODE1CkksMi42NjEyNTU1NjI3Mjc0MzI0CkksMC44ODE2NDg2MTY2OTQxMzc3CkksMy4xMTczMDg2MzIyNzU4MDMKSSwyLjY0NjgzMjcyODA5NjQxNwpJLDMuNjAyNzY3MDQ2MzA1MDg1NgpJLDMuMzg2MDM5MjcwNDQ3MzUwNQpJLDEuODYyMDU5NDAwOTM3NzYxMQpJLDEuOTA5NzE3MjU4MTg2MDQzOApJLDEuNDA0NDgzODI3NDM3NTUyNgpJLDIuMDM4Mjk3MDcxNzQ1Mzg1NwpJLDMuMzQ0MzU0ODExMjk2OTIyNgpJLDQuMTkyMjA3MDExNjE1NDU1CkksMy4zMjg0MDkzOTU4NjQyOTkzCkksMC41NzAwNjIzMzAzNjkzMTYKSSwzLjIyMTg3ODEwNjE2MzExNgpJLDMuNDM2MjY4NzYyMDAzNDA0CkksMy4wMTc0MjAxNDQxMjk4MDA1CkksMS41NDUwNjk2MzY4ODEyMTQ1CkksMy40NjQ1MTA1MTg0ODQ3MTA1CkksMy4xMjk0ODE0NTgxMDM2NjY3CkksMy4wNjI2NTY1ODQzNTgwOTA0CkksMi4wMTg1OTI3OTcyOTU3NTc0CkksMy4yNDU4OTE3Nzc3OTM1ODEKSSwyLjUxMTU5MTg4NDQ0NTgxMjcKSSwyLjMzMjIyOTczODM0Mzk2NApJLDMuODg3MDk4MDk2NTE4Mjc3OApJLDMuMTU3MjIzMzc2NjQ2MjMK');
+        if (!response.ok) throw new Error('Network response failed');
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = 'df2.csv';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.dispatchEvent(new MouseEvent('click'));
+        document.body.removeChild(a);
+        setTimeout(() => {
+          window.URL.revokeObjectURL(blobUrl);
+        }, 100);
+        return false;
+      } catch (error) {
+        console.error('Download failed:', error);
+        alert('Download failed. Please try again.');
+      }
+    }
+    downloadFile(event);
+  " has_icon="TRUE"><i class="fa fa-save"></i> Download df2 as csv</button>
+</div>
+</div>
+<p><br>
+</p>
+<ol start="2" type="1">
+<li>Explore the data by plotting the group means and SEM. Next, run an ANOVA to assess overall differences among the groups. Then, use the <code>pairwise_t_test()</code> function from <code>rstatix</code> to run theory-based post hoc comparisons (we of course recommend permutation tests, but it can be helpful to know how to run theory-based post hoc tests for multiple comparisons). Finally, visualize the distribution of the raw p-values (the <code>p</code> column) by plotting a histogram to see whether there is an enrichment of low p-values that might reflect a true signal in the data.</li>
+</ol>
+<p>Looking at the histogram of p-values from your post hoc tests, you can see whether there is an enrichment of small p-values, which may indicate true signals among the comparisons. Wouldn’t it be useful if we could somehow use this information to separate likely true positives from false positives, rather than treating all tests equally conservatively as in Bonferroni? This is exactly what the Benjamini-Hochberg method does: it controls the false discovery rate by taking into account the distribution of p-values, allowing us to retain more true positives while still limiting false positives.</p>
+<p>We return to StatQuest and <a href="https://youtu.be/K8LQSvtjcEo?si=ejOgPCccNmfkz4qK" target="_blank">this video</a> (<em>False Discovery Rates, FDR, clearly explained</em>). Josh explains how the Benjamini-Hochberg method corrects for multiple testing, and around the 14:40 mark he begins to show the math behind the method. We will walk you through this step by step and demonstrate how it can be implemented in R code.</p>
+<p>Now we will calculate Benjamini-Hochberg FDR-adjusted p-values starting from the <code>p</code> column in your <code>pairwise_t_test()</code> output.</p>
+<ul>
+<li><ol type="1">
+<li>First we sort the p-values from smallest to largest using <code>arrange(p)</code>. This step is important because the FDR procedure considers the rank of each p-value. The smaller the p-value, the more likely it reflects a true signal.</li>
+</ol></li>
+<li><ol start="2" type="1">
+<li>Next, assign a rank to each p-value with <code>rank = row_number()</code> and record the total number of tests (<code>n = n()</code>). The rank tells you the position of each p-value in the sorted list.</li>
+</ol></li>
+<li><ol start="3" type="1">
+<li>Calculate the scaled p-value using <code>b = p * n / rank</code>. This step adjusts each p-value by considering both its rank and the total number of comparisons. Smaller p-values get scaled less, while larger p-values get scaled more. Conceptually, this uses the pattern you saw in the histogram. If there is an enrichment of small p-values, this step helps separate likely true positives from false positives.</li>
+</ol></li>
+<li><ol start="4" type="1">
+<li>Compute the FDR-adjusted p-value (<code>p_fdr_adj = cummin(rev(b)) |&gt; rev()</code>). We take a cumulative minimum from largest to smallest so that the adjusted p-values are monotonic, meaning they do not decrease as rank increases, ensuring valid FDR control.</li>
+</ol></li>
+</ul>
+<p>Putting all of this together, the code looks like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>output <span class="sc">|&gt;</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(p) <span class="sc">|&gt;</span> </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">row_number</span>(),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">b =</span> p <span class="sc">*</span> n <span class="sc">/</span> rank,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">p_fdr_adj =</span> <span class="fu">cummin</span>(<span class="fu">rev</span>(b)) <span class="sc">|&gt;</span> <span class="fu">rev</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A histogram of unadjusted p-values shows you where the small p-values cluster. The Benjamini-Hochberg procedure leverages this information: clusters of low p-values are treated as more likely true positives, while isolated larger p-values are more likely false positives.</p>
+<ol start="3" type="1">
+<li>Rerun the <code>pairwise_t_test()</code> function, this time setting the <code>p.adjust.method = "bonferroni"</code> argument to obtain Bonferroni adjusted p-values. Next, starting from the output of this function, calculate Benjamini-Hochberg FDR-adjusted p-values as shown above. Finally, compare the Bonferroni adjusted p-values to the FDR-adjusted p-values. How do they differ in terms of which comparisons are considered significant? How does this relate to the pattern of p-values you observed in the histogram?</li>
+</ol>
+<p>As we have seen, when comparing multiple groups, we risk inflating the acceptable false-positive rate, a problem that scales with the number of comparisons made. We could opt to perform multiple tests, identify p-values for each one and then retroactively ‘adjust’ them to control for each test performed. Bonferroni and FDR were two such approaches. Alternatively, we can simultaneously account for performing multiple tests by adjusting the null distribution we draw p-values from! Here, we talk about two such approaches: maximum-statistic pooling via permutation and Tukey’s Honestly Significant Difference (HSD) tests.</p>
+<ol start="4" type="1">
+<li>In maximum-statistic pooling, we iteratively shuffle data across groups, compute the Cohen’s d (or t-statistic) for each comparison and then select the maximum absolute Cohen’s d, <span class="math inline">\(|max(d_1...d_n)|\)</span>. By pooling the maximum Cohen’s d across multiple tests, we make the null distribution of Cohen’s d robust against the effect of the increasing probability that at least one of the group comparisons yields a false positive or inflated Cohen’s d due to random sampling. Now, when we compare the observed pairwise d value to the distribution, we need not worry about adjusting the p-values calculated.</li>
+</ol>
+<ul>
+<li><ol type="1">
+<li>We start below by summarizing what we will require to calculate Cohen’s d: the means, variances and sample sizes for each group. Fill in the blanks and test the code chunk on the second dataset you downloaded. Replace <code>data</code> with whatever you labelled that dataset.</li>
+</ol></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sum <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(______) <span class="sc">|&gt;</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(_____), </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">var =</span> <span class="fu">var</span>(_____), </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">n =</span> ____)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><ol start="2" type="1">
+<li>We then need to find each pairwise comparison. To facilitate calculating each Cohen’s d, we’ll align the means, variances and number of observations per group on the same row. <code>cross_join</code> will take each row of the first argument and combine it with every row in the second argument. Here, it creates a new tibble that generates each pairwise combination and attaches a <code>1</code> suffix to the first group’s variables and a corresponding <code>2</code> to the second. We then filter rows to ensure we remove self-pairs (i.e.&nbsp;A-A) and redundant permutations (A-B and B-A):</li>
+</ol></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>...  <span class="sc">|&gt;</span> <span class="fu">cross_join</span>(sum, sum, </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">suffix =</span> <span class="fu">c</span>(<span class="st">"1"</span>,<span class="st">"2"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(group1 <span class="sc">&lt;</span> group2) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><ol start="3" type="1">
+<li>We will now derive the Cohen’s d for each comparison, returning only each group and Cohen’s d:</li>
+</ol></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>... <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">d =</span> (_________) <span class="sc">/</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                <span class="fu">sqrt</span>(_______ <span class="sc">/</span> (_______)), </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">d =</span> <span class="fu">abs</span>(d)) <span class="sc">|&gt;</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(group1, group2, d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><ol start="4" type="1">
+<li>Now wrap these code blocks into one function, making sure that you embrace (<code>{{</code> <code>}}</code>) the group and outcome variables.</li>
+</ol></li>
+<li><ol start="5" type="1">
+<li>Using <code>break_assoc()</code> from earlier sessions and your new function, we’ll write a <code>map</code> loop to randomly permute <code>y</code> across 10,000 iterations, returning the maximum Cohen’s d in each iteration.</li>
+</ol></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>perms <span class="ot">&lt;-</span> <span class="fu">map</span>(____, \(i) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    ________ <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    ________ <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_max</span>(d) <span class="sc">|&gt;</span> </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(d)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list_c</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><ol start="6" type="1">
+<li>Calculate the p-values associated with the Cohen’s d of each pair (i.e.&nbsp;<code>group1</code> and <code>group2</code>). You will note that perms is a vector of Cohen’s d; when calculating the p-value, you can mutate a new p_adj variable and use <code>mean(null_dist &gt; d)</code> to find the p-value of each observed pairwise Cohen’s d.&nbsp;</li>
+</ol></li>
+<li><ol start="7" type="1">
+<li>Append these p-values you calculated to your tibble of raw, Bonferroni- and Benjamini-Hochberg-corrected p-values. You can use <code>left_join</code> with group1 and group2 as keys to ensure the ordering of pairs is the same.</li>
+</ol></li>
+</ul>
+<ol start="5" type="1">
+<li>We now turn to an adjacent and commonly used approach in post hoc testing: Tukey’s HSD.</li>
+</ol>
+<p>Fundamentally, Tukey’s HSD addresses the same challenge as the Cohen’s max-statistic pooling: the more comparisons performed, the greater the probability of seeing a larger mean difference between groups purely by chance. In a Tukey’s HSD, we consider the <em>range</em> of group means, a fact conveniently captured in the name of the distribution as the studentized <em>range</em> distribution. For Cohen’s d, we standardized the mean difference by dividing by the square root of the pooled variances of the two groups. For Tukey’s HSD, we instead standardize the range by accounting for the variability within all groups, summarized by the <em>mean square error (MSE)</em>. When all groups have the same number of samples, the MSE is simply the mean of the within-group variances, something we saw last week when calculating sum of squares within (SSW). The square root is taken of MSE divided by the number of samples per group, n.&nbsp;In other words, we divide the range by the <em>standard error</em>, making the test sensitive to the total sample size, number of groups and variability of observations within each group.</p>
+<p>Let’s work through the steps to calculate q-values.</p>
+<ul>
+<li><ol type="1">
+<li>First, we calculate the means and variances of each group. Unlike the max-d permutation, we’re not explicitly testing pairwise differences:</li>
+</ol></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sum <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(group) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(y),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">var =</span> <span class="fu">var</span>(y),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">n =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><ol start="2" type="1">
+<li>Next, we compute the difference between the maximum and minimum means and calculate the standard error. These can be used to compute the q-statistic by dividing the difference by the standard error</li>
+</ol></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>... <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">diff =</span> <span class="fu">max</span>(mean) <span class="sc">-</span> <span class="fu">min</span>(mean),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">mean</span>(n),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mse =</span> <span class="fu">mean</span>(var),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">se =</span> <span class="fu">sqrt</span>(mse <span class="sc">/</span> <span class="fu">unique</span>(n)),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">q =</span> diff <span class="sc">/</span> se) <span class="sc">|&gt;</span> </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><ol start="3" type="1">
+<li>Now wrap this code into a function and, like before, use <code>break_assoc()</code> to permute y in a map 10,000 times. Feed each permuted dataset into your function, collecting q-values, thereby creating a null distribution of q-values.</li>
+</ol></li>
+<li><ol start="4" type="1">
+<li>Plot a histogram of the q or studentized distribution. Is it normal?</li>
+</ol></li>
+<li><ol start="5" type="1">
+<li>We will now compute adjusted p-values via Tukey’s HSD using the null distribution you created! For each pairwise comparison, calculate the observed difference in means and divide it by the standard error.</li>
+</ol></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sum <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(group) <span class="sc">|&gt;</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(y), </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">var =</span> <span class="fu">var</span>(y), </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">n =</span> <span class="fu">n</span>())</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> sum <span class="sc">|&gt;</span> <span class="fu">summarize</span>(</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">mse =</span> <span class="fu">mean</span>(var),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">se =</span> <span class="fu">sqrt</span>(mse <span class="sc">/</span> <span class="fu">mean</span>(n))) <span class="sc">|&gt;</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(se)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>q_values <span class="ot">&lt;-</span> <span class="fu">cross_join</span>(sum, sum, </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                       <span class="at">suffix=</span><span class="fu">c</span>(<span class="st">"1"</span>,<span class="st">"2"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(group1 <span class="sc">&lt;</span> group2) <span class="sc">|&gt;</span> </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">q =</span> <span class="fu">abs</span>(mean1 <span class="sc">-</span> mean2) <span class="sc">/</span> se) <span class="sc">|&gt;</span> </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(group1, group2, q) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><ol start="6" type="1">
+<li>You have now computed the observed q values. Using a similar approach as in question 4 part 6, determine the probability of finding each observed q-value per pair of groups by chance. Should your test be one-sided or two-sided? If you succeeded in running this step, then you have just performed a post hoc Tukey’s HSD test. Append these p-values to your tibble of p-values for Bonferroni, FDR and max-Cohen’s d pooling.</li>
+</ol></li>
+<li><ol start="7" type="1">
+<li>You will find it faster to use the base R <code>TukeyHSD()</code> function. Compare the p-values you found using <code>TukeyHSD()</code> to those you generated via permutation.</li>
+</ol></li>
+</ul>
+<ol start="6" type="1">
+<li>We’ve explored different methods for accounting for multiple tests. Out of the plethora, which should be used? Below, we’ll compare the different approaches.</li>
+</ol>
+<ul>
+<li><ol type="1">
+<li>First, sort your tibble of p-values under each correction method by raw p-values in increasing order of magnitude (i.e.&nbsp;<code>arrange</code>). Then, pivot longer to create one column of p-values and another, the correction (or lack of correction) method used. Plot these using ggplot, with rank (order of p-value) along x and the p-value on y, colored by correction method. Try reproducing the figure shown below, making note of the log10 scale of the y axis.</li>
+</ol></li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Post-hoc_2025_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><ol start="2" type="1">
+<li>Reflect on what you see for each correction method. Which is most conservative? Which is least?</li>
+</ol></li>
+<li><ol start="3" type="1">
+<li>Create a similar plot for the first dataset you downloaded and compare the uncorrected p-values with each correction method.</li>
+</ol></li>
+</ul>
+<ol start="7" type="1">
+<li>The final thing after running an ANOVA, finding a significant omnibus test p-value and continuing with post hoc tests, is to plot the results. Often times we see plots in papers showing group stats (as boxplots or bar graphs or something of that sort) with annotations added to communicate the significance of pair-wise comparisons. This is easy to do if you know how to make ggplots, with help from the <code>ggpubr</code> and <code>rstatix</code> packages. Let’s revisit the <code>penguins</code> data. Investigate some relationship in this data set you find interesting, create an appropriate plot and check out <a href="https://www.datanovia.com/en/blog/how-to-add-p-values-onto-basic-ggplots/" target="_blank">this article</a> on how to add p-value annotations. You will probably find the <em>Pairwise comparisons</em> section most helpful. Note that a function named <code>t_test()</code> from the <code>rstatix</code> package is used here. This is the same name as a function in the <code>infer</code> package we have used before, so if you run into problems with the code in the article, try unloading the <code>infer</code> package.</li>
+</ol>
+<ul>
+<li>The example in the article shared above uses theory-based t-tests (that is what the <code>t_test()</code> function from the <code>rstatix</code> package does) to calculate the post hoc p-values. But what about if you instead (as you should) prefer to use p-values from permutation tests. Here is another <a href="https://www.datanovia.com/en/blog/ggpubr-how-to-add-p-values-generated-elsewhere-to-a-ggplot/" target="_blank">article</a> describing how you can add p-values <em>computed from elsewhere</em>. Add multiple comparisons corrected (pick your favorite correction method) permutation-based (pick your favorite way to run the tests) p-values to your penguins plot.</li>
+</ul>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./anova_2025.html" class="pagination-link" aria-label="Session 14: One-way ANOVA">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Session 14: One-way ANOVA</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./stats_journal_club.html" class="pagination-link" aria-label="Session 16: Stats Journal Club">
+        <span class="nav-page-text">Session 16: Stats Journal Club</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://caius-gibeily.github.io/r4dss25/edit/main/docs/Post-hoc_2025.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://caius-gibeily.github.io/r4dss25/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

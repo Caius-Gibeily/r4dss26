@@ -1,0 +1,39 @@
+---
+title: "Data import and tidying"
+format: html
+editor: visual
+---
+
+## Reading
+
+This week, we'll be reading
+
+<a href="https://https://r4ds.hadley.nz/data-tidy.html" target="_blank" class="btn"> Chapters 5-8 </a>
+
+Please complete exercises
+
+1.  r4ds.tutorials: 05-data-tidying
+
+2.  r4ds.tutorials: 06-terminal
+
+3.  r4ds.tutorials: 07-data-import
+
+4.  r4ds.tutorials: 08-getting-help
+
+```{=html}
+<style>
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007BFF; /* Bootstrap blue */
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+.btn:hover {
+  background-color: #00008B;
+}
+</style>
+```

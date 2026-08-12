@@ -1,0 +1,38 @@
+---
+title: "Session 4: Vectors, numbers and strings"
+format: html
+editor: visual
+---
+
+## Reading
+
+This week, we'll be reading
+
+<a href="https://r4ds.hadley.nz/logicals.html" target="_blank" class="btn"> Chapters 12-14 </a>
+
+Please complete exercises
+
+1.  r4ds.tutorials: 12-logical-vectors
+
+2.  r4ds.tutorials: 13-numbers
+
+3.  r4ds.tutorials: 14-strings
+
+
+```{=html}
+<style>
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007BFF; /* Bootstrap blue */
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+.btn:hover {
+  background-color: #00008B;
+}
+</style>
+```

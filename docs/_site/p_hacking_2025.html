@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Bioscientist’s Guide to P-hacking (and to never p-hacking again) – Data Science and Statistics in R for Fellowship</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./Multiple_regression_2025.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-08799928d293638fe9563d5c5a2794e5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/live-runtime/live-runtime.js" type="module"></script>
+<link href="site_libs/quarto-contrib/live-runtime/live-runtime.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script type="module" src="site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+<script src="site_libs/font-awesome-6.7.2/js/script.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating fullcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Variance_2025.html">R for Statistics 2026</a></li><li class="breadcrumb-item"><a href="./p_hacking_2025.html">Bioscientist’s Guide to P-hacking (and to never p-hacking again)</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Data Science and Statistics in R for Fellowship</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">R for Data Science 2025-26</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome to R4DSS25</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 1: Data visualization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session 2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 2: Data transformation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session 3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 3: Data tidying and import</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 4: Regular expressions &amp; Joins</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session 5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 5: Quarto</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 6: Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 7: Iteration</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">R for Statistics 2026</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Variance_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 8: Variance &amp; Standard Deviation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./cov.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 9: Covariance &amp; Correlation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Standard_error_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 10: Standard error, Bootstrapping and Confidence intervals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Permutation_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 11: Hypothesis testing, p-values &amp; Permutation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./power_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 12: Cohen's d &amp; Statistical power</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./project_work_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 13: Project work I</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./anova_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 14: One-way ANOVA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Post-hoc_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 15: Post hoc tests &amp; multiple comparisons</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stats_journal_club.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 16: Stats Journal Club</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rm-anova_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 17: Repeated measures ANOVA &amp; paired post hoc tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chisq_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 18: chi-square tests, odds ratios &amp; Cramer's V</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./project_work_2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 19: Project work II</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./linear_regression_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 20: Linear Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Multiple_regression_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 21: Multiple Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./p_hacking_2025.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Bioscientist’s Guide to P-hacking (and to never p-hacking again)</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Variance_2025.html">R for Statistics 2026</a></li><li class="breadcrumb-item"><a href="./p_hacking_2025.html">Bioscientist’s Guide to P-hacking (and to never p-hacking again)</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Bioscientist’s Guide to P-hacking (and to never p-hacking again)</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Throughout the training, we have exhaustively discussed computing different null distributions, p-values and the limitations of only looking at p-values. Instead, we have emphasized different effect size measures (i.e.&nbsp;correlation coefficient, Cohen’s d, <span class="math inline">\(\eta^2\)</span>, Cramer’s V and <span class="math inline">\(R^2\)</span>). We have also examined the corollaries of statistically honest but underpowered designs, including of course a higher chance of simply missing a ‘true’ effect or reporting inflated effect sizes (a.k.a. Winner’s curse).<br>
+</p>
+<p>But what if we married statistical analysis with ambition? What are the consequences of survival in a publish or perish ecosystem that selects for ready-fire impactful findings - a career measured by one’s weight in triple-star p-values? After all, acquiring scientific knowledge is by definition unpredictable. Were only there some mechanism to secure a significant outcome, regardless of that uncertainty. In this session, we explore one such mechanism - <em>p-hacking</em> - and why it undermines genuine empirical knowledge, especially when it becomes common in the field at large.</p>
+<ol type="1">
+<li>This week’s session will be a blend of coding and a journal club. Let’s start by reading <a href="https://royalsocietypublishing.org/rsos/article/10/2/220346/92017/Big-little-lies-a-compendium-and-simulation-of-p" target="_blank">Big little lies: a compendium and simulation of p-hacking strategies</a>.</li>
+</ol>
+<ul>
+<li>How would you describe p-hacking? What does p-hacking fundamentally involve?</li>
+<li>At what point do flexible analytic choices cross the line into questionable research practices?</li>
+<li>Why might setting some threshold, say <span class="math inline">\(\alpha=0.05\)</span> contribute to the problem of significance fishing?</li>
+<li>What is HARKing? Illustrate it with an example.</li>
+<li>Explain the concept of researcher degrees of freedom.</li>
+</ul>
+<p>In the following section, we leave the manipulation of data open-ended to highlight this idea of researcher degrees of freedom. Along the way, we introduce common questionable practices for modifying data. While these approaches may have good justification in some scenarios, to the p-hacker, they are simply options on a menu to try, individually or in tandem until the desired outcome is achieved.</p>
+<ol start="2" type="1">
+<li>Let’s begin by focusing on common data manipulations: outlier removal and variable discretization.</li>
+</ol>
+<ul>
+<li><p>What constitutes an outlier? When might outlier removal be justified and how might it be exploited?</p></li>
+<li><p>Let’s take a look at two common outlier removal approaches: interquartile range (IQR) fencing and thresholding based on the z-score.</p></li>
+<li><p>In IQR fencing, data are removed if they are are less than Q1 - 1.5 * IQR or greater than Q3 + 1.5 * IQR. Complete the function below to perform IQR fencing across a set of groups</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>iqr_fence <span class="ot">&lt;-</span> <span class="cf">function</span>(data, variable, value) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span>  </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>({{variable}}) <span class="sc">|&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="fu">across</span>({{value}}, <span class="cf">function</span>(x) {</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      q1 <span class="ot">&lt;-</span> <span class="fu">quantile</span>(x, <span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      q3 <span class="ot">&lt;-</span> <span class="fu">quantile</span>(x, <span class="fl">0.75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      iqr <span class="ot">&lt;-</span> q3 <span class="sc">-</span> q1</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      lower <span class="ot">&lt;-</span> q1 <span class="sc">-</span> <span class="fl">1.5</span> <span class="sc">*</span> iqr</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>      upper <span class="ot">&lt;-</span> q3 <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> iqr</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(x <span class="sc">&lt;</span> lower <span class="sc">|</span> x <span class="sc">&gt;</span> upper, <span class="cn">NA</span>, x)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    })) <span class="sc">|&gt;</span> <span class="fu">na.omit</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>We can also perform z-score thresholding, where outliers are removed above some number of standard deviations from the mean. The general guidelines often suggest 2*sd or 3*sd thresholds but the ambiguity it offers provides an opportunity to test different alternatives.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>z_thresh <span class="ot">&lt;-</span> <span class="cf">function</span>(data, variable, value, <span class="at">thresh=</span><span class="dv">2</span>) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span> <span class="fu">group_by</span>({{variable}}) <span class="sc">|&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">abs</span>({{value}} <span class="sc">-</span> <span class="fu">mean</span>({{value}})) <span class="sc">&lt;</span> <span class="fu">sd</span>({{value}})<span class="sc">*</span>thresh) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>Download the following dataset containing eight groups with some continuous outcome of interest:</li>
+</ul>
+<div class="text-center">
+<div class="cell">
+<div class="cell-output-display">
+<button class="btn btn-default" onclick="
+    async function downloadFile(event) {
+      event.preventDefault();
+      try {
+        const response = await fetch('data:text/csv;base64,dmFyaWFibGUsdmFsdWUKeDEsOC4zNAp4Miw1LjI2CngzLDQuOTkKeDQsMy45OQp4NSwyLjk5Cng2LDMuMzcKeDcsNC40OAp4OCw0LjEzCngxLDguNTIKeDIsNS43OQp4Myw1LjUKeDQsNC4yNwp4NSwyLjkxCng2LDQuMzMKeDcsNy4yNAp4OCwxMi4zCngxLDUuOTcKeDIsNC4wMgp4Myw2LjE2Cng0LDQuMjQKeDUsNC41OAp4NiwzLjExCng3LDYuNAp4OCw0LjI3CngxLDYuNzIKeDIsNy4xCngzLDMuODQKeDQsNy4xNAp4NSwxNC45Cng2LDguMTcKeDcsNy4zOQp4OCwxMC4xCngxLDcuNDMKeDIsNS4xNwp4MywyLjI5Cng0LDguNzgKeDUsNi43NAp4Niw0LjM2Cng3LDQuNDEKeDgsNC43CngxLDQuOTIKeDIsNC4yMgp4Myw2LjAxCng0LDIuNDMKeDUsNy4wOQp4Niw0LjUyCng3LDEzLjEKeDgsNy40OQp4MSw4LjgzCngyLDMuMDkKeDMsNS40Mwp4NCwxLjM0Cng1LDEyLjcKeDYsNC42Ngp4Nyw2LjU2Cng4LDYuMjIKeDEsOC4wOAp4MiwxLjkxCngzLDMuOQp4NCwzLjU0Cng1LDEuODQKeDYsMi40Ngp4Nyw0Ljk0Cng4LDIuMQp4MSwyLjgzCngyLDUuMTUKeDMsNS42OQp4NCwxMC4zCng1LDYuODMKeDYsNC43Cng3LDYuOTEKeDgsNi4yOQp4MSw1LjY3CngyLDMuMDkKeDMsNy4yNAp4NCw0LjY0Cng1LDYuMDYKeDYsNS42OQp4Nyw0LjM0Cng4LDguMTgKeDEsNy4zMgp4MiwxNC44CngzLDMuNDcKeDQsNy4wOAp4NSw5LjMxCng2LDUuNTIKeDcsMi44NQp4OCw5Ljg2CngxLDcuNTEKeDIsMTAuMQp4Myw1LjQKeDQsNi4zMwp4NSw1LjcxCng2LDMuOTQKeDcsNi42MQp4OCwxNS45CngxLDguNTcKeDIsNy40Nwp4Myw2LjY2Cng0LDUuOTEKeDUsMy40Cng2LDEzLjQKeDcsOC42OAp4OCw3CngxLDYuMDYKeDIsNi4xMgp4Myw1LjEKeDQsMy42Mwp4NSwxMC44Cng2LDEwLjEKeDcsNS43OAp4OCw5LjQ4CngxLDUuODUKeDIsNS43OAp4Myw0Ljc3Cng0LDQuNTcKeDUsNC44Ngp4Niw2LjU2Cng3LDIKeDgsOS4zOQp4MSw1Ljk0CngyLDcuMDIKeDMsNy43MQp4NCwzLjI5Cng1LDUKeDYsMS44Ngp4NywzLjExCng4LDYuNgp4MSw5LjU5CngyLDYuNgp4Myw0LjA2Cng0LDMuMjgKeDUsNi41MQp4Niw2LjgxCng3LDYuNjgKeDgsNC40NAp4MSw0LjY1CngyLDcuNzIKeDMsNS4wMgp4NCw3LjEKeDUsNS4wOQp4NiwyLjQKeDcsNi44MQp4OCw0LjUKeDEsMTIuNwp4Miw2LjM5CngzLDguMTcKeDQsNi4wOAp4NSw1Ljk2Cng2LDQuMQp4Nyw2LjU2Cng4LDcuNzUKeDEsNS44NAp4Miw0LjUKeDMsNS41Mwp4NCw0Ljk4Cng1LDMuMzUKeDYsMi45NAp4Nyw2LjE2Cng4LDYuMzgK');
+        if (!response.ok) throw new Error('Network response failed');
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = 'conditions.csv';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.dispatchEvent(new MouseEvent('click'));
+        document.body.removeChild(a);
+        setTimeout(() => {
+          window.URL.revokeObjectURL(blobUrl);
+        }, 100);
+        return false;
+      } catch (error) {
+        console.error('Download failed:', error);
+        alert('Download failed. Please try again.');
+      }
+    }
+    downloadFile(event);
+  " has_icon="TRUE"><i class="fa fa-save"></i> Download group data</button>
+</div>
+</div>
+</div>
+<p><br></p>
+<ul>
+<li><p>Visualize the data per group. Consider two alternative approaches to this visualization. In the first, try to emphasize the between-group differences in means to persuade your reader. You could, for example, take your pick of a simple bar chart or line graph. In the second, we’d like you to visualize as much of the underlying data as possible (e.g.&nbsp;violin and dot plot).</p></li>
+<li><p>Let’s now search for significance! Start by running an ANOVA using any approach we’ve discussed in previous sessions.</p></li>
+<li><p>Try going ahead anyway with multiple comparisons, using the <code>rstatix::pairwise_t_test</code> to test all pairwise differences using Bonferroni. Change the correction method from Bonferroni to FDR just to make sure we’re not being too conservative (might as well check right?).</p></li>
+<li><p>What if outliers are obscuring any true differences? Try a few different cutoffs and perform ANOVAs for each cutoff. Record your F-statistics and p-values for each test.</p></li>
+<li><p>Once you found a cutoff yielding a significant result, try running a post hoc test and prepare a table showing the Cohen’s d/t-statistic for each pairwise difference of means and its p-value</p></li>
+<li><p>Let’s turn to the IQR fence. Try the same analyses, beginning with an omnibus test and then multiple comparisons.</p></li>
+<li><p>Compare the outcome when you use Bonferroni vs.&nbsp;FDR correction. When might choosing among different multiple testing approaches constitute a form of p-hacking?</p></li>
+<li><p>Once you have your candidate method, report your findings as if you were writing a results section or abstract, providing a brief explanation of the methods you used. There’s no need to list all the combinations you tried, of course, they were just the groundwork before landing on the <em>correct</em> method.</p></li>
+</ul>
+<ol start="3" type="1">
+<li>Let’s take a look at discretization. We touched on the issues of discretization during the previous project work session. Using simulation, we found that binning the predictor variable from a continuous one to 6 and then 3 bins before binning both outcome and predictor successively reduced our power of finding a true effect. But for the p-hacker, discretization provides yet another lever to test multiple different analytic combinations and exploit sampling error to try extracting something purportedly significant. The number of bins, placement of intervals and equality of bin sizes are all features that can be manipulated and the winning combination justified <em>post hoc</em> in the results. We provide you with the next function in the p-hacker’s toolbox:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>discretize <span class="ot">&lt;-</span> <span class="cf">function</span>(data, x, n, <span class="at">binned =</span> <span class="st">"binned_x"</span>) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  suffix <span class="ot">&lt;-</span> <span class="fu">str_sub</span>(binned,<span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(n) <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    data <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">sym</span>(binned) <span class="sc">:</span><span class="er">=</span> <span class="fu">cut</span>({{x}}, </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">breaks =</span> n, </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">labels =</span> <span class="fu">str_c</span>(suffix, <span class="dv">1</span><span class="sc">:</span>n)))    </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    data <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="sc">!!</span><span class="fu">sym</span>(binned) <span class="sc">:</span><span class="er">=</span> <span class="fu">cut</span>({{x}}, </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">breaks =</span> n,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">labels =</span> <span class="fu">str_c</span>(suffix, <span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(n) <span class="sc">-</span> <span class="dv">1</span>))))     </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Don’t worry too much about the <code>!!sym :=</code> notation. This will just allow us to call our new discretized variable whatever we specify in the <code>binned</code> argument, something that will come in handy when we explore binning both predictor and outcome variables. By default, it will create a new column called <code>binned_x</code>, assigning each datapoint to a group, <code>x1...xn</code>, depending on how many bins you specify in <code>n</code>. Alternatively, you could pass in a vector of irregular interval breaks to n, such as <code>c(0,15,45,90,100)</code>, creating n=4 bins.</p>
+<ul>
+<li>Download the following dataset, containing predictor (<code>x</code>) and outcome (<code>y</code>) variables:</li>
+</ul>
+<p><br></p>
+<div class="text-center">
+<div class="cell">
+<div class="cell-output-display">
+<button class="btn btn-default" onclick="
+    async function downloadFile(event) {
+      event.preventDefault();
+      try {
+        const response = await fetch('data:text/csv;base64,eCx5Cjk1LjI2ODUzNDM1NjcyODIsNDkuNDc0ODc2NTcxMTk2MDQKOTMuNjAwMjUxNTcyMjA2NjIsNTMuNTIyNjUyNTA3MTcwOTEKMjUuOTY4ODIwOTk3NTEzODMsNTIuNzAzMzU5Nzc1Mjk2NTYKNDIuMTIyMjg4OTU2MzA2ODc1LDQ5LjE1NjcyNjEwNTU3MzI4CjY3LjU3MjgwNjQwMzA0MDg5LDQwLjg2ODg1NjYzNzI1NDQ5NQo5My41MDg5NTI5NzI0NzkxNiw0OC4wMDI5MzQ3ODIzMTY0MgoyMy4yNDIwNjkzMzg0NDgzNDYsMzkuMjAzNDY3MTEyMTczMTMKMTAuMjE3MjMyOTU1NjE5NjkzLDQwLjQ0ODc5NDUxOTUyNTM5CjcuMjkxODA5NDkyNzQ0NTA1LDU5LjU4MTc3MDM1NDg3MjEyCjQyLjM3Njg1MjEwNTM3MTY1NCw3NC42NjQ0MzYxMTI4MzQ2NAowLjMyMzQ5NDU0NzA0NjcyMSw1Ny4zNzkxMTI4MjE4Njg2Mwo5Ny43MzI4NDg2OTczNDE5OCw0My43OTA2NDM0Mjc0NzI3Nwo4Ny44NTgyNTgzMDQxODYxNyw1Mi42OTc4MzQ2NjE1MDQ1OAo2OC43ODAyMTYyMjU0MjI5Miw0Mi4yMjgwNDEyODg4MTMzMQoxNC45NjcxNjY4MTg2NzgzOCw2MC44ODA0OTYxOTU3Mjc5MTUKMzkuMzI0NzIxMTU4NDgyMTM0LDU1LjEwNjI4MTY3OTMxNTQ4CjYyLjk0MzU1OTQ2NTkyOTg2Niw2MC4zOTU4MjU4NDU0MTY5MgozMC4xNzQzMTY2MDU1NTMwMyw2NS4wMjQ4MzM1ODg0Mzk1CjExLjI0ODQwNDExMzU3NTgxNiwzMy42NzI2MTk0NTYyOTAxOAoxMS42NTk1MTcxMzkxOTYzOTYsMzQuOTMxOTczNzU5MTQxNjQKNTguOTI4NTEwODAyNzk3OTcsMzguNjQ2NzgxNTU5NzE2MjgKMjIuMjgzMjk5Nzc5NTE5NDQsNDguNjUyOTQ1OTI1NjQzMzkKNTMuNzM2MzM2MTMzNDQyODIsNTIuNDQ5ODc2ODg2MDc3Njk2Cjc0LjkzODg5ODkwNjExMTcyLDQ2Ljc4MTY3NTgwNzUwNTE5NQo0Ni45NjQxMTU0Mzk5MTQxNyw2Mi45NjE0OTAyMDYwOTY3Nwo0NC4zNDQzMjMwODE4OTU3MSw1OC4zMDg1NjI5OTQyMjc3NgozOC41MDUzNDE3NDEyNTY0MTYsMzEuNjIxMzI2NzQ3MTE2MTU0CjIwLjgxNzc4NzI5MzM0NDczNiw0NC4zMDY0NDU5MDQ5NjE3NAozMy45ODkxNjc1MTYxMTk3OCw2Mi43ODczNzg4NTg4Mzc5OAoyMi4zODg0MjI1MTI0NDkzMjQsNDMuMTI2NzY2OTAxNTU1NzEKNi4xNTE3OTk5OTczMTQ4MTEsNDkuNDIyMzk3NjM4MjM4OTkKOTIuNTg3ODkxMjQ0MzI5NTMsNTcuMjM4MDUxOTI1NTI5Ngo3Ni4zMjY2MjMzMDI4ODQ0LDQyLjk2MzA5NTUxMjQ5OTc1CjE3LjQxODQ5OTY0MDE4OTExLDUzLjgwMjgyMzE4NDA4NzgyCjYyLjQ3MjM2Mzg4NzM1NDczLDM0Ljg4MzM2NDQwMDA2ODQ2CjIyLjQxNzYyNjcxNjE5NjUzNyw0My40Nzk4NDAzNjkwNzM0MwoyNC4zMjYyMTgyNjg4MzQwNTQsNTcuNzg1NTkxNTIxMDEwOTM2Cjg2LjkzNjEwMTg3NjE5OTI1LDU3LjQ4Mzk1Mzk2NDk0MDIzNAozOS40NzQwMjYwNjcxODI0Miw1Mi4wODU5ODYwMjE3MTE3Nwo5OC42NTA5NzA3NTIzNTEsNTIuMzc1NTMwMjg5ODM4NDIKMzEuMjAwMTE0NDc0NjMxODUsNDQuODI2MjM5MjE4MjA0Mzg1CjcuNDI3NDUxNTk2NTk1MzQ3LDYxLjQyNTMwMzIyNDAwOTM3Ngo5Ny4wMzcwNDYyMzk3MTEzNCw0Ni4yNTk3Mzg2NTE4NzMwMgo1OC4xNzcxMDMzMzUwMzc4MywzOS44NTY1MzU1NjUyMTY1Ngo5OC45MDE4MTMzNjA4NjI0Myw1MC4wNzM0NzIzNDg4MzI4OQoyOC41NjMwMjM4MDA5NjE2NzMsNTYuNTA1MTc2MDg1MzU5OTYKMzQuMDExMDc3NDg1MDQ3MjgsNDAuODU4NDI4MzE4ODUyMjcKNjAuMTMxOTU3ODQ3NjI1MDIsMjguNTUxNjUwOTc0NzE1MzQKOC4zNDM4ODU2NzYwMDM5OTMsNDYuMjM3Mjc1OTIwMzM3MTc2CjU2LjI0NTY5MjkzNTc3MjI0LDUzLjExMzM4MzY0MjkzNjUwNQo0NS4xNTU5Njc5MzQ5ODg0NCw1MC45ODY5NzUyOTYwMTk5MzUKNDkuMjEyODA4NDQxMzcwNzI2LDY1LjI0NjQ4NzEwMzU5NzE4Cjg3LjkwNjY2NzQyNzE1OTg1LDM0LjUxODM1MzMxMjc0ODE1CjI4LjY1OTQ0MjE2MDI3ODU2LDQzLjcxNzI1ODU3NDQ1MQoxMi4xNzM5ODAxMjUyMjYwOCwzMy43NzYwMTIxMjQxMzM0OTQKMzkuNzYyNDc5MzY5NTI4NTksNTAuMzUxNDYxNzI5NDkyODc1CjIzLjk0MTE4OTQ5MzA1MjY2LDQyLjkzNDM5MDI3ODgyNDE1NAozMy43MDEyNzk2NjYyNzQ3ODYsNDQuODc5NDY1NjUyNTMwOTA0CjU2LjU4MTY3NDA3MzgyMjgsNDEuODAwMzk0NTUyNjY0OTgKNjMuNjEzOTA1NzgwOTQ4Nyw0Ny4wODUwNzcyMDMyODA3MQo3Ni45NjE1Njk5MDcxNDM3MSw0NS42Njg1NTU4NTA4ODIwOAo0OC43OTYxODE1NDM3MzAyLDUyLjk4NDg0OTAyMTkyNDQ1CjQ3LjIyNzU5NTE2NDQ0MDU3LDQzLjU4ODc5MzcwMjgyMTkyCjE1LjQ1MzA4NDI3ODg1MTc0OCw1MS41NTQxOTk2NDM0NzMxNTQKOTguNTExNjUwMjk2ODU5NDQsNjguNjAxNzQ1NTQ5MDQxMTEKMC43OTA3ODE5OTM0MTg5MzIsNDUuNjAzODc2NTExMTA2OTkKMTEuODQzODA1Mjk0NDgzOSw0OC4wMTM1NTcyOTQ2MTM3Nwo2MC4wODA4NjQ4NjI1Mzg4NzQsNDcuOTMyNzcxODU0NjczNzk2CjQ5LjY0OTM1NjY3ODEyODI0LDMyLjM1NzkyMTU0NTQwNDA5Ngo2MC4wODYzNjE3Mzc5MjE4MzQsNTUuMDc4NDAxMDgxNTMzOTYKNDAuODEwMTI3MDIwODEzNTI1LDQ2LjM0MTgyNjEyMDU5NDA3CjMuNDc5NzgzNjc5MzU4NjYxLDQwLjk2NzkzNzYyNzc1NDc2NQoxNi4wMDY2Mjk2MTEzNjU0OTcsNDcuNDc0Njg5MTQzMzMyMzgKODcuODAyNzU2ODEwNTYwODIsMzkuMDg3ODI1NTc1MDc3OTIKODUuNzA1NDEzNzE1OTEzODksNzMuOTI4MDg3MzY5Njk1ODMKNzQuODgwMzMwNTkwNTMxMjMsNDQuMTk1MTc5NzMxNDE1MjgKNTguNTQxNTkxNTM1MzIyMzcsNTcuNDU4NzM3NjIzODkwNQoyMS40OTI5MTM4MDc3NDIyOTgsMzkuMTY5NDc0NDkwNDU0CjQ0LjE3NjQ2MjgyODE4MTY4LDUwLjYxODY0NjE3OTc1NTUzCjEuMTI3MzM4OTY4MjE3MzczLDUwLjMzMjUyOTg2NDY0NjgKOTMuMTM4NDczNDgwOTM5ODgsNDIuMDgwMDU4MTM2NDQ4MTQ1CjI4LjA3NTgzODk3Mzc0NTcwNCw1NS4zOTg2MjA5Nzk4MTUxNgo5OS4yNTQ3NzI3MTg5OTU4LDQwLjI2Nzg4ODcyNTY1ODkxCjcuMDI2NTAyMDAxMDk5Mjg4NSw0Ni41ODg0OTczODUzMDc4MwozNC4xNTQyMTExNzA5NzEzOTQsNTMuMTM2MDg1NjkxOTg0MjIKMzUuODUxNjk0NDMzOTQ5ODksNjQuODI2ODg3NjQwNTQ5Ngo4Ny4wMDg5OTk1MjA5MTI3Nyw1Ny41MjY5NDUzMDU5MTQ4NwozMy43NDU5MDY4NTEyNTQ0MDQsNDguNzM5NTc2ODc1OTczMDkKMC4xODE1NDg4NTYxOTg3ODc3LDY5LjE5NTkxNTIxNTY4NjA5CjUwLjY2MjUwMDMxODEzOTc5LDU3LjYwNTQwODI1MjMwODQKODMuMjc3ODk1NTgwOTc3Miw2NC4yNzYxNTEzOTA2MzU3OQo4My4yNTAwNjEzNTI3MzcyNSw0My4yNzQ3NTY1Nzk3ODc3MwoyNC45MDE3NjE1ODAyNTg2MDgsNTcuNDM1OTA0MjM4Njg2OTUKMjMuMjE3NDA0NDcwNzc5LDQ1LjkwNTA1NTQ4MTkxODUzCjEwLjAxNTgzMDQ0NDE3MjAyNSw0Ny4zNzUyNDkxMDc2NDM1MQozNi44MzgwNjU1MzAxNzM0OCw1NC41NDk5Nzk5NzA4MTg5OTUKNTkuMTk5NjI5NTE0NDc4MTUsNjMuMjQyMDI0ODc2MzE2NDYKOTIuMjI2MjU0NjYwNjM2MiwzOS42NTkyOTUxNDQyMzE0MQo5My41MDU3MTg3Njg1NzQzLDY1LjY1OTIwNTIzOTg4MDE4CjU0LjEwMzU4MzkzNTY0ODIsNDQuNjcxNTY1ODY5OTAzNDIKMTEuMDAwMzAzMjAyMzA4NzE0LDUyLjc3NjgyODczODUxMzg1Ngo0NC4zMzg0NzQ4NjUwNzE0NzYsNTcuNDE1OTgyOTk1MDEzMTgKNDcuNzcxMzEzMjI3NzEzMTEsNTEuNzExMzc1MzYzMDM0MTIKMTUuODAyNzAzODY3NjY2NDIzLDQ3Ljk4MzQyNzI0MzQ1MzcxCjUyLjE3NDMwMzI2MTU2MzE4LDUzLjA0MzQ5MzU4ODY1MDE4CjEuNDQwMjU2MTU4ODIxMjg0OCw0OS4wNjU0ODMwMTg5NjM2NzUKODIuNDY2NDY5NjgxODIxNzYsMzQuOTcwODA3MDczNzE0NTI1CjYzLjQzNTgyNDQwMTY3NjY1NSw2MS4wMTY2MDUzMDYyODk2CjUxLjg0MjA0NjU5ODkwMzgzNSw2NS4zOTQyNTQxOTQ5MDk3OAo3OC4yNzcyMjkzNzc5OTk5LDQ1LjA1MjY3MjIyODcyMjY2CjIzLjQ5NzQ1NzkxODcxMTAwNyw1Mi40NDc0NDM0MTk2NTgyMQo4OS4wMTI0MjQ5OTcwNTQwNCw0OS42ODAyNjc0OTg1NDI2OQoxLjk5MTA5OTE0MjQ2OTQ2NTUsNDUuNDg2ODc0ODAxMzgyNDQKNC41NjQyODgxNDIxMzcyMjk0LDYwLjY3Mjk5MTExMjIxNTI3CjU2LjcxMzA2NTkyNDEyMjkzLDM3LjIyNDkwMDU0MzA5NTI5NQo2OS4yMzk4MjAyMTM5ODg0Miw0OS42NjQ1ODgyNTA4NTA5NQo2My44Mzg4ODc0MDA5MjUxNiwzMS45NTQxMDI5MDMzNzI0MjMKOTQuNzA4MjM5NzA2MjMzMTQsNDMuODgyMDgyODg4MTg1NTkKOTYuMzQyMDMxMjM4NjAwNiwzOC40MjQzMDQ1NTc5MzM2MjQKMzguNDQwOTc1MDgxMTc1NTY2LDYxLjMwMjQ1MDQ3MzIyNjkKNTcuMDQ4NzQwMzMxMDgzNTM2LDU1Ljg0MTgyOTkwMDE1MDE2CjU2LjIzMTIyODA3NTkyMTUzNSw0MC40ODY1NTgyOTA0NDU4NTYKMzYuNDI4MTU1ODE5ODg1NDMsMzEuOTEyMjA3NTYwNzc4NDc3CjY4Ljc0MjM2NzIwNjE0MTM1LDU4LjkzMzI2NzQ5MjUxNDI2Cjg4LjE1Mjg2MzQ1Nzc5ODk2LDQ0Ljg2MDQzMjQ2MTczMDg0CjYyLjk4MzQwOTA4MjUxNzAzLDU0LjU0MTA2MDk0MzY5NTIxCjUxLjc2NDI2NzQwMzYzMjQsNDMuNzA2NjA0Njg1ODIzODA1Cjk3Ljc2OTIyNzI5Nzk3NjYsNjIuOTMxNDg4NzQ2ODUyMTMKODcuMDQ5MzAyNzE0ODc2ODMsNDMuNjE1NjcxMjk3NzcwNTMKNDYuODU2NTAzODg3MTAyMDEsNTguODA5NjM1NjU1MzQyNjc0Cjk5LjY1NzI4NDA3MjYwMDMsNjUuMzc1NDIwNjQ4MTIwMDQKNy4wNTQ4MzMyMDYzNDgxMjEsNTMuODg0OTQwNDI1MzI2NTIKOC43MTA3ODUzMjY1NDc5Miw0Mi44NjY1NDc1MzcxOTQyNjUKOTkuNTgyNjQ0NzM4MjU2OTIsMzcuMDM4MjUxMzU4NjU5MzIKNTcuNTYzNTM5NjY0MjYxMDQsNTEuODg5MzAxMzAzNzY1NTcKNi41NzQwNDIxODgwMDM2NTksNTQuMTY0NDcwNTkzMjY0NzEKOTcuNjI2NDg4ODE4Nzg3MDQsNDUuNjA2NTI0NTc1MjM2ODEKNDkuMTAwODMzMTc2NjM1MjA2LDUwLjMzNDE1NDcxMzU4MjU0Cjk0LjE5OTI3NTQxMTY2NTQ0LDU3LjQ4MzkzODMxMTU2Mjg0NQo2Mi41Mjg4MDk5MjgzMzUyNSwyMC41NjU4NzIyOTEyMTYwMDcKMTYuMjM0NjUwMzY5NzMzNTcyLDI4Ljg0NDExNzUwMzA4NzEzNwo0NC45NTQ0MzM3ODEwOTQ4NSw2NC4zNzg0MTkyOTgwMjQwNgo2NC4zNDIwMjI0MzEwODMwMiw0My4xMjAwMDAyMTcxMjYwMDUKNTAuNjU3ODAxOTM1NDQ5MjQsNTEuODA1MzMyODc3NTMzNjgKNjcuOTcwNDE1OTAzMjU1MzQsNTMuNzk3NzYzMjQyNDIwODM1CjEuMDUyMzQ0OTYyOTU0NTIxMiw1MS42MzU0NjIwMTkwOTM5Mgo5NC40MjE4MjM3ODg0MzQyOCw0NS44Njg3NTIxNTY5NzMyMQoyNy41OTg2MjQ1NjAwNTA2NjMsNTMuODgyODY5MzQzMDMwNzMKMTQuODAyMjE2MTc5NjY4OTAzLDQ1LjAwNzI2NTg1NTcxNDg3CjQ3LjU0NDI4Mzk3ODY0MTAzLDQwLjE5NjI3MjU5OTM5MjczCjE5Ljg5MjkwNjE2NDc1MDQ1Nyw1Mi42ODUyODQyNzc1NTUyCjYzLjY2NzU4NzQ5MzU0NjMxLDM5LjE3ODI5NTg0MTIzNjg5CjguODIyODk2OTEzNjI1Myw3MS45MzI2NTEzNjMwNTQ1Cjk0Ljg1MzMxNDMxNDk2ODg4LDQ1LjQyMTQ1OTcxNjk3MzI1CjI2Ljk1OTMzNDYxNjU0OTMxMyw4My40Njg4OTg1NzA0NjcwMgozOC45ODMyODY4NDczNjA0Myw2NC4wNDEyNTg0NjgxMTExMQoxNS45NTQ1ODQ5NTQzMDY0ODMsMzIuNDMxMTcxNTk3NTEyNTQ1Cjg4LjUwMzY2ODI5NDI4ODIyLDU4LjY3NjI4MTMwMTgxNTEyCjY5LjY5ODU1MTUzMDAxODQ1LDQ5LjQyNDQ4NzE2ODU3MzAyCjExLjUzNzQ2NzUwMjA1NzU1Miw0NC4xMTE4NzgzMzEzOTUzMQoyMC44NDA4MTM1Njg3OTMyMzcsNDAuNTQ0MDU1NDUyMDI4MwowLjcyODc2NTg5ODM4NDE1MzgsNjIuNzU4Njc5NTQyMTU5NjEKOC4yODUyNzI5MzYzMzY2OTYsNDUuNDA0NDIxODYyMzg2MTkKNjAuODcwOTg0NjYyMzI0MTksNTguODc2Njc3NzEzMDQwNTEKMzMuOTIyMzY0NTM5NDY2OCw1Ni4xMDI2ODQxOTc3MTg1OQo1NS4zNDEzMzc5OTM3NDEwMzUsMjAuNzE3NTQ1OTY0NDE5MzgKODkuMzU5Mjg1OTM4NTUzNTEsNTcuMTQzMDc4ODkzNDE0NTUKOTEuNDg4OTYyMDYxNzAzMiw2MS4wMDE5MTI3MzIxMTEwNAo3OC40ODQzODE3NTg2MDc5MiwzNi4zMzAyNzY4MzE1MzczNQoxMS4zNDgzMjI5NjUyMDQ3MTYsMzkuNDk0OTk1OTQwNjYzNzgKMjIuNjU1OTEzMTQwNjI0NzYsNDYuMzgwNTQxODIyNDI4NzEKNDYuMzI3MjEwNzUzMjI0NzksNTAuODk0NTgzMjI4NjU2ODgKNzAuNzc1MjU3NzAyOTE2ODYsNDguMjgyNDQzODQ0NDY4NjIKNTEuNDE4MTI1NDg5NzI2NjYsNDcuMzE0MDUyMjczOTE0NDM0CjcyLjc3NTkzNzEwNDU5NzY5LDQ0Ljc1NTI2Nzc0MTY3MjcKNTUuMDA0NjMyMTQ3MDI5MDQsNDYuNzgyMzIxMDUwNDE0OTIKMzMuODk3ODM4NDM4ODYxMDcsNTYuMTUwMzk4MzMxNDk5OTMKMjQuNzE5OTA2NjIxNjEyNjEsNTAuMDgxNTUzOTkzOTc3NDQKMTEuNDcxMDc4NDA1MTU2NzMyLDQyLjQ0Mzg1NzkwMDkyNzYKODEuOTM3OTQ2MTY5NjM3MTQsNTIuMDYzNjkzNzc1OTAwNjgKNjMuMzA1NjIyNjg4NDk0NjIsNjIuMDIxNzQxNTA5NTM5NTkKNTEuNjE3NTg0NDI0MDkzMzY2LDY2Ljc4MDUyMDI3NjAwMDA2CjUwLjMwMzI3Nzc0NTg0MjkzNCw0Ni40ODI0NjQxODc3MTA5NQo5MS4yNDA1NjE3MzAyMjgzNiw1My40NjE1MDcyMzQ3MTQzOQo1MS43MDk2MjY3MzE0NjI3OCw0OC44NDk5NTQyMzMxMzg4NzQKOTAuOTE1MDcwOTM5ODA5MDgsMzYuOTMyNTU2MDIwNzgzCjg4LjMwMjY4NTUyOTkyNDkzLDM4LjkyNzg0OTk2MTg2OTczCjEzLjU0NjgxMDI3NTg3NTAzMiwzMS4yMzgwMTI1MjU0NTE0NAo2MS41MjU3Nzc1NDExMDA5OCw1MS45ODg4NDE4ODg0MDk3NAo4MS42ODMyNTA3NzI3NjY3Nyw1NC4wNzk3NDkyNTI4NjkxNQozOC4yMjE4NjczMzU5NjAyNyw1Mi4xMjk2NzM5NjEyNjg5Mgo5NC44Nzk3NTQ3NDkxMjY3Miw1Ny40MzE3MzYwNDk2NTE0MQo1MS44NjY5NjA3MTE3NzcyMSw1NC4wMjYzNzMxMDY1NzgxOAo4NS43OTEwMjA2Nzc0MjQ5Nyw0Mi42MjY3MDU0MzIzNDEwMQo1MS44MDY1NjA0ODQ2OTI0NTQsNTYuNzg2MTExMjk5NTc5Nzk0CjE5LjA2MDkyOTMyOTEzNDUyNCw2Mi42MDA1ODQxNjI5MjkzNDQKNzEuNDY0OTc0ODUyMjc4ODMsNzAuMTIxODU4MDcxMjk3NTgKMzYuOTQ0NTQwNzk5NTk1NDE2LDQzLjA4Njk5Njc2NzY3MjI2CjgwLjIwNzYwNTQ3MzY5NzE5LDYwLjM5NDgyNTI4NzU4NzE5CjMyLjA2MTY0Nzg3OTg5MTEsNjAuMjcwOTQxNTk4MTk0MDcK');
+        if (!response.ok) throw new Error('Network response failed');
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = 'Dataset 2.csv';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.dispatchEvent(new MouseEvent('click'));
+        document.body.removeChild(a);
+        setTimeout(() => {
+          window.URL.revokeObjectURL(blobUrl);
+        }, 100);
+        return false;
+      } catch (error) {
+        console.error('Download failed:', error);
+        alert('Download failed. Please try again.');
+      }
+    }
+    downloadFile(event);
+  " has_icon="TRUE"><i class="fa fa-save"></i> Download x-y dataset</button>
+</div>
+</div>
+</div>
+<p><br></p>
+<ul>
+<li>Since both are continuous, why don’t we start by fitting a simple linear regression using techniques we’ve already covered in session 20. Plot the data and overlay the line and its standard error using <code>geom_ribbon</code>. What values did you see for the intercept and gradient? What is the <span class="math inline">\(R^2\)</span> and its p-value?
+<ul>
+<li>Remove datapoints you think are applying too much leverage to the linear model and refit the model</li>
+</ul></li>
+<li>Let’s now try testing out a few different discretizations coupled with an ANOVA. Some things to try are the following:
+<ul>
+<li>Bin the predictor variable, anywhere between 2 up to 10 bins</li>
+<li>Combine binning with different within-bin outlier detection + removal approaches</li>
+<li>Choose interval widths you can find ad hoc justifications for by looking at the ggplot</li>
+<li>Binning both x and y variables (run <code>discretize()</code> twice, passing <code>y, binned = "binned_y"</code> on the second pass) and run a <span class="math inline">\(\chi^2\)</span> test</li>
+</ul></li>
+<li>Any luck? Let’s run some post hocs then and see if anything survived correction. Remember that we can always fall back on FDR if we’re being too conservative with Bonferroni.</li>
+<li>Excellent! Now write a summary paragraph of your findings and prepare a plot to illustrate the significant differences you found</li>
+</ul>
+<p>We hope by now that, alongside the paper, we’ve belabored the point that the more combinations you try, the greater the likelihood of identifying a spurious significant result. Consider it a ‘shadow’ family-wise error rate, since these prior exploratory analyses are rarely published in the final paper/abstract. When you report post hoc tests and the correction method used, you have essentially only accounted for the batch of pairwise tests performed - something required in any reputable journal - and not the multiple analytic combinations (i.e.&nbsp;outlier cutoffs, alternative discretizations and transformations) you tried before landing on the winning combination.</p>
+<ol start="4" type="1">
+<li>We will belabor it just a bit more through simulation. Below we show three visualizations of how testing alternative analytic combinations inflates the ‘shadow’ FWER. We simulated n=500 datasets comprising <code>x</code> and <code>y</code> variables similar to the one you loaded in for exercise 3. We then tested different 1D or 2D binning strategies and extracted the p-value for each ANOVA or <span class="math inline">\(\chi^2\)</span> test. We either performed no outlier removal, outlier removal using IQR fencing, or <span class="math inline">\(2\sigma\)</span> or <span class="math inline">\(3\sigma\)</span> thresholds. Note that we are not looking at any post hoc tests here. In total, that gave us 100 different analytical combinations. You can take a look at them here:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>combs <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">outlier_thresh =</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">3</span>), </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 0 = no outlier removal, 1 = IQR, 2 = z_thresh at 2sd, 3 = z_thresh at 3sd</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">bins_x =</span> <span class="fu">seq</span>(<span class="dv">4</span>,<span class="dv">8</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">bins_y =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can then take a look at the effect of trying out different numbers of combinations. In the first panel on the left, we randomly subsampled <em>n</em> analytic combinations from each of 500 simulations 10 times and reported whether <em>at least 1</em> significant result occurred in each of the 500 simulations within the n batches of combinations attempted. We then calculated the proportion out of the 500 datasets that showed at least 1 significant result for each number of attempted steps.</p>
+<ul>
+<li>Interpret the first plot. Why does the shadow FWER appear to increase with more analytic combinations?</li>
+<li>The second plot shows the mean number of significant results as more combinations are attempted for 10 randomly subsampled simulated datasets. Why do different datasets appear to have different gradients? Why might the number of false positives appear to increase linearly with the number of steps attempted?</li>
+<li>Inspect the third plot. Here, we have visualized the distribution of the minimum number of steps taken before finding a significant result for 50 randomly chosen datasets. We shuffled the order of the analytic choices to simulate how a p-hacker might try different analytic paths before converging on the chosen path. Note how it doesn’t typically take many tests before finding a spuriously significant result.</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="p_hacking_2025_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="1440"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Let’s now explore the impact of changing the number of analytic choices on the distribution of observed p-values, reminiscent of Figure 14 in the paper. Explain what the figure shows.</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="p_hacking_2025_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now it’s your opportunity to indulge in either some significantly reputable or refutably significant data analysis. Below we have provided two datasets, where you will analyze them as either a p-hacker, a data analyst with more statistical integrity, or one of each. 5. Download the first dataset below:</p>
+<p><br></p>
+<div class="text-center">
+<div class="cell">
+<div class="cell-output-display">
+<button class="btn btn-default" onclick="
+    async function downloadFile(event) {
+      event.preventDefault();
+      try {
+        const response = await fetch('data:text/csv;base64,aWQsY29uZGl0aW9uLHNpdGUsc2V4LGFnZSxiYXNlbGluZSxiaW9tYXJrZXIsaW1tdW5lX3JlYWN0aXZpdHksdHJlYXRtZW50LHN0cmVzc19sZXZlbAoxLEMxLFNpdGVfQixNYWxlLDI0LjczMDQ0NDkwMzA1NTg3Miw3MC4yNDI4NTQzODkzNjYyLDEyLjA1NzY5MzIyMjQ3OTk1NywxLjY0MzY3NTM2OTQwMDUxNjIsNzUuNzY1NzMwMjM4MzMyMywyLjQwNzY3ODk1MDE0MjcwMwoyLEMyLFNpdGVfQSxGZW1hbGUsMjcuMDk2OTAzNDQ4MTI5NzE2LDQ0LjA1ODkyNDY2NzU5MzQ0NSwxNC41OTM4MjMwMjY0Mjg1ODIsNC43MjE5MDg4NTM4NTMzMzUsODAuMzQwMzI5OTYyMjM3NDgsLTMuODQ5NTY4NjA3MzUzNjE5CjMsQzMsU2l0ZV9CLE1hbGUsMzcuOTU3Mzk1NTA1NDA0MzMsNjcuOTUyOTgyMjgzODI5NywxMC4xOTAyNDQ3MTcxODMwOCwxLjI3Mzc0NzkwMTkwNTYyMjgsNjUuNzk0MjU4MDk3NTYwNTMsMS43ODUyMzQwNzQyNjM5Nwo0LEM2LFNpdGVfQSxNYWxlLDM0Ljg2NDI3NDMxNTgxOTY2LDU3LjM4ODU3ODE4MzAzMjExLDExLjg5OTI0MTg1OTY3MDQ4LDAuODU1MzM5NjQ0NDAwMzQ5OCw2Ni4xODgyMTQyMTMxMzQxNiwxLjQwNjg1MjUyMjYxMjc0NjIKNSxDMSxTaXRlX0EsTWFsZSwyNS4yNDkxMDM4NDA0NjY0OCw3MC41NzM1NTk5NTUwMjgwMiwzLjc4MTY2NjAxOTYyMjg1MywxLjU0Mjk3OTQ4NjE0OTI1MTYsNjEuOTYzMzM2Mzc0OTE1NDEsMy4xMzcyMDU5NjUxNjg1MTIKNixDMixTaXRlX0IsRmVtYWxlLDMyLjM1MzI3NjA0MzIwOTQ3LDczLjE4MjMxMDYxNzg3NzY1LDQuNjE0NDE2MTUwMDAxODIsMS4wODU4MjQ4MjE0ODQzNDgyLDc1LjY3ODI0MDM3ODA4NDA3LDEuOTU0ODQ2MTQzNDI3NTI3CjcsQzEsU2l0ZV9BLEZlbWFsZSwxMS4wODA4Mzc2ODc1ODg2OTQsNzAuNjkzMTE5ODYwMDYyNjUsMjUuMzc5NzU1ODc4MTY2NzgzLDEuNTQzOTA0NTEzNDUwNTExMiw3MS43NTA5NjE0Nzg4MzEwNiwxLjk5NTUzNzczMTk4MjcxMzIKOCxDMSxTaXRlX0EsRmVtYWxlLDE3LjgxMzg2MjMzOTIxMTk0NCw2Mi40NDkzMTMzMDUxNjA4Miw1Ljk1MjgyMTM4OTkzMDQwOSwxLjU3MTUxNDU2NjY0MzMyNCw3OC4yOTE4MTg0ODQ0NTg3OSwyLjEwNzEwMjE1NTcwNzIwMQo5LEMyLFNpdGVfQyxGZW1hbGUsMzQuMzc2MDY0MDA4MDc5MjgsNzQuMDkyODQ0Mzg1MTE5MDQsMTkuMzY2MDc0MzQ4MTMwODgzLDEuODcyODQ0OTE1MzI3MTgsNjYuMTgxNjM2MjQ1ODQxNjIsMi41MDI2NzY5MzQxNTkxMDU3CjEwLEM1LFNpdGVfQixGZW1hbGUsMjUuNjk1NTk2OTcyNDI0ODQsNzMuOTIzMTE0NzM1MzIyNjYsMTAuMTI1MDUyMTM1MDkzNzk2LDEuNjM0MjAxMDQwMTc2MDUzNCw4My43ODI3ODIxNzM3MjM3OSwyLjY2MTUzODA4MTUxOTc3OTYKMTEsQzEsU2l0ZV9BLE1hbGUsMjQuMjk1NTUxMzk2NDI5Miw2OC40NzQyMzIyNzg1NjExOSw3LjQwMTI4OTUyNTU1MDI2MSwxLjE5NjQ5MzczNDMxNTkwOSw3MC42NjY2OTcxOTMxMzgxOSwxLjk5NzY1MTU3MjkyOTcyOAoxMixDMyxTaXRlX0IsRmVtYWxlLDI4LjIwODk0MTIyMjcyMTQ1LDY3Ljc1NzI0NjczMDQ1MDU3NSwxNi4yMjE3NzU4NDg2NjU5NTMsMS45MjgxNzAwMDQwMjk4MjE1LDUyLjQ0MzMxNzE5ODgzNTgzLDIuMjg3MTQ4NDE0MzcxNTQxNwoxMyxDMSxTaXRlX0MsRmVtYWxlLDIxLjQ3NzQ2NzgxMjE1MjA1LDY0LjU4OTU4NDQwNjYzMTg5LDE4LjI2ODQ2NzE2MDE5NjcwMywyLjE5MjU3MjUxNTc2NDYxMDMsNzMuMTQ3NzAzNTk3NDA1ODIsMy4yNTAyNjAyODAxODgwNzcKMTQsQzIsU2l0ZV9DLEZlbWFsZSwzNC42NzYxMzkzNDg0Mzk3Nyw4Ny41MjQyNDQ5MzE1NjYwNiwxMi43Nzg5MzU0NTgzMDY4MDgsMi4yNDY0MzEzMjA0MDUyMTczLDc5LjY2ODM1NTcyMjYzMjg4LDIuNTMwOTgxOTI4MDk0MTY4CjE1LEM2LFNpdGVfQyxNYWxlLDIwLjM0OTA5MjQwNDk2MzYyLDgzLjQzNjczOTY2MjYxNDc0LDEwLjc4MjI0MTkzNzM5NTEwNSwyLjAzNjM5NjA3MzE3NDMzNTQsODIuMTUxOTA2NDEyNDAzMDYsMy4xMzAxNjY5NDE2ODI1ODUyCjE2LEMyLFNpdGVfQixGZW1hbGUsMjIuMDg4Mzc2MTczMzc3NDk3LDcxLjYzMzQzNTc2NjM5MzYzLDguOTM2MTI3MjEwNzc5NzI1LDEuOTMyNjE4ODgwNTYwNTEzMSw2OC40NjMyNTg0NjkzODM2LDEuNjc4NTI3MzgyNjk5MjU5CjE3LEMxLFNpdGVfQSxNYWxlLDE5LjA0NTQxMzgwMDU5NTgzLDgxLjE3MTA1MzQ4MzExNjk0LDcuMDI1OTY2MjA3NzA0OTgsMS4xODg3Mjc2MTgzMTcwMjY4LDgzLjMzMjk4NTMxOTU0MzI1LDIuNjUxMjc4NjQ0NTgzNDIxOAoxOCxDNixTaXRlX0IsRmVtYWxlLDIzLjAwODE3NDcxMDI0MjE1LDYxLjgxNDY4NTg5NzYzOTA1LDQuNzk0NjM2NjEwODk1NDcyLDEuNDY0MzY3NTk1OTUwNjE4NCw3OS41MTY0NTU3Njk1NjEyNiwyLjU2NDY5MjMxMjMzNTgyOTYKMTksQzEsU2l0ZV9CLE1hbGUsMzEuMTExMDk2OTQ2MDk5MzM3LDU1LjcyNjI3NjYxNTAxNjQyLDMuODQ5NDg5NDU4OTY2MTU0NiwxLjI5NTcyOTIyNjU3MDI2NTYsODAuOTMzMzg5OTQzOTMzMSwyLjUxMTk3MDI5ODU4MTQ4OAoyMCxDMixTaXRlX0EsRmVtYWxlLDI0LjYxMTczODgwMjUzMjY1LDcxLjEwMzQ1NzI2MzQ2Mjc2LDUuNTQyMTk5MTA0Njg2OTkyLDEuMjI2OTI3MjQyMTU2MzI1LDc5LjkzNTgxODEwMDE0OTcyLDIuMDYyNjE1MTQ0MTQ0Mzc3NAoyMSxDMSxTaXRlX0IsRmVtYWxlLDI4LjQ0ODM2ODgwMzk4MjcxLDYyLjc4Mjg4Mjc5NzIyNDAyNiw1LjMwMzYwNzA4NjU2NjI4MywxLjM4NDAwMTA5MTA3NDc2Miw2OS45MDQwNzM0Nzg4NDkyMSwyLjA4MTc2ODgyNTk0ODg3MzYKMjIsQzEsU2l0ZV9CLE1hbGUsMzMuMjQ3NTkzNDcwNTY0Mjc2LDc4LjA2NTU4OTY4MDU1OTYsMTEuNzUwMjUyMzQ3MDk3Nzg4LDEuNTk2OTM1ODcwOTAzODczNyw3OS4zNDY3Mzg4NzAzOTk0NSwyLjU2MjEzNzI0MDQxMDQ1MjMKMjMsQzEsU2l0ZV9DLEZlbWFsZSwzNi42MzI1NTM5MDU2NTc2LDc2LjM3Nzk4MjQ0OTU1OTg1LDMuMDM2NTgwNjk4MzY3MzU4NCwxLjM1NzAxNTM2ODQwNDQ1MzcsODEuNDczMDQ2MjQ0NDA2NDUsMi4wNjEyNzUwNjQ4MDcyMjMzCjI0LEMxLFNpdGVfQixNYWxlLDMzLjU4NDc2NjYwMzUyOTI3NSw3Ni41NDY4MTA5OTAzMjYxNiw1LjEwMTY0ODM5ODkwOTYsMS44Njc2MTk4OTg2NjUxOTE1LDY4LjE4NzI1NjA5MzkzMTYsMi42MjQzMzA3MzE3NzY3NDc3CjI1LEM2LFNpdGVfQSxNYWxlLDIzLjYxOTcxMTY1NzU2MDI4OCw2OS42OTUyOTgwNDk4Nzg0OSwxNy42MjQyMDY4ODI2ODc0ODUsMy4zNjU4Njg5NDY2MjMzNTY1LDYzLjI2NTMwMjE2MTU2NzksLTAuODg4NTI4NTM0MTM3NDM4MwoyNixDMyxTaXRlX0EsRmVtYWxlLDIzLjk2MzA4OTY5NTM1NjE1Myw1Ny4wODE2OTU1ODEyNDY5NzYsMTMuNTEzNTYyMzA2MzA0MTc1LDEuMjUwMDkwMzE4MzkyNzYzNCw2OC4xOTgzMjg4NDc3NDk4NSwxLjg2Mjk5MDg2OTc5OTQzNjQKMjcsQzMsU2l0ZV9CLE1hbGUsMzMuOTg4ODQ4MzE1NzcwNDUsNzUuNTM2NjU4MDgxODM4OTUsMy42NTQxNzU0NDMwNDM1ODU4LDIuMjMzMjgwMzM1NDMxOTY0LDc0LjE1MTY1MDg0MjAzMDgzLDIuNjU3MTYyOTgwNjUxNjA3NQoyOCxDMSxTaXRlX0EsRmVtYWxlLDI0LjYzMDczMDgwOTAyMTE4OCw3OS44MTYzODA2MzQ4ODc0NSwxNS4wMDgxNzY5MTY3OTIzNzIsMi4zODA5NDIxMDcwNzgzNTQ3LDY4LjUyMDk2OTQ4MTc4NDIzLDIuMzA2OTI4NTcyNzEyMDg3NgoyOSxDMSxTaXRlX0EsRmVtYWxlLDM3LjY0MTI4NjY1MDAzODI2LDYwLjUxMjI3NTAyMzE2MTE3LDYuNDEyOTM2NzUwNDk3MTQ0LDUuMjcwNzg0NDUzMDM5OTI2LDgxLjUwNzk5NzkyNjQ5MDc5LC01LjE0MTc3NzUzOTQ2MzYyNwozMCxDMSxTaXRlX0MsRmVtYWxlLDI2LjcwOTcxNjA1NDU3ODQxNSw3NS41NjgxMjAyNzQzOTIyMSw1LjQ5Mzk1NTY3MzcyNTEyNywyLjA3NzI3OTIxNTQ0NzAwMTQsNTMuMjkyODQ3MTE0NDg0MTc1LDEuOTk1NTAxNjMzNTY2MTU2OAozMSxDMixTaXRlX0IsRmVtYWxlLDI5Ljk5NjQxMjI5NTAyOTIsNzUuOTUwODc0NDYzMTk0ODEsMTUuNTM5NjgwOTE1ODU0NDEyLDEuODUxNTM4MjYxMzU3OTc3Niw3My45NDg5NTUwMTYwMDgxNCwyLjc3NTg4MzA1MDM2MjIxOTYKMzIsQzEsU2l0ZV9BLE1hbGUsMzkuMjA4NTc3NTQxNzMwOTI1LDY5LjU5MDA2NzA0MjUwNDEsOC44ODAxMDczNTA5Mzg4MjQsMS45MzY5MjY3MzUyMzU1MTkzLDg1LjMxNzEwMTY0OTM2NTc4LDEuOTAzODk2NTQ3NzQzNTc3NgozMyxDMSxTaXRlX0IsTWFsZSwyMS40NDEwMjI4MTI5NTk4MjIsNjQuMjE1NDgyNzgyNjYxMTEsOS4xMDc1ODMyNTA4MTg5MDMsMS40NTYwNDIwMDIyMjMxNDc1LDc2LjY1Nzc3NzE4NzM3MzM2LDEuNjk3NDYzOTc2NjYxNjk5NwozNCxDMSxTaXRlX0EsRmVtYWxlLDE4LjE1ODQ3MzkzMTY3NDgsNzAuMTY0NDU4NTAxNDQ2NjksOS40ODk1NjM0MDk1NzIyOSwxLjY4OTI0OTgxNTc1OTU0Nyw2NS41Njc3NDc0NDQ3ODM5OSwzLjY0ODMxNjI4NTk0MzAyMDcKMzUsQzQsU2l0ZV9BLE1hbGUsMzUuNDYwOTc4ODc5MDk4MzMsNjMuNTkxNzgwMDcwNDkwNjksMjMuNjAwOTg4OTM1NDE1MzYsMS42OTM1MzM0ODYyMzA0MzIsNjguMjc0ODk1NTE3ODM2NjUsMi4xNDE0NjAzNDg5MzE4Mzg1CjM2LEMxLFNpdGVfQixNYWxlLDE3LjI4NTQ3ODExMjkyMzk5Myw2OC42NjE3NzAzNTY5NDkwNiwxNC41ODAyNjI0NTA3NzUzNzQsMS40ODA0ODA2MjkyNzYzMjE1LDgwLjE1ODE0NjQ1MzM0NTM0LDIuMjk0MTQ2MjMzNDAwOTQ4CjM3LEMxLFNpdGVfQixGZW1hbGUsMjYuNzYwODc1NjU4OTEzMzE0LDYzLjg5Mjc5MDgxNzc2NTQxNiwzNC4xMTQ0MzQ1NjU0NTgxNTQsMi4zMDE5ODM1MzA2MjkyNjc1LDcyLjY5MDA2MzcwMjE5ODcxLDIuODkxNjYxMzg0Nzg3MTg1MwozOCxDMyxTaXRlX0IsTWFsZSwzNS42NzY2Mzg2NDgwMDk0NjUsNjkuNjM2MjMxNjk2MjQ3NDYsMTIuNzc0NjEyNDE1MzQ5OCwxLjU0MTE4NTc3MDM0NTA4MjQsNjkuNzI3ODg1MTY5MDk3MTUsMS45MjI5MzA3OTczMTc2MTUKMzksQzMsU2l0ZV9DLEZlbWFsZSwyNi4yNDE2MDk3NjE2NTczNzYsNzQuNDc0OTMwMTQxMTcxMDQsMjIuNTk2NTE3OTk4OTc3OCwyLjA2MzA2MDM2MzQ4ODU2Niw2OS43NDcwODc5MTk4ODU0MiwyLjM3OTgwNTQwMDU3MDU2Nwo0MCxDMSxTaXRlX0EsRmVtYWxlLDMyLjA0NDcxODY1OTk0MzY3LDc4LjQ2NTYzMTg2NTk1MTksNy42Nzg1MjM5MzYzOTU1MDIsMS41MjEwODY5ODE3NTYxMTM3LDYxLjE4MzMyMDk1MjE3NTIxNSwyLjE3MTEzNDAxMzM2MzM5NDMKNDEsQzMsU2l0ZV9CLE1hbGUsMjMuNjg3NzYyODgyMDc0NjgsNjYuMTI0ODc5OTUzNTcwNDgsNS44MjgyMjA4NDkzNzI2OTQsMS41MTAzMDMwNDkwOTA5Njg4LDc0LjI1MjAxMDI1NTk2MDc4LDIuNDA0OTg0MjM2MjE4NzM5NQo0MixDMixTaXRlX0IsTWFsZSwzMS40MzI5ODE3MTk1NTY0Myw2Ny4xNjcxNDg3MDUxNjYsMjMuMTAxOTcwNDIyNTU3NTMsMS43MjU2Njk0MTcwODcxNDY1LDczLjg1ODE4MDY2MzYwMTcsMy45NjQwNTA5MjYxNjkwMTEKNDMsQzUsU2l0ZV9BLE1hbGUsMzguMTY0NTI4ODA0MzM3NjM1LDk0LjA5MzcwMjM0NTg4MzksMTAuNzEzNjEwNjQ4NjMyODgyLDIuMTI1OTI3Mjk1MzM2MzY2NCw4MC40NTM0NDM0NzE0MDMsNC41NTYwNzQyOTIwMzY0ODgKNDQsQzIsU2l0ZV9DLE1hbGUsMjguNTUyMDk2Nzk3OTM4MzUsNjguNzk2ODU5NjE3MTA5MjYsNS41MjQzOTgzMTAzNjQyMjMsMS42MjUxOTM3MzAwMzkwMDI1LDc0LjEyNzk0MjAwMDk3OTc0LDIuMjAxNTkwODkxNTA1NzI4Mwo0NSxDMSxTaXRlX0EsRmVtYWxlLDI1LjM4ODYwODM5NDI5MDQwOCw2OC4wNDI5NzE5MzY0Mjg4LDIuMzk4MDI2OTM2NzcxNjczMywwLjkyNzYwNTA0MDg0ODkwMzgsNzEuNDQ1OTI2MTU3NzEzNzQsMi43MjY4MTE0NTE5MDAzOQo0NixDNixTaXRlX0MsRmVtYWxlLDI5LjI0MTYyMzU2NTMyMjM3LDc4LjUxNjc2NzY1NzM1MjQzLDEwLjE1NzM3NjY5NTQ5NDQ4NCwyLjE1MDY4ODUzOTcxNDMwOTQsODguMjM4NTExMDgxNjc3OCwyLjk2MDIzMzYxODkyODM2MTYKNDcsQzIsU2l0ZV9DLEZlbWFsZSwyMC40MzYwNTAwMzQ0ODM2NTcsOTAuNTQ4NjA2MTc4OTUxOCw4LjQ3NjcxMTI2MDkwMjUxMiwyLjA4NzYyMDM4OTE3ODIxNzUsODYuODE2ODcwMjIxNDI1NzIsMi42MjEyOTY0NDI1MzU4MTgKNDgsQzEsU2l0ZV9BLE1hbGUsMzYuNDA2MzI5MTUwNzkzODcsNzcuMjU1MjcwNzgzMzQ5NCwyMS42MjY4NjY3MDcxNzk4MSwxLjY5NTc5MDI3MzkxOTc4NTcsODUuNTYzNTU4NjA4MDkwMTMsMi4zNTc4MDEwMTY5MDIyMjU3CjQ5LEM1LFNpdGVfQyxGZW1hbGUsMjguMTUxODk5MDU2NDE4MTE3LDYwLjczNDUwMDk3NzEwMDM0LDYuODg4NDkzMjY1NzY3MzY1LDEuMDAxODY5MjQzNjU4MzkxMSw3OC4xODk5OTkwNjEzMzAzMSwyLjE4MjMyODc0Nzg3OTA0NTQKNTAsQzYsU2l0ZV9BLEZlbWFsZSw2LjUyNjU4NTYxODA3NzI1Miw3Mi45Mjk2NDE0OTczMjk3MSwxNS4zNjg3NTQ0ODE1MTQwMTQsMS42NzQyMjc3MDUzMjI1NjU0LDYyLjQ1OTk1MTAxOTU5MDA2NSwyLjc0MDIzMTQ5NTU2OTgxMDYKNTEsQzMsU2l0ZV9BLEZlbWFsZSwyNC45MTU0OTgxOTQzMTEwNTYsNzYuMTUxNTM5OTcwNTUzMzMsNy4zMTA3MzAxMTgzNDI5NTUsMS44OTE2NTQ5NTU4NjUwMTg0LDcwLjEyMzA5MjM4MDA3ODM1LDIuMTIyMTQ5NjE2NzE2NjE1CjUyLEMyLFNpdGVfQSxGZW1hbGUsMjkuMTg3OTQ2MjgzMjk0NTM2LDY1LjI1NjA2OTUxNDQ0MDExLDguMTYxMDEzNzM4MjkzNTM5LDEuNzYzMjU5MzAxMzQxMjY4Myw3NC42MjM5NTYwNzQ2MjE3NiwyLjUxNDA0MjEyNzI0Nzc0NTYKNTMsQzUsU2l0ZV9CLEZlbWFsZSwyNy40NDAzOTczNDgzNjk1OTcsODEuNDQ5ODQ2Nzk3ODQwMTIsMTQuNTAwMjU4MDUzOTg1NCwyLjU2NjI0MjY1MTM4ODk2MjIsNzEuNDI1MDI2MTMyNTIyNTUsMS44NTEzNTY4NjU4OTI0NDQ0CjU0LEMzLFNpdGVfQixNYWxlLDI5LjMzODY1ODE0OTc4MjM5LDc4LjIwNDMzNzM2Mjc1Nzg4LDcuODU5ODM0Njk5MTQ0NzQ5LDEuMzcyMjg0MjEyNjYzOTM1Niw4My42Nzc0NjE2NDI2Nzk2MiwyLjQ1MTUwNjM4OTA0NjA1CjU1LEM0LFNpdGVfQSxNYWxlLDEwLjI5ODM1NDUxNTE3OTY1Miw2MS40OTI2MjUwNjU4MjMwMyw1LjA2MDQ3NjkwNDM4NTg1LDAuNjU2MTIwMDIxODczNTA4OSw2OC4xODk0NTEzNTUzMzkyLDEuNzk1MTA4MTE0MDY2NzE2NAo1NixDMixTaXRlX0MsTWFsZSwyMS4wNzQ2MDM1NDMzNDU2ODgsODIuMzI5NzU5ODYyNDYyMTEsMTAuNzQ4ODQyMTkwODgyODU4LDEuNzgyNzYzNDkxMTUxNTMxLDg1LjM3ODc4NTMwMTEwNzE3LDMuMDk1NTk1MDAyODYxNTA5Ngo1NyxDMSxTaXRlX0IsTWFsZSwzMy42OTk2ODMzMTk5NDg5NzQsNjIuODE1MDM3NzIxODI4NTQ2LDEzLjA0MDg3MzE5NzE1NjgyMiwxLjg3NTM4MzM3MzExNTcyOCw3Ni4yMDg4MDg3Nzc5NTU0LDMuMDUzNTUyNzc5ODI3MzE5CjU4LEMxLFNpdGVfQyxGZW1hbGUsMjAuNjMzNTQ4NzI2MTQ0NjUzLDg0LjAxNDgxOTE4ODk1NzY5LDUuMzgwMTM4NDkzODM0OTM3LDEuODA4ODE4OTYyNTE4MSw3MC4yMjIyODE0MDY5MDc0OCwxLjkyNzU5NTMyODc2Mjc2MDMKNTksQzEsU2l0ZV9BLEZlbWFsZSwyMy4yNTU0MzMwMzA4MTE3NSw3OC4zMTcyMjgwNTYzODg3NiwxMi40OTI4ODgxNTgxNTI0NDUsMS43NTc1NTMxODA3MzMwNTY5LDc1LjA0ODcyMDg4MDY5MTU5LDIuNDIzNDQyODM5NjIwNzgxCjYwLEMxLFNpdGVfQSxGZW1hbGUsMjIuMTA4MTc3NTczNDMxMTQsODEuMzQ0MTQ1NDg3MDg0NzIsNC4zNzg4NjYxMTA1MjkwNzEsMS43MTUxMTM5NzQwODA4NTgsNzQuNjA2NzM3OTQzNTU0NTYsMi41NjMxMDEwNDc3MjczMDQ0CjYxLEMxLFNpdGVfQSxNYWxlLDMxLjQ5NzU4ODYzMDg0NTc5Nyw4MS4wMjc4MzU3ODYyMTM3MywzNC4yMTgwNTYzMzI4NjQzNSwyLjM5MTgxOTYwOTg5NTAxNTMsNzQuMjYzODQwNzI3NTYxNTYsMi4wODA5ODk3MjcyMjE2MjIKNjIsQzIsU2l0ZV9CLE1hbGUsMjUuODM4NzE5MTQ2MTQ1OTksNzUuMDg1MDk4ODMxODAyODQsNy43NTUyOTQ5MTcyMDA4NTIsMi4wOTkxOTc0NzIwNDA4NzYsNzEuODcwNzEzNjQ3NTU1MTksMi41MDM4MDY0NTQ4MzE3MjUKNjMsQzMsU2l0ZV9CLE1hbGUsMzYuMDIzMTMzMTUwNzA3MDc1LDY3LjI4NTMwOTkzNTQ3NDkxLDguOTQzODY1MDI2NTEwNTc2LDEuODIwMjgwNDI1OTY4OTcyLDY4LjA0NzU0MzUzOTc1MDA1LDEuODQyNjUxOTgyNDYyMTAzNwo2NCxDMSxTaXRlX0MsRmVtYWxlLDE2Ljg0ODA4MTU0NzE5MDI0LDczLjgwMTg0OTYzMjIyMTU2LDE0LjgxODI2NTA3NDk0MjUsMS44MTc1OTUzOTg4MDExMjMsNzUuNTAwNTI0NDMwNjE5MSwyLjYwMjEwMjYwNjU5NjI3Ngo2NSxDMSxTaXRlX0IsRmVtYWxlLDIyLjY4OTg1MTU1Nzg3NTgzNyw3Mi45MDE2NTQyNTcxMDA5Nyw3Ljc5NDAyNDg3NTI3OTYzNywxLjY1MTEyMTk3Mzg5NTEyOSw3Mi42MzE0MTg4MzI3MTk0MiwyLjk4NjY2MzY5OTEwOTU4CjY2LEMzLFNpdGVfQyxGZW1hbGUsMjIuODg2MjAwOTQzNjg0OTIsNzguNDgzOTMyMDE3NTU5NDEsMy40NzQ2NTM1Mzc0ODk3OCwwLjk5Nzk2NDkzMzc0OTUwOTIsNTkuMjc3ODc3ODQ5Njg4MDQsMy4yOTE0NzkzNTU1MDUzNDg1CjY3LEMxLFNpdGVfQyxGZW1hbGUsMzAuMDQ4OTM5MDM0MjgyMTEsNjkuMDkyMTkyMDQyMjE3NzksMi45MDM1MTA0NDE2NTA3MjAzLDEuOTAzNzA3OTEyMDA2NDYzMyw4MC40Mjk0MTYyNDE4ODcxMSwxLjg0OTE2MjI5NDkxNDk1MjQKNjgsQzEsU2l0ZV9BLE1hbGUsMzYuOTkzMzA4NTU3MjI2Miw3MC40ODU0OTQ4ODE0MDUzNywyMi4yNDU0MzUyMTgxNDgzNzYsMi4wNDYyMDcxNDQ0MDY5MDIsNjguMDUzMTEwMTgwNjE2NjEsMi4yMjYzMjkzOTkxOTAyMTIyCjY5LEMzLFNpdGVfQyxNYWxlLDMxLjI5NDY5OTc1NzU2MjA1Nyw4Mi44MDAxODkxNTAwMDYzNSwzNC4yOTYxNzIyOTMxNzQzNywyLjE3NjQzNDgyMzYyNTM3MDYsNzQuMTAzNjEzMDk0MDU5NjUsOC4wMjU5OTcyNTgxMTAzNgo3MCxDNSxTaXRlX0IsTWFsZSwzOS4wODkzMTA0NDM4MTI2NCw3MC4wOTgwODMwNTY5ODg0OSw0LjI2OTg1MDY1MDg4MDkzMywxLjM1MDgxMzM4NzE4OTA4MzUsODEuMjE0NDM1MDkyOTQ1NjgsMS42MzM2MzU4MTMzOTI1NzU3CjcxLEMxLFNpdGVfQyxGZW1hbGUsMzYuOTM3MDAyNTE4OTAxMDc1LDY0LjMzNTA1MDk5NzYyODgzLDcuMDYwNDM4OTQzNDIzMjM2LDEuNzQ5NDQ5OTA4NjMzODcyLDY4LjQ4NDkwOTkwMTg4Nzc4LDIuNDcyNTM2MzgzMzUyNDI0Mwo3MixDNCxTaXRlX0EsRmVtYWxlLDQxLjczODMzMTY2MjU4OTM4LDcwLjMwOTI3MTcwMTM0NDYzLDEyLjAwMDMyNzc0MDY0ODQzNSwxLjcxNTM2OTA0NjQyMzEyMjQsODEuMDU1NDIwOTkyMzQyNDYsMS43Mzk5MTI5Nzg4OTI4MDY3CjczLEMyLFNpdGVfQyxNYWxlLDEzLjMzMzQxMjc2ODE5ODYzNiw3Ni40NjU0NDAzMDE3NDEzNSwxMy4xOTc2NjcyMDc0NTAwNjMsMS42Nzc2Mzk0ODg1NzI0MTY0LDcxLjU0OTI3MDcyMzQ2NzY0LDIuNTA3MDQ3NjkyMTgxNzMxNQo3NCxDMyxTaXRlX0EsTWFsZSwzNS4wMTE5NDQzMDczNzE4NSw3Ni40MDkzNDA3NzEwMDMsMTAuMTM1MzIyODIxODY1MDM3LDEuNzUwNjI0NTcyMzg1MjQxLDcwLjcxOTY3OTgzMjEzNDI5LDQuNzMwNzUxNTQwNzUyNDM0Cjc1LEMyLFNpdGVfQSxGZW1hbGUsMjAuNTYxOTk1MDkxNTgxNzg1LDc3Ljg0NDUxNDk4MjE2MDMsMTAuOTAzMjU0MjA0NjEwNjIsMi4xMjYzMjI2NzQ0MDMzMTg2LDY1LjY5MDI3NDc0ODM3Njc1LDMuOTYxNzk2NzY2MzI3NzA1Cjc2LEMxLFNpdGVfQyxNYWxlLDI2LjU3NDIxMTM0MzgzODM1Nyw2My4zNDE5MDk0NzA5MTExMyw4LjUzMTY5OTUxMjU4MzQyNiwxLjE2NjI3NjUwMDcwMjYzNyw2MS45OTk2MjMyODEwMTMzMTQsMS44MTU4NTYxNDgxODQzNDEKNzcsQzEsU2l0ZV9CLE1hbGUsMTkuNzIwMDQ4MDIxODQzNjgsNzMuMzA1OTQ3ODMwNzEyNDYsNC44MDU4MzkwMDE1MDA0MDgsMS43NzQ0NTY1ODgyMDM5NTksNzcuODkzOTI3NjM1Mjc0ODQsMi40NTI2MjM4NjU5OTQ1OQo3OCxDMSxTaXRlX0EsRmVtYWxlLDM2LjEwODA4ODg5NzEyNzE3LDY2Ljk3NDQ5MDkyMDU5NzQ3NSwxNy45MDE5NTQyNzc3MzI1NzUsMS40NzM3MTY3MDA5NjM5NjEsNTkuNDMxOTEwNDkwODQzNzMsNC4wNTA5NzM1OTEzODY5NDIKNzksQzEsU2l0ZV9CLEZlbWFsZSwyOS43MTMwMTE3ODQyNjIyMSw3Ny44NDIxNjg1OTcxNDIwNSwzLjk5MTc5NjAwNjg4OTc4NCwxLjU0Mzc5MTQxMjczOTUxMDcsNjguNzEwODMwNjE2MzAyOTEsNC4yMjU5NDg5MTA5MjkzODIKODAsQzUsU2l0ZV9BLEZlbWFsZSwzNS40OTg0ODQzMDc1MTY3OSw4NS4yNDk0MzY0Nzc3NTgxOCwxNC45MTEzODI3NjgyNTczNTQsMi4xMjcyMzAxMDA2ODAyOTgzLDgzLjUxNDQ4NTAxODEzODIzLDIuNjU4MDk4NDAyMzQ5NDcKODEsQzEsU2l0ZV9DLE1hbGUsMzUuMzU1MzYzMzU2NjQ3NzE1LDczLjg5NDE0MDY2Njg5MjA4LDEwLjg5NDQwOTk0NjEyMjU3NSwxLjYyNDMxOTEzNjU5NjQ1MDIsODMuNDk3Mzc1MTAzMjEwOTcsMS45MTg0ODkxNjA3OTY5OTg1CjgyLEMxLFNpdGVfQSxGZW1hbGUsMjUuNjA5NzI1MTI0MTMxOTk1LDc1LjM4MDcwMTQ4MTcxNjM5LDIuNzEwNDIzNjM4NzUxMTM5LDEuNTMzNjkzMDg4MTk3MzUwNSw3Mi41MzY0OTg4NjQ0OTQyMiwyLjU2ODM4MDkwMDc0MzM2NjQKODMsQzYsU2l0ZV9DLE1hbGUsMzkuMDU4MDQ4OTQ1MDE2OTYsNzcuOTk3NjYzMzc2MDc0OTEsMTIuOTgzNjY0NDE1NDM2NCwxLjczNTAyNTM2NDI3MDcxMzYsNzEuOTAzNjA3NzAwMTAwMTQsMS44MjMzMTgwMzEyOTQyOTM2Cjg0LEMxLFNpdGVfQyxGZW1hbGUsMjMuMjIyOTYxMzkyNzQ5MzgzLDc0LjczMDAzMzI0MzI3MTE4LDE4LjI5OTUzMTkzMTEzMjU4OCwyLjA4NTE0Njg3MzI1MzA0Nyw2OC4yMTk4NDg4MDE5NzcxNiwyLjQ5MDAyODE5OTA5NDM0MzQKODUsQzYsU2l0ZV9BLEZlbWFsZSwyOS40MTAwOTU3NDY0NjA4NDcsNzYuMTU2MzA5ODQ4ODI1NTMsMjAuNzg1NzI4MDIzNzI0MjY4LDEuODkwOTczMzUzOTIwNjQsNzUuNDE1MDc3ODU2OTA5NTUsMy44NDc0NzA3MDcxNzM0NjU1Cjg2LEM1LFNpdGVfQyxGZW1hbGUsMzEuNzIwMTkwNjI5OTcxNjI2LDgxLjIyNzAyOTU1NjQ2MDMyLDguNjY5NzQzMTI5NjgxOTgsMS4yNzY0OTEzMzIxOTI0NjksNjUuMjAyNzM1ODM5Nzk4NTgsMi43NzA1MzEyMzM5MzI4MDgzCjg3LEMxLFNpdGVfQixNYWxlLDE4LjIyNDE5MTU1NDg3MzkzLDgwLjIwMjkwNjc2MzQxNjQ0LDEzLjMyNDA5MDI0NDM0OTM1MSwxLjk5NjE0MDYzNjQ5Mjc4ODUsNjQuOTI4NzY0MDg5NTAyODgsMi43MDI5NjE0ODE0NjE2OTkKODgsQzIsU2l0ZV9DLE1hbGUsMTkuMjMwMjY3OTE0Mzg5NDA4LDczLjY2ODI1MjIxMzgxMzA1LDIuNjkyOTQ1ODYxMDU0NjkzMiwxLjc5NzgyMDAxOTQ5Mjk3MDMsNjYuNTc4MDcwMzYwMzUxNSwxLjkyMzg1ODQ0NDEyMTY2MjgKODksQzMsU2l0ZV9BLE1hbGUsMzQuMjcyOTMyODM4MzY2MjEsNjMuNDAwMDkzNzIzNjA2MTgsMTEuNTQ3Nzg2NjgyMjM5NzI2LDIuMDExODA4MDc4MjQ4MTk5Nyw2Ny45NzI2ODA0NzkyMTI5OCwyLjEzMjMxMTI5NTExMTY2NTQKOTAsQzEsU2l0ZV9BLE1hbGUsMTUuNzk0Njc5ODczMDc0MzU2LDg5Ljc2NjgxMzk1NDU0MDk2LDExLjA3MDA3NjYzODk5MDIxNCwyLjI1NzUxMDAyOTQwNjMwNyw3NC44MDc2OTg5NDY5ODExMiwzLjkyNjYxNzc2NTE3NDMyNwo5MSxDMyxTaXRlX0MsTWFsZSwyMC44OTcxNjMwMzE2NTI4NCw3MS42ODQ2NjA3ODc0OTQ1NSwzMS43NDAxMzQxNjkwMTg3NzMsMS44OTI1MDIzNDU1MDA3ODE3LDcyLjEyNTg1MDg0MzAxNzI1LDEuODU4Njk0OTUwNzM0ODYzNgo5MixDMixTaXRlX0MsRmVtYWxlLDM4Ljg0ODAwNTQ1ODUzMzI0LDgyLjAyNDc3MTg0MzA0NDksMTEuNjk0MzE5NjMwNDUyMjY4LDEuNzA0NDA4NDg3NjY4MjQzMyw2OC45Nzg0NjE3NTAzNDc3OSwyLjUwNzM1NjE1OTMwMDM2NDYKOTMsQzMsU2l0ZV9CLE1hbGUsMjcuNDI4MTA1MTIzMDY5MjY1LDc2LjQ4NzMzMjUwNDY4OTE1LDI5LjEyMDU5MDA4NjU5MjQ0LDIuMTYyMDQyMjM1NDUwOTQ0LDc2LjA1OTYxNjQ5NTA1NDMsMi42ODM5MzE3MzgxNjY5MzY4Cjk0LEMxLFNpdGVfQSxGZW1hbGUsMzUuNDkxNDcwMDg4NTM3Mjg0LDU5LjQ2Mzk1ODQzOTc4MzUzLDIwLjIwNTYxMTEyMTc2MjIxNywxLjY0MDAzNzU4OTU1NDg2Miw1Ni43MzMwNDEwNjc1NzkyMTUsMS45MjMyMjI1NzU4OTA3MjQKOTUsQzIsU2l0ZV9CLE1hbGUsMzIuMDIwNDkxMTA1MTMyMjY1LDc2LjIwNjM3MDEwNTQxMDEyLDExLjIwMjAzODQ3NzM5MTA2NCwxLjQ1MDMxNDM4MjQ1OTE0MTYsNzUuMTM0ODMyNTk2NTAwMjUsMi40ODkyNDk2NjcyOTI5MjUKOTYsQzEsU2l0ZV9CLEZlbWFsZSw0NC41MDk1MDc1NzI1MTMxNiw2Ny4wNzY2NzI3MzM4NDQ3OSw3Ljg4Njg0MjYzMDk1NDgxMywxLjUzMTgwODgyODg3MDg5MzgsNzguMDc4ODI4MDAxNzcxNjcsMS44NzM2MjEzODgyNzIyNDYKOTcsQzUsU2l0ZV9BLEZlbWFsZSw0Ny40NjUxNzY2NjgwOTAxNSw3Ni44MTI1ODEzMjk0MzQxLDE1LjgyOTU2NDgyNTY1NTAyNSwxLjY3NzMyMzQzNjIyNTk4MzcsNTguMDM5MDI0OTYxMzUxNjg2LDIuODk5ODU4NzI3MDA1NDQ2Cjk4LEMyLFNpdGVfQSxNYWxlLDMyLjE2NTgzMDE3MTQ3NTYzLDcxLjMzMDcyNTQzNjk2MTgxLDUuNjgxNzAwNjQ1NDg3NjE3LDEuNzI1MDQ4MDQ1MDQzMzA1Nyw3OC4yNzYyNDQ3MTYyODY2LDMuNDA3Mzg3Mzk1MTcxNjU1Cjk5LEMxLFNpdGVfQSxGZW1hbGUsNDEuOTU4Nzk2NzYwNTA0MDYsNjMuMTE1OTgyNzUyNjYwODEsMTIuNDEyMzM2MjI2OTYyMDA1LDEuMjc3ODM4NDcxMzU5NTc0Myw3NS41MTE3NzkyNjU1NTE1OCwxLjkwMTczODE4NDY5MDE3MQoxMDAsQzEsU2l0ZV9BLEZlbWFsZSwzMy43MTg0MjEwMDkwNTEzMDUsNjMuMjU5OTYyNTU2ODMzMjIsMzguNDc2OTU3MDIyNjIyOTcsMi4wNzU2Mzg4MTQ3MDE1MjcyLDY5LjIxNjg1Nzg1NzcyMjYyLDIuNjU3ODk4NzQ3OTE5Mzc5Cg==');
+        if (!response.ok) throw new Error('Network response failed');
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = 'Treatment data.csv';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.dispatchEvent(new MouseEvent('click'));
+        document.body.removeChild(a);
+        setTimeout(() => {
+          window.URL.revokeObjectURL(blobUrl);
+        }, 100);
+        return false;
+      } catch (error) {
+        console.error('Download failed:', error);
+        alert('Download failed. Please try again.');
+      }
+    }
+    downloadFile(event);
+  " has_icon="TRUE"><i class="fa fa-save"></i> Download treatment data</button>
+</div>
+</div>
+</div>
+<p><br></p>
+<ul>
+<li>This dummy dataset records the outcome of five different treatments:
+<ul>
+<li>C2: cardioselective <span class="math inline">\(\beta\)</span>-blockers,</li>
+<li>C3: non-selective <span class="math inline">\(\beta\)</span>-blockers,</li>
+<li>C4: targeted monoclonal antibody treatment,</li>
+<li>C5: non-invasive Vagus nerve stimulation,</li>
+<li>C6: anti-inflammatory (cox-2 inhibitor)) compared to a control condition (C1) in n=100 participants.</li>
+</ul></li>
+</ul>
+<p>Participants’ age (<code>age</code>) and sex (<code>sex</code>) were recorded during enrollment across three sites (<code>site</code>): “A”, “B” and “C”. Prior to the trial, participants’ concentration levels of blood catecholamines (<code>biomarker</code>) were measured. Each participant’s average heart-rate was recorded prior to receiving a double-blinded treatment in the <code>baseline</code> condition and then following the treatment (<code>treatment</code>). Cytokine reactivity (<code>immune_level</code>) and the participant’s perceived stress (<code>stress_level</code>) were recorded.</p>
+<ul>
+<li>Click the button below to determine your role for the first dataset:</li>
+</ul>
+<p><br></p>
+<div class="text-center">
+<div class="cell">
+<div class="sourceCode cell-code hidden" id="cb5" data-startfrom="332" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 331;"><span id="cb5-332"><a href="#cb5-332" aria-hidden="true" tabindex="-1"></a>viewof run1 <span class="op">=</span> {</span>
+<span id="cb5-333"><a href="#cb5-333" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> button <span class="op">=</span> <span class="fu">html</span><span class="vs">`&lt;button style="background-color: white; color: black;"&gt;Find role&lt;/button&gt;`</span><span class="op">;</span></span>
+<span id="cb5-334"><a href="#cb5-334" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> clickCount <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-335"><a href="#cb5-335" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-336"><a href="#cb5-336" aria-hidden="true" tabindex="-1"></a>  button<span class="op">.</span><span class="at">onclick</span> <span class="op">=</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb5-337"><a href="#cb5-337" aria-hidden="true" tabindex="-1"></a>    clickCount<span class="op">++;</span></span>
+<span id="cb5-338"><a href="#cb5-338" aria-hidden="true" tabindex="-1"></a>    button<span class="op">.</span><span class="at">value</span> <span class="op">=</span> clickCount<span class="op">;</span></span>
+<span id="cb5-339"><a href="#cb5-339" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-340"><a href="#cb5-340" aria-hidden="true" tabindex="-1"></a>    <span class="pp">setTimeout</span>(() <span class="kw">=&gt;</span> {</span>
+<span id="cb5-341"><a href="#cb5-341" aria-hidden="true" tabindex="-1"></a>      button<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">backgroundColor</span> <span class="op">=</span> <span class="st">'red'</span><span class="op">;</span></span>
+<span id="cb5-342"><a href="#cb5-342" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span> <span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb5-343"><a href="#cb5-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-344"><a href="#cb5-344" aria-hidden="true" tabindex="-1"></a>    button<span class="op">.</span><span class="fu">dispatchEvent</span>(<span class="kw">new</span> <span class="bu">CustomEvent</span>(<span class="st">'input'</span>))<span class="op">;</span></span>
+<span id="cb5-345"><a href="#cb5-345" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb5-346"><a href="#cb5-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-347"><a href="#cb5-347" aria-hidden="true" tabindex="-1"></a>  button<span class="op">.</span><span class="at">value</span> <span class="op">=</span> clickCount<span class="op">;</span> </span>
+<span id="cb5-348"><a href="#cb5-348" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> button<span class="op">;</span></span>
+<span id="cb5-349"><a href="#cb5-349" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell" data-input="run1">
+<div>
+<div id="webr-1" class="exercise-cell">
+
+</div>
+<script type="webr-1-contents">
+eyJhdHRyIjp7ImVjaG8iOmZhbHNlLCJlZGl0IjpmYWxzZSwiZXZhbCI6dHJ1ZSwiaW5wdXQiOlsicnVuMSJdfSwiY29kZSI6IlxuXG5pZiAocnVuMSA+PSAxKSB7XG4gIGNhdChzYW1wbGUoYyhcIlAtaGFja2VyXCIsIFwiSG9uZXN0IGFuYWx5c3RcIiksIDEpKVxufSJ9
+</script>
+</div>
+</div>
+</div>
+<p><br></p>
+<p>If you are a <em>p-hacker</em>, consider doing the following:</p>
+<ul>
+<li>Transform and/or discretize your variables until the desired result is achieved</li>
+<li>Eliminate outliers using different techniques or thresholds</li>
+<li>Test any and all combination of variables: include or withhold different dependent variables, test multiple outcome variables and add/remove covariates</li>
+<li>Try subsetting your data for separate subgroup analyses (e.g., analyzing only one Site or one Sex), as well as testing models with and without explicit interaction terms.</li>
+<li>If running an ANOVA, debate different post hoc correction methods and rationalize which one to use based on your findings</li>
+<li>Decide on what your initial hypotheses are after knowing the data. Consider selectively reporting the variables that support your narrative rather than the trivia of reporting everything you tried</li>
+<li>Prepare persuasive figures to illustrate your results, with a focus on showcasing your significant findings rather than any effect sizes</li>
+</ul>
+<p>If you are an <em>honest data analyst</em>, consider doing the following:</p>
+<ul>
+<li>Prestate your hypothesis/es based on any a priori knowledge</li>
+<li>Preregister your analysis plan(s): which variables will you require to test your hypotheses? Which statistical analyses will you perform?</li>
+<li>Do not perform any unnecessary data transformations/discretizations without good reason</li>
+<li>Report all analyses you performed, irrespective of whether the results are significant or not</li>
+<li>Report effect sizes where possible that reflect uncertainty in the estimate (i.e.&nbsp;using bootstrapped confidence intervals)</li>
+<li>Provide informative visualizations that highlight your findings</li>
+</ul>
+<p><em>For either role</em>, prepare a short Quarto report to showcase your findings.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Presenting your findings
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When you present your findings to the rest of the group, it shouldn’t be obvious which role you played. Explicitly questionable data analysis does not publish and could even result in retraction. You should treat others in the session as potential reviewers and should be prepared to review your peers’ findings too.</p>
+</div>
+</div>
+<ol start="6" type="1">
+<li>In this neuroimaging study, a preliminary 60 participants were collected. Here are their data:</li>
+</ol>
+<p><br></p>
+<div class="text-center">
+<div class="cell">
+<div class="cell-output-display">
+<button class="btn btn-default" onclick="
+    async function downloadFile(event) {
+      event.preventDefault();
+      try {
+        const response = await fetch('data:text/csv;base64,aWQsZGlhZ25vc2lzLHNpdGUsc2V4LGFnZSxtb3Rpb24sRkFfdW5jaW5hdGVfTCxGQV91bmNpbmF0ZV9SLEZBX3NsZl9MLEZBX3NsZl9SLEZBX2Npbmd1bHVtLEZDX2Zyb250b3BhcmlldGFsLEZDX0RNTixGQ19zYWxpZW5jZSxleGVjX3Njb3JlLHdvcmtpbmdfbWVtb3J5LGF0dGVudGlvbl9zY29yZQoxLEFTRCxTY2FubmVyX0IsRmVtYWxlLDExLjIyMTQ5MDA5ODk4NTExOCwwLjA4NjY2MjEyMDU4Mjk0NTIsMC4xMDE1MTI0MDU0NDE0MzY5NiwwLjEyNTg3OTkxMzgyMzEwMzQzLDAuMTEyMzcyMTE0NTkwMjE1MDgsMC4yMDA3ODYxNDg2NTU0MDEsMC4xNDE2NDc3MzkyNTQ1MTEyNCwtMC4zNzk2NjgzMTMzNTEyLDAuNDExMDc1MTc2ODI2MDU4NCwtMC41NjAyMjQ4ODIyMjg0OTMyLDEuOTk0NjM5NzE3NTQ3MzU3LC0xLjI4MTk4NzAyMzkxMDc3MywtMS45MTkyOTczOTMyNjY5OTgKMixURCxTY2FubmVyX0IsTWFsZSwxNC44NTM5MDYzNTIzMTQwMTgsMC42MTA2Mjc0MDI4OTA3NDQ1LDAuNjcwNTk3NjgxNTQ0Njg4NiwwLjg1OTYwNTM2OTE2MjkyMzMsMC43ODY1OTE3ODAyMTQ3NDE3LDAuNjE1OTUxMjYyNzAwNzM4OSwwLjc0NDYwMDY0ODM2MzQ3NzcsMC4zOTQ5MDA5NTk4MzExMTI4LC0wLjkyMTQ2NzkzODg0OTM3NjgsMC4zMjIwMjYyOTA3OTIzMDA2LC0xLjQ2NzIyMDkyMzUwMDExNzcsMS4yNDY5ODYwNzcwODcyNTE4LC0zLjEyNzc2OTAwNDg2NjIyNjgKMyxBU0QsU2Nhbm5lcl9CLEZlbWFsZSwxMy4zMDE1OTM1NDQ4MjU4NjUsMC40MTg0NjEzNTgyMDM1MTAxLDAuMjU1MzczMzM0Mjg1NDkyMywwLjE5MjQxNjY0MTYwOTI3MzEzLDAuMjQyNTE3Mjk4MDY0NzcwNzYsMC4zNjE4MzA4MTk0MjUzNzI2LDAuMzk4NTczOTc0NDk1MjA3NSwtMC41NjA5MjM3NzA2MDQwNjYxLDAuMTQ4MzkyODM2MDA5MzEzODgsLTAuMDUxOTg3Njk4OTE5MDg2MzIsLTIuMzk3MzUwNjg4Mjk2NjA3NiwwLjE1MzQzMDE5OTE1NjkyNjYzLDMuODIzNjY3ODAzODg1Nzc4CjQsVEQsU2Nhbm5lcl9DLE1hbGUsMTMuMDg2NzQ4ODI4NTc2NTg5LDAuMzg0NDk5OTExMTY5MzU3OSwwLjUyOTM2NDc3MTQ2MDM4ODEsMC40MTQyOTI3MzU2MTkyNDA1LDAuNTA4MTQ4Nzk5NTc5NTUyNSwwLjM3MTc4OTY5NjA0Mzg0MTEsMC4zODUzOTYwNzM4NDk0NDA4NiwwLjM0MDczOTgxNDY3NTcxOTg0LC0wLjE5NzA1MzM0NDg1MzkwNzMsLTAuMjEyMTMxMjY4OTY5ODUwNjgsLTIuMjYyNzg1ODUyMTA1NDY2LC0xLjQ3Mzk0NjU4OTkyNDkzNSwtMC42NDUxNjE1MTg4MzQ4MjMzCjUsQVNELFNjYW5uZXJfQyxGZW1hbGUsMTYuNDUwNzM3Nzg3NzcyNCwwLjE5OTIwMDkzMzE0MTM2MzQsMC40NDY5MjI3ODQxNTE1Nzc2LDAuNTM3OTM4Njk3NjIzNzA0MywwLjM0NDg1MDc5MTczMzQzNjYsMC4zNjcyMDkzOTcwNTk4MDE5MywwLjU0OTIxMTI4NjAzNDMxMywtMC4wNDY4NjA5NTQxMjA0NzQ3NSwtMC4xOTUzMzczMTIyMDA4MzIxNywtMC4wMjcxMjk0NzgyODcwNjk2NCwtMS41MjQ0MjU0MTcwNjA0MzMyLC0wLjA2MjE5ODQzNTg5Mzk4Njg5LDEuNDk0NzI0NTUxMDA4NTUzOAo2LFRELFNjYW5uZXJfQSxGZW1hbGUsMTAuMDM4OTE4OTY2NjM2ODI1LDAuMDg2NzYwNDg0MTY2ODIxNjQsMC43ODM0NzczMzA0MjA0NjEsMC42OTM4NjQyNjM5NDU3NjIsMC41OTc5MDI4OTY1Njk4MDU2LDAuNTcwMTE0MzQ3NTYwMjg3NywwLjY1NDk3MDY3ODE2Mzk5ODUsMC4xNTc1MzkyNTkwMzMyMTg2LDAuNTgxNDkwMjMyODE2NzQxNywwLjA3ODQ5MDI4NDM1OTcxNjM5LC0wLjAwNjEwNDg4MDQ3MDEzODcyLC0wLjgzNzAxMzMzMjczMzczMTQsMC40NDU4Mzc0ODU2MzkxODMxMwo3LFRELFNjYW5uZXJfQSxNYWxlLDExLjk2NTU4Mjg3MTYwNTEyLDAuMjEzMjc5MzIyNzAxMTE4NTcsMC41ODQ0MzIxMDUzOTI0MjQ3LDAuNDEwMzQ3NDU3Njc1MDczLDAuNDA3ODgzNDI3NTg2MjYxNywwLjQzNDkwNTExODYxNjYxODQsMC40OTE4MjYwNzcxMjM1NTIsLTAuMjY4MTkxOTIyODI2MDA1NDYsMC4wNDA1NjA2MTE0MDE5MjQ0MSwwLjUyNDAxMDQ5ODgzNjk1ODMsLTAuNDk5MDM3OTY5NzkxNjkzODUsMC4zNDkyMjMyNzk0MTQzNzIyNiwwLjU1NjkyNzgzMjA2MDEzMjYKOCxURCxTY2FubmVyX0IsRmVtYWxlLDEzLjcxNDA5Mjc0ODM1MjQ2NCwwLjc1ODM2MDczODk3NTc3MjIsMC42MDMxNzE1ODkxODU4NTkzLDAuNDk5MTQ3MjUyMjg2Nzk1MSwwLjU1MTAyMzkxMDc1NDI5ODIsMC41MTg1NTk4MjI4OTI2Mjc3LDAuNTQ0NzAyNzg2MDI3NDgxMSwwLjI1NzM1ODc1NzQyNDI2MjYsMC4wNDIxNjIyODIwMjQxNTI0NSwtMC4xNTc3Njc5MTU4Mzk3NTc3LDEuNjczNDY5OTA3NzY0NjczLC0wLjU1NTQzODYwMjY1NTI4NTIsLTAuNjIxMjA4MTg2Njg1NDUzMQo5LFRELFNjYW5uZXJfQixGZW1hbGUsMTEuNjgzNDM2Mjg3MTgxOTA5LDAuNTkzODYwNjc2MDYwMjM5NiwwLjM3NjA5MTUzODAzMzQ1NjcsMC41NTYyODgyMDQzMjM3MDE0LDAuMzcxMzEzOTU2ODI3NTkyNywwLjM3NTM1NjI3MTQ2OTE2MTYsMC41NDQxMDYyNTE2NzUyMzQyLDAuMzkyMjQ2NzAxNjYxNDU3OSwtMC42NDM4NDYyOTYwMDc3NDA3LDAuMDk3NzgxOTY0NDIwNDU4MjQsLTAuMDYyMjI2MjAzNDQ3Mjc0MjMsMC4yNzQ3MjI3OTA1Njg4MDc1NSwtMC42NDQzOTEwNjE3MzY2MDE4CjEwLEFTRCxTY2FubmVyX0IsTWFsZSw5LjM5ODU4MDU2NDc3MzI4LDAuNjI0Mzg1OTk1ODk1MjU5OCwwLjgzOTkxNjI5Nzk5OTYyNjYsMC44MjQ1OTQ1MzQ4NzUyNzEsMC43MDc4NTcwNjU1Njc4MTk0LDAuNDgzNTYxNTAyNzkyMTQ4OTMsMC43ODQ3NDUxNTIxMzg0ODk3LDAuMzgzNTIzMzUyNDU4MTcyLC0wLjAyODE1NDY5NzM5MzI1MjMyLDAuMzkwMzc3OTk1NjU0NjU0NjQsMC45MzQ2MDAzNDk3MjE5ODA4LC0xLjMyMTM2NjM1MDI4MjkyMDUsLTEuNDgyNzgwMDYxNjIxMjI5NAoxMSxURCxTY2FubmVyX0EsTWFsZSw0LjgwOTgzNjUyMjA2OTA0OCwwLjg1NDUyNjkxNzMwNzcwMjYsMC40NjQ4ODM4NzAwMTI0Mjg2NSwwLjQ3NTgyMzY1NTY1MzU1MywwLjM4NzA2MzY3MDI0MDIwNzA1LDAuNDY5NDMzMDY1OTQ0MDA3MzUsMC40MDc0MDI5NTU5NDU1MDQsMC4yNTI5ODAyOTk0NDU0NzUzNCwwLjEzMTI1MTgwNTgyMzY0MjQzLDAuMDc4NjQ5MTMwNjY1OTE1MzgsMC4xMDI4MTMzMjk2NjA0NzY0NywwLjg1NDIwNzMwNTcyMjQwMTYsMS45NDc1MDc0NTk5OTQyNjQ4CjEyLFRELFNjYW5uZXJfQixGZW1hbGUsMTYuNjg2NDU4NDkyNzQ1ODM1LDAuMTI1MjQ3NTY3MDAxODMzMzQsMC4xMzQ3NTQzMDA2ODUxOTY3LDAuMjQyODI1NjI0MzQ4MDQwMSwtMC4wNDU0ODg1ODgxMjcwNzUxNSwwLjM0Mjk1NDg0MzM0NjYzODQsMC41MDI5MDMzMDYwNTQ3MzY4LDAuMTMzNDkwNTkwMjgxMjM5NSwwLjYwNTc5MDg5NDI5Njg4NjUsMC4wODY4NzYyNTc5OTcxNjkwNSwwLjA4NDU5NjI2MDQ5Mzc0NDMzLC0xLjAzNDk4NzQ5Njc4NjMxODYsMC42OTY4MTI3NDc4Nzk5NTY1CjEzLEFTRCxTY2FubmVyX0EsTWFsZSwxMi44ODA3NDI0MjA1MTUwMTgsMC45Nzc0Njc4MjA4OTg0Mjk3LDAuNDg5MTAyMjU2NTg5NzI2MSwwLjU0MTQ4OTQ0MTkzNjk0NzgsMC43MTg2NzU2NDU3MDU2MTA4LDAuNTIzMDQ0MjQwMzQ2MTEyLDAuNjAxNTE2Mzk0MzQ5Nzc1LDAuNTYyNTQwMzMwNTQyNDM3NiwtMC4zMjkyNDU0MzE5ODk2OTYyLC0wLjA3NzIzMzE2ODk1MzM2OTAxLC0wLjgyOTE3NTk3NDUyNzU3NDcsMS41MTA5ODI4OTk5NTE4MjYyLDEuNjU3NzkzNDk3OTcwOTkzCjE0LFRELFNjYW5uZXJfQixNYWxlLDE0LjA5NTk3NTU5OTI5MzAxLDAuMTk5NDgxMTU1OTYyMTI3NDgsMC40NjMyMzM0MDI4NTk2ODM4LDAuNTA1MzQ5NzE2MDA4NjE0MiwwLjU4NDA5Nzg5ODYxMTIxNjIsMC41MjIzMTA1ODQyODA5NjksMC42MjM3ODY4MDcyMDkwNDQzLDAuMTM2OTgzNDk5MzQ3MzcxMDgsLTAuNTc0MjM1MjQ3MTU5NjkyOCwwLjExNDg1MDc0MzE1ODc5MjM2LDEuNTk1OTkxMTYwODcwNjc2NSwtMC42MjYyMDA4NTkwNzgyNzI5LDAuNzc1MTQ5NjIyOTA3NjM3CjE1LFRELFNjYW5uZXJfQyxNYWxlLDEyLjQyNDU3Mjc5MzY5MTMyNywwLjU1NzE4Nzc4MjUzMTQ1LDAuNzM1NDAyOTY5MTcyODc1NiwwLjYwNzQ2Njk1NTIyODI4MzksMC42MzA4NTMwODU4MjkzMzE3NSwwLjQ5NTg5NDkxODQ2MjU0MTIsMC42NzI5MDQ1MTA0OTM2MzIyLDAuMzg3MTU4MDk0MjE5MDMyNDcsMC4wNjI2NTc2OTk4NTA0NDk3MiwwLjM1Mzg3NDQ1NjYwMjc0NTMsLTAuNTgzMjM1MDgzNzYyNDAxNSwwLjYyMDc4MTY3NTY0NzM3NTEsMC4wMzUwNjk1OTcxNzY0NDU4NAoxNixURCxTY2FubmVyX0EsRmVtYWxlLDguODEwNTkwMjI3ODU2Nzg3LDAuMTM0OTYzMzIzOTU0ODYwMTMsMC42MTQ5NTYzOTkyMDk0NTg1LDAuNDc4NTg0NTE4MTE2MzIyODUsMC41MDg1NzUyMzkzNjI3OTUsMC41NDExNjg0ODM4NTkxMjYzLDAuNTMxOTgwMzYyNDcxNjg5MiwwLjM4OTM2Mjk2MjE3MzA0OCwtMC40MDcwNzA4NTMzMDY2MDMyLDAuNjU5NzQ5OTgwNDc1Nzk3OCwtMC44MDQ0ODk2MzQ2OTE4Nzc0LDAuMDc2Njk4MDI5MTY4NzIwMjcsLTIuNDcxMjg0NTk4MzAzMTAxNQoxNyxBU0QsU2Nhbm5lcl9DLEZlbWFsZSw4Ljc0NDUzMDc0OTE3OTA1NiwwLjY3MDY2ODg3OTAyMTUwMTMsMC42ODQ5NTExNDYyOTgzOTEzLDAuNzQ5NTc2OTI2MzczMzYwMywwLjYwNTgxMTIwMDIyMDUyMTQsMC42MzM5NzI2ODMwOTc1MjcyLDAuNzk3MDY3ODcxNDA0NzgwNiwwLjQxMzI1OTg4NjkyNjk3NzYsLTAuMjc3MTc3MjYyMDYyMDcxNTUsMC4yODc4MjM1NzEwODU4OTg5NSwwLjMxMjI5OTkxMTc1ODI1MjQ1LC0xLjMxNzg0MDY1Nzg1NjczOCwwLjY4NjExMTU4NjQ3MjIxMzMKMTgsVEQsU2Nhbm5lcl9BLEZlbWFsZSwxMS4wMTkwNzE2NTc1NDA3MiwwLjQxNDY0NzUyNjQ4MzYwNzEsMC4xMzMzNDgxNzAxMTc4MjUzLDAuMzY0NjE0Nzk1OTc2MTQ4LDAuMDkxNzM4NTA5MjI0NzIxMDIsMC4wNTIyMTc2ODY2Njg3ODY1OSwwLjMyOTYyMzU3MDE0MjkxNDIsLTAuNzg4MjkwMTk3OTkzNzUxMSwwLjgwODUyNjA2MDU3MTQ4NTksLTAuMjY3MDMyMjg0NDMxNjc2NCwtMC42Mzk1OTEyNjcxNjk3NTIzLDAuNTIzMDAxODExNjgxMDk5MywxLjE3NzI3MzI3NTE3OTc2MDMKMTksVEQsU2Nhbm5lcl9BLEZlbWFsZSwxNC44NTE1Nzk4NzY3NTM2MTYsMC4wMzU3NTg1MzU3MzQ4Mjc4OCwwLjM0MDc3NDQyOTkyMDkzOTMsMC40Mzc3NTE3NjIxMjQ1MDQxLDAuNDQ1NTQ4NTc5MDY0OTc3NiwwLjQyNDEyNTkwMTM4ODY4MzA2LDAuNDI4OTkwNjcwNzA0MzExNCwwLjAwMjk3NzM5MDY2MTI0MDEyLDAuMzMwNjExNTc4NDgwMDExLC0wLjM0ODc5ODU3MjYyNjI5NjA0LDAuMDc4MzczMDE1NjI0NjIzODIsLTAuMzMyNDU2MTExNjkzNTk3OCwzLjUzMzA5OTc2NDA1MTI5NjQKMjAsVEQsU2Nhbm5lcl9DLEZlbWFsZSwxMi42NTkyODg5NTkwNDQ5MywwLjY0ODE5NDkzNDAzOTAwNDksLTAuMTQyNDA2MzkxOTI3ODkxOSwtMC4wMDgyOTkxMjczNjU3MzA4NSwwLjI1NzU5Mzc0MTMzMDU3MzksMC4wNjI0MzMyMTc4ODM0NTMyOSwwLjA3ODE4NTU3Njg2MDk1MzQ1LC0wLjU2NzY3NzU1ODY0Mzk4ODIsMC4yNTI2NjQyMjk5Nzk5MzEsMC4wNDUyNjgwOTc3NzE1NDY4OSwwLjE0NDUxNTg1MTI0MjYzODg4LDAuODMxMzY3NjIzNDEwNDM0NywwLjkyMzIyODk0NTQ5ODk0ODgKMjEsVEQsU2Nhbm5lcl9DLE1hbGUsMTYuNjA2Nzg5NTU1MDU4ODUsMC4zMzY3MzY4MzMyNjU5Mjc2LDAuMTE3NTMyNzk2MjI1MjU4NTYsMC40MTg3ODEyMTM3MDk0NDY5LDAuMjkwMTI0NzYzMzA2NzExNTUsMC4yNzI5MzMyOTIyMTM0NTAxLDAuMzI2NTMxNjI1NzYzOTUxODQsMC4xMTk1NjA5NDM5NDUyNzEyOCwtMC4zOTcyNDUzOTIwNjk2MTk5LDAuMDQyMjU0NzQyMTU5MjQzNiwwLjk1NTMyMDIzODMxNTc4ODgsMC43ODAyNjIxNDUxOTI4ODQyLC0wLjI5NzQ4NDA0MjE3MzY4MjYKMjIsQVNELFNjYW5uZXJfQyxNYWxlLDEzLjM3MzEyMTM5Nzg2MjgzNSwwLjEzOTg5ODUwNDU1MzczMjUsMC42NzI0MjAzMDE1MzQ0NDI1LDAuNzUzNTM1MTQ5NDU5MTg3LDAuNTk2MTQxNzQ0Mjg4NjE4MSwwLjQ5MTg4NTUyMDM0NTc3ODU0LDAuNzc5MTk4MTY3Njk3ODY4MSwwLjEyNzA3ODc4MTU2MzgwNDY0LC0wLjA3Mjc0MDEzNzcxNzI3MTEzLC0wLjAzOTQ1MzAyMDQ0NTgxNjY5LDAuMDA3NTQzNDQyOTcyNTE2NTMsMS4wMjYzMDE0MzQ3ODc5NDIyLC0xLjYzMTc1MTY0MDkwNjk4NQoyMyxURCxTY2FubmVyX0EsTWFsZSwxMi4yODIyNjk1OTkyOTYwOCwwLjMxMzcwNTQ0MTQ2NTgyMDEzLDAuMzM4MDMwMjY5NzAzNzQ4ODMsMC4zNzI2NjYyMzc1NzM1Mzk1LDAuNDM0NjA2MTUwNzA5NTM5MywwLjM0OTYyNTcyNTAwODAxNjgsMC4yOTk0NzUzNTc3NDEyNjc0LC0wLjUwOTM5MzA3NzY0NTU1OSwwLjgzMDA3MzY5ODQzNDc0MjMsMC4xMjI0NDgwODEwMzQxNTIyNCwwLjQ2OTg3NDU4Nzc0MzMyNjQsMS40Mzg2NTc0MTQxMDA3NjcsMS4wMzY5MTI2NjE3NjI0NzY5CjI0LFRELFNjYW5uZXJfQixNYWxlLDEzLjE2OTU0MjIwMjE5OCwwLjE0NjAyMDg5NDI1ODI1NDQ2LDAuNDE5ODE5NTc4MzgzMzk3OCwwLjQyMzg3MDc3MDQxNTQ1NzIsMC40ODcwMTM5NDc3Njg5ODUsMC40MTQ2MDE2MDc0NjgwNTE5LDAuMzk4NjE0NDgxMDIyMzQ0ODcsLTAuMDQ1NjY5NzAwMTMwODcyNSwwLjIyNDIyNTUzMjY2MTg3OTI1LC0wLjA2MzYwMjI1NjcwMzA1MjcyLDAuODIzNjc1MTExNTUxMDc0NSwwLjAyNjE3ODUxMTQ1NDE1MjM4LDAuMjgzNDU0OTY2ODE2NTIyNjYKMjUsQVNELFNjYW5uZXJfQSxNYWxlLDkuNzkyMzEyMjgyMzc4Njg1LDAuNjAwMzE5NDc1ODkxMDIwNywwLjM4Mzk3NDU1NTg0MjI3OTEsMC4zMDM3MDQxMzUxMjMyMDAyNywwLjQzNjc3OTk1MzMxNTEzODg2LDAuMzcyMzg4ODg2NzAxNDc1MSwwLjM3OTIyNjEwOTY1ODAyODgsLTAuNDc0NDc0NjU1MDEwMTY4NCwwLjQzNTc4MDk1MTAzMzQwMDQsLTAuMzk5MjAxNjY4ODgyNjk0OSwtMC4xMjQxNzYwOTMxNTI0NDQyLC0wLjIxMTkxNDkyMTMzNzE0NiwxLjI0NDA3Njg4ODgxNzM2ODgKMjYsQVNELFNjYW5uZXJfQSxNYWxlLDE3LjQzNDcxNTcxODg0MTI4MiwwLjU0NTE2MjY4NzI5NjExMiwwLjE1NjIwMDM4OTQ2ODY3NjA0LDAuMjczMzk0NzI3NjEwMTg0NiwwLjMyODcxNzY1NTUzNTgyMjYsMC4yMDUyMTc4NTM3MTI5MzgwNSwwLjM0NDczOTk2MDcyOTIxOTMsLTAuMjE4OTg1NTYyNjkyNjUwNTcsLTAuMTgyMDUwNTc3MjIwMDY5ODcsLTAuMDYyNDY1NDkzNDY5NTQxODYsLTMuMjMxNzYyNDUxNzQ5Nzk4MywwLjA2NDEyNzAzMjEyNTk5MjEsMC44NTcxODg1MTA0MjMzMDY5CjI3LFRELFNjYW5uZXJfQyxGZW1hbGUsMTUuNDI0NDI0NDU4OTAyMDY4LDEuMjg0OTY4Mjg1MjI1NDk4LDAuMTMzNzU1NDI0NjgxMzA5ODgsMC4zMDU2MzAxNjk1OTg0NjksMC4yNTg1NjAyMDQzNDA0NzcxLDAuMzQ0MzU1OTUxMzE0MTUzMSwwLjQ0ODI4MDM0MTYwNzYzNTcsMC4xNDkyMzg2MzQ2MjI5MDkzLC0wLjIxNjAxNDQxMDEyOTM5MDgsLTAuMzIxMzU2NDA4MTA3MjczMywtMC45OTUzODgzMzMwMDc4MzYsLTEuMjgwMjc4NjkwNjk1NDEwNCwtMS41NDE1OTc3NzE1MTYxNTQKMjgsQVNELFNjYW5uZXJfQSxNYWxlLDExLjI1Njc2NTg5NzY4NzAyLDAuNDA1MjEyNjM1NzY3MjU4NiwwLjU5MTIwMjMyMDQ4NTQ2NjcsMC42Mzk0MjAxODMxMTE4ODE2LDAuNjkzODk5MjU4MDI5OTc0OSwwLjY0NDYyNzIxNjI4OTcyNTEsMC41MTc1ODQwMTA0ODYyOTU4LDAuNTM5MDQwMTQwNzk5MDI2OCwwLjM0OTExOTA0OTIxNDc3MzEsLTAuNDc2MzExMzg4ODk5MTI3NSwwLjg5NDA1NjA2NTYwODYxNTQsLTAuMTU4NzQxNTQyMjE3ODU0NTUsLTEuOTI4NjYwODgzMTY5ODk4CjI5LFRELFNjYW5uZXJfQixGZW1hbGUsMTUuNjA5NDk0OTExMjc1OTEsMC4xMDkwOTc1OTc2NTE4NTIwOCwwLjY5MzgzMjI1MDE1NDM4MTQsMC42OTY3MDc2NjA2MTk4NjUsMC41NzYxNTI0MzgyMTA0NDg5LDAuNTk4MzY2MzY2NjgwNDI5MywwLjY5ODQwNzI0MjYyNzY5OTYsLTAuMzAwNTQxNDU0Njk0MzQ4NDUsLTAuMDk2MDY4NzIyOTEyMjYxMzYsLTAuMDU5Mjg3ODI1NjQ3MTA4NDksLTIuNzMxMDI3ODA0NDc4MTk2NiwtMS4yODI3MTcwMTAxOTY4MzM3LC0wLjgxOTI5OTI3NjkzOTYxMzUKMzAsVEQsU2Nhbm5lcl9DLE1hbGUsMTcuMTE4MzI0Nzg5MzQwNzg2LDAuMDg5NDA1MTMxMTQxNjI0ODEsMC4zNTk2ODk2NTk3NjgwMzI1LDAuMzk3NDkwNDE5MTIxODQ2NywwLjI3NDk2NDE1OTE1ODI5NTM2LDAuNTM0OTQ5MDE4MDg4NTIyNCwwLjM5NDYxODE3NTc0NDA0NDMsLTAuMDcxMDk1NTM2MDk5MDUyMjUsLTAuMTMzNjI1MTQzMjk3ODQwMSwwLjM4NDc0NzM4MDgyNzE4MDQ2LDAuMTA4MDM1OTAzMzA4Nzk5NTIsMi44NTI0Mjc1ODg3MDU2MDY1LDAuMDU4MzcyMjkzNTc2NDU4NQozMSxURCxTY2FubmVyX0MsRmVtYWxlLDEyLjQ1NTMyOTA4MDc0OTkxOCwxLjMzNTU3MjcxODQyNzQ0NTMsMC43MTIwNTE5OTgyOTQ0NjE4LDAuNjU1OTc1MTc0ODg5OTM1NiwwLjg0MDU2NzYyMzI5OTEzNjMsMC42Mzc5MDc2NDA2NDU0OTIxLDAuNjc3MzIxODg0NTYzNjQ3MSwwLjQ2MTg1NDE3Njk4NjkzMTcsLTAuMjc3MDYxNzE5Nzg3Mjg0OTQsMC40MTg5MTA4MDExMjE1NTc2LDIuNTE1NTIxMDE1MzA1MTA5LC0wLjIzMTU0MjMwMDIyODg2NzMsLTAuMzczNTgxNjQyODY0MzM3MgozMixBU0QsU2Nhbm5lcl9BLE1hbGUsMTQuNzM0MjY5NzkxMzY2MDI4LDAuNDUwNDkzNTU0MjM5OTU0MywwLjQ2MjY0Mzg1NDI3Mzc5OCwwLjUxNjkxMzM4ODY2ODQyMzIsMC41MzA5NjI2NTk5MjIwNDMsMC4zMjkxNzczMjgxOTQ3NzA3LDAuNDA3MjE4MjE0MzM4MjUyOCwwLjM3NDM2MzYzOTY5MDA2NTAzLC0wLjMyOTIxMDI3NDc3MzQzMDM0LC0wLjM1MDA2NjgwMTYwOTE1MDQsMC4xOTcwNDg2MDA5NzE4OTI0LDAuMDAyMzAzNzM4Mzc5MTcxNzcsLTEuMjkxMDE1MzQxMzc3NDU5NwozMyxURCxTY2FubmVyX0MsTWFsZSwxMi40MTM4NzUxNTUxNTY4NjYsMC4xMDU1OTY1NzU4OTc5MTQ5NiwwLjI5NTgyODczOTY3NzcyMzMzLDAuMTYxMzQ1MzcyMDI5Mjc0OTYsMC4xMzk1NTA3MzE4NzI3NTk2LDAuMzUwNTM5NDI3OTQ5MzA1NTQsMC41MjkzNjM3NTA3MzMzMjg4LC0wLjM5ODE3MTU2OTQ4ODc3NTUsLTAuMDEyODA4NDAxMTI1OTk2NTQsLTAuNTIxMjQ0Nzc3OTkwMTYyNiwwLjkyNzc1Nzc5NjY5NTY3NzIsLTEuMzczMjYyODczNjgyMDIzMiwtMC43NzI2NTc1ODgzMzMzNDEzCjM0LFRELFNjYW5uZXJfQSxNYWxlLDExLjE2NTM5MDU1MDUzNTE2NCwwLjI1MDcxMjEyMTA3MjE2MjM0LDAuNDI5MzYyMzA2ODU4MDEyNjMsMC4zMTAxMzM5MzExMTQ5NTQ5LDAuNTE5ODg2NTY3OTQ1NzM2MiwwLjUyMjE3MjY1ODk4ODg3NTIsMC42MjU1MjEyODU2NTg3MzE0LDAuMzc0OTE1ODE2NzI0MzQ4OSwtMC4wNTc2MzY1Nzc5Mjc5NjYyNywwLjA0MjA3MjQ0NDMwNTQ1NzYzLC0xLjE0MDU3Mjg3OTgyNDE5OSwtMi4wODk2MDE5NTk1MTMzMjQsLTAuOTQwMzM3MTY2ODE1OTc4OAozNSxURCxTY2FubmVyX0MsRmVtYWxlLDEyLjAzMzcwODU4ODg3ODA4LDAuMDc3ODc5NDUwODkwOTUxMTUsMC4yOTE1NTA5MjMwOTU1NTkzLDAuMzQzNjI5MzM3MTY0OTQ4MiwwLjIyOTUyNTQzMzk0MTE4NTA1LDAuMzczMjg1MTU3NjY5MjcyNywwLjI1NzkzODAxMDE4MjY3ODAzLC0wLjI4OTc1MjI3NjQyODgzMjIsMC4xMjIzMDkwMjY1MjkxMjkzNywwLjA3NTAyNzYxNzU1OTU4NTgsLTAuMTc3NTU3NTk1ODk4NTA2NjQsMS4wMTUxNzc5NjMwMzM0NTIsMi4zMjc3NjA5MTM4Mzc4NDkKMzYsVEQsU2Nhbm5lcl9CLE1hbGUsMTQuNjYyMDYzODU1NDE0NzIsMC4wNjMxOTU3NTg2MjgyMjIxNSwwLjY4MDcwNzQwNTc2NTg5NTEsMC42MDMyNDE1NTU4ODg1MzUyLDAuNDk1NDI5Nzc5Mjk5MTM4NSwwLjU1NzkyMDY2MTg0ODkyMywwLjY5MTkzMDAwNzY0NzEwNDksMC4yODYzMTA2ODc0MTAwMDM1LC0wLjI4MDE3OTY5NzMxNjQ2NDg2LDAuNTEyOTYyMjI3Nzg1MDYzNCwtMC4yOTA2NDU0MTA5Mzk3MDc2NCwwLjE0MjE4MTQ5NTQ0NjY5OTQsLTEuMTUxNTM4NDM1ODk3NjY4NAozNyxBU0QsU2Nhbm5lcl9CLE1hbGUsMTEuMDc3MzMzNTcyNzM1MjUsMC4yMDUyNTkwNzIyMjIwMjQ3LDAuNDIyNTI0Mjk0MDgzNjc2ODcsMC4yMjk5MjM4ODE5MjI4NTY4NCwwLjQ1ODgwNjAzODkyMjA5MywwLjM4MTY2MTQwNjQ4MjY3NTU1LDAuNDU1NTg3NzU3MTU0ODY5MiwwLjAyMzkxOTE5MDE2MDAxNzk2LDAuMTY5OTk4NzAwNjU4ODM4ODIsLTAuNTI3NDgwNjIyNjc4NjcsLTAuOTU2MzgxMzE0Nzc1MzgwOCwtMC4wNjE2OTM0MzU5MzQyNTk5NywtMy43NzQwOTA2OTMwMzE2NjQ3CjM4LFRELFNjYW5uZXJfQSxNYWxlLDExLjM3NTQyMDI4MjcxMTcyNCwwLjA2ODgxODE0NTkyOTg1MTkxLDAuNzMxNjQ1OTU2NzE3MTcwOSwwLjYzMTcxMzY1NjI3NzA4OCwwLjcxNzk4ODMzOTk0ODM2MDIsMC41NTE5OTYzODQxNDU3MTYzLDAuNjE2ODEwOTM4MTc5NzY0LDAuMjI0MTUzOTMxODEyODc5MiwwLjAzMDIwNzg5NTc5MTQ1ODYsMC4xNTI4NDUwNzAwMzA0NDczNCwwLjYxODkyMDA0MDQzMTU3MSwtMi4wODQ1ODg3NjUyOTAyMTEzLDAuMDQ3OTEwNTQ0Mjc3NDEzMjgKMzksVEQsU2Nhbm5lcl9BLE1hbGUsMTEuODc4NjI3MDA1NjY3MTA2LDAuMTQyNDYzNDM1NjYxMzU5NTgsMC4zNTkxMjMzNzM0MzA2MzcyNywwLjMyNjE0Nzg4MzczMzA3MDI0LDAuMjY1NzUxNDQ0Mjk5MTQxLDAuNTcwMjQ2MzkzMjcwNzk0MiwwLjQwNjU2NDYxODkzMjYzMTUsLTAuMDExNjE4NjIyODQ1ODkzNzYsMC4xOTUwNDUxNzkzNTcyODg1LC0wLjAyNTI2NDg5OTQ4NDA4MDIsLTIuMTgwMjgxNjk4ODYxOTE1LDMuNjYxMjYwODM5NjU4ODQ0LC0xLjkyMDIyMzQyMDE3NjUxMgo0MCxURCxTY2FubmVyX0MsTWFsZSwxMy4wMDEyMzgxMzk1MzIyMiwwLjE5MjA3MzkwMTE1OTM1NDEsMC4zODAzNDg1NTg0MTM3NTA2NSwwLjQxNjY4OTQ5MjE1NTAyNzgsMC41MzU0MDUzNTE3MDgxODMyLDAuNjE2MzIyNTM2NjIyOTMyMSwwLjY0OTE5ODg1OTk5Mjg0MTIsLTAuNDI5NTkzNjE3MDU4MjE0NiwwLjU1MjAwNTYyOTU0Nzc0OCwtMC4xNjI1OTUxMzE2MzE3Mzg0MiwxLjQwMjY1MTg5MzMwMDI1MiwtMC4yMjcwNzI4NTEzMDg0NDk3LC0wLjM1MTU3MDU4MTI5Mjc5NDYKNDEsQVNELFNjYW5uZXJfQSxGZW1hbGUsOS4wMDY0MDI0NzEzNTI5OTksMC4xNTAyMTM2NjMzNTE1NTU2MiwwLjE2NzI2ODIzODA5OTc1ODg1LDAuMzcyMDQ0MzY1MjkwNTM0NSwwLjIwMjY4NTM2NjU5MjgwODgsMC4zNDMzOTgwOTI3MjA5MDcyLDAuMzU2OTY1MjI4Njc5NDk0NDMsLTAuMDc0NzEzMTYwODE4NzI3MzEsMC4zMjE0ODg5NjExOTY5MDk2LC0wLjE2Njg4MTMxOTA3NDU5MzYsLTIuMjIxNTAwNTIzMjc5NzA3NCwxLjk1ODk4NDM4Mjk4ODg3NTYsMS4yMTk4Mzc5NjE4MzExNDMKNDIsVEQsU2Nhbm5lcl9DLEZlbWFsZSwxOC4zMTU4NjQ3MTE0MDc5MTUsMC4wOTQzMDExMTYzNDM2NTE0MiwwLjc3NzkzMzMzODM0OTk0NzYsMC42MjE5MDg5ODE5MjUzMTY5LDAuNjAxMzMxNzE1NzA2NTExLDAuNzIzMDc0MDA5NzY5NjQ2OSwwLjU5NDA3MTQ2MjQxOTI1MzcsMC4wNjIyMjY4NzYxNDMzMDUzNSwwLjIzODg1NTQ0MTAyNDMzMSwwLjE5NTg4NTMxNjg1ODUyMTQ1LDAuNDUxMjQ2NjU1NzE3OTQ4MywxLjE1NTQzOTM2MzYyMTc4MzcsMC4xNTgwMzkyMjc2NzE0MzM4OQo0MyxBU0QsU2Nhbm5lcl9DLEZlbWFsZSwxNC40MzczNzU2NDQzMjYxNCwwLjQ1OTcwNDUyMDAzNTgzMDQsMC41NTc3MDE3MTcyODgzNjc2LDAuNTcxOTY1NzA0OTEzMzY0NCwwLjQ4MjcwMzk3NjgzMjU4MDEsMC41NTE3NzA5NjkyMzk0NDE4LDAuNjUzMDcyNTQzNzU3ODcyOCwwLjIxNzA2Mjc5NzUwNTk2ODc3LC0wLjQ4MTczOTM0NjYyMjg3NTkzLDAuNDQ0MDc3ODUwMDM4NTI1NCwwLjIzNzUyODUyMzM3NTMwNTU2LC0wLjMxMTU1MDIzNzQ1ODc3OTQ3LDAuNzI3MzI0OTM3NzY1NDExMQo0NCxURCxTY2FubmVyX0EsRmVtYWxlLDkuNzk4NTU5MjE1ODc5NDkxLDAuMjY1MzMzMzgzNjcyOTY1MTYsMC40MjA2MTA4MjQ2NDgyMTEzLDAuMzgwMDc0Njk3OTI5NjUwNjUsMC41MTM5MzM5MzgzNTc4NDI1LDAuNDYyNzE3MTc1MDY1ODA3OSwwLjI2NjYxNTEzOTAyNDM1MjksLTAuMDU0MjI3Mzg3MDA5NTI2MTgsLTAuMjE5NjQ4NDM5NzQyNjU3MSwwLjAyNjQwMzExNTQ4NTExMjUsMC4xNTEwOTU3Njg3NTkxODk2MiwtMC4xOTQyNzAxODAxNDA1MzkzNywwLjI0OTY2MTUzMjIxMjM0OTI0CjQ1LFRELFNjYW5uZXJfQSxNYWxlLDEyLjk1OTk2NDAwMDk5Mzg0NiwwLjQwODE0NzU1MzU5ODcwMTUsMC43NzY0MzY0NjkyNTY3MzAyLDAuODQ4ODkxMDQyMDE2NjU4MSwwLjYxNzk4OTkwNDAzMzAzMjgsMC42NTg0MTQxMDM3ODAxMTE2LDAuODE2MjMxNTc1NjY4MzQ4OSwwLjI2NTc3MjA3MDI2MzA0OTYsLTAuMTA3ODUyODI2MzYyOTk0NjIsMC4xNDk2OTE5MDg3NzUwNjIwMywtMC4zNjIyMzgzOTgyMDc3NjQsLTIuODE1OTU1MTY2ODk0MTg4LC0wLjAxMTE1ODkyOTExNTQ2MzIKNDYsQVNELFNjYW5uZXJfQSxGZW1hbGUsMTIuMDEyNzkzOTg1MzczMTA4LDAuMjYwMjA0OTAxNjI1NzA3OSwwLjI4MTE4MDk1MTUxMjYzNzE3LDAuMjgyNDEzODA2ODc1Nzc2NCwwLjIzNjQ2OTU4NTYwNzI1MTU2LDAuMjcyMTg5MjY0NjcxMzY0NCwwLjM0MzI0NzQ2OTQ2OTM3LC0wLjIxNzQ1MDI2MjIwMjMyMDcyLC0wLjA3NzM1MjkwODM4NDYwMDYzLDAuMTEwNDkwNDc2ODU2NjI1NjYsLTEuNDU5NDU5NjU5OTM3NjEzLC0xLjI0MjA4Njc2MjgxMjYxMywtMS4xNjAzNzY0MDg2NjI1Mjg2CjQ3LFRELFNjYW5uZXJfQixNYWxlLDE0LjcxNjE0MDMzNzMwNjcyLDAuODgyNzg3NzU1MTEyNDQ5MiwwLjQzMzA4NjcyNTA2NzIyODA2LDAuNDI5MDA3MjQ1NzMyMDkzODcsMC41MTIwODM5NDkzOTY0NzkzLDAuMzAxOTQ2NTQ2MTAyODc5ODUsMC4zOTAyMzUyNjIwNTI3MzQyMywxLjE2MTAyNzQzMTI4ODkyNzMsMC4xNTk0MzQyNjcyNzU3MTI1LDAuMDcwNjg4MDQ5MDg0NzU1NTcsMi4zNTM5MjUxNDg4MDc2MzgsMC45NDAwMzkyMzM2NDU5NTE3LC0wLjcyMTI5OTQyNjk5NjA0NTkKNDgsVEQsU2Nhbm5lcl9CLEZlbWFsZSwxMC43OTQzMjAzNDE2NjAwMjIsMC4zNjgzMDA3NTQ2MTczNTEzNCwwLjU4Nzc0NjIyNTQ1NTAzMTEsMC41NzA5MTUzMTU0NjA0NDEsMC41MDc1ODYxNTI4NjA5NzY2LDAuNDM2NDgyMDYzNDg1MzgzNDMsMC41Nzk4NTgwMzMxMzcwNDU0LDAuMzEyMTQzODEyNDg4MTY4NywtMC4xMjkzMDAyNzgwMzg4ODksMC42MjE5ODgxOTg0NTM5NDk5LC0wLjE1MDY0ODc0NDU2NTI3MSwtMi40MzgzMDAzODI2ODIzNTI0LDEuODcwNDU5OTE4NjM4MzQ2NAo0OSxBU0QsU2Nhbm5lcl9BLE1hbGUsMTQuNjkwNDg0ODk1NjcxOTY2LDAuNTI5NzkwMTk4NjE5ODY0NCwwLjQ5NzM5MjExMzg1NTMwNzcsMC42MjA2MDU2MzUyMTA4NTY3LDAuNTY5NTU2MDg2MDQ0MTYxNCwwLjM1Nzk2NjMzMzExNTIzMDg1LDAuNDkzMjkyNjAzMjc5Mjk2NDcsMC40NTg3OTcwODE3MjM2ODg2NiwtMC4wOTQ0NDYyMTIwMTM3MTA2NywwLjI2MjQ0Nzc2NDYzNDM4NDksMC43NTcwMDA4NjQzNjI0NDIzLDAuMDgxNDU4MjIxNTI3ODAyMjQsMC4zNjQ0MzgxNzYyOTU4Nzk2Ngo1MCxBU0QsU2Nhbm5lcl9CLEZlbWFsZSwxNi4xNTkwMzQwMTMzNTgwNCwwLjQxNzY2MTk3OTI2MTk1MDg3LDAuNDAwMjg1OTg5MDM1OTA0NiwwLjQyODMwOTI0NzM0NTEwNzUsMC40NDE4MzQ0Mjc0NTY1NDQ2LDAuMzI4NDQ1MzgxNTU4ODI4OTYsMC40MDc4NDI4ODQ5MzE4NTQ1LC0wLjAyNzE4MzY5Nzk5NzY0NDE3LDAuMjA2NDY5NjUzMzg2NTQ1MywwLjE5NDAwMjE2MTg0MTMyODM1LC0yLjE2MjQyMTc1MjQwNjEwNywtMi4xMjUwOTIyNDk3ODk4MDk3LC0yLjk2NjI0MjgxMDIzNjgwOAo1MSxBU0QsU2Nhbm5lcl9BLEZlbWFsZSwxNS4zNDMzNzA3MDUxMTM4NjYsMC4wNjUzOTAyMDE3Mjk2NTYxNCwwLjU0MTQ0NjYwNjA3NzkxMjYsMC40MTAwOTA3NDEzMzgwODM3LDAuMzY2NTcyNjEzMzM2NTAxOSwwLjUwNDU4ODg3NDIxODU5NDcsMC40NTI2OTAxNTM3MzY3Nzg5LDAuMzkyMTU1MDMyMzgyMDAxLC0wLjc1MjcxODk5MjY1NzI0NzEsMC4wODA1OTg0MzI5MTAxNTIzLDAuNjEyOTg2MTI0MjI1NDI0NCwtMC44OTA2MzcxMTA4MDY0NTQxLC0wLjA0MDEzOTczODI1MzA5MzA0CjUyLFRELFNjYW5uZXJfQixGZW1hbGUsMTIuMTU1NTI4MzQ4MjcxNDM1LDAuMjM1OTM0OTY1MjY0MDk1NiwwLjU3ODg0OTYxOTE4MTk2MzMsMC42MDY4ODE5NzQyOTkzMjExLDAuNTAxNDgyMzM3NjQ2NDE5OSwwLjU0NDM3NzM4OTEwNjExNTgsMC42MzQyNjk3ODI4Nzg5OTM1LC0wLjA5MDM0Njg5MDkwNDcxNywtMC4yNDY1NTc5NjI1NTc3NTg5NywtMC4wMDI1NjA0NTQyMjkwMDkzLC0xLjkxOTEwNTA5MDI1ODg3MiwyLjg4NjE1NzI1NDMzMDY2NSwxLjI0MTU3MDEyMzY2MjQyMzMKNTMsVEQsU2Nhbm5lcl9CLE1hbGUsMTQuMDczOTk5MDg2MzI2NDIyLDAuNTEwMjg2MjU3NzM4ODExOCwwLjQyNTA5NzUwMDg4MjY4NzQsMC4zNjIxMDM4NDU1MTUyMTA0NywwLjMzMjQxNTE4NjM3Mjg0OTMsMC4zMDkzNjAyNTU1MzQ5NDYzNCwwLjQ0MzAzMDE0NDUwMzExNjYsLTAuMzEzMTk3MzM5OTg1OTAyMTYsMC40MTU3MzcwOTQ5MDM4NjQ5LDAuMjk1MjYyMDQ2MDUwODQwMiwwLjc3OTk4MzAwMDc0OTIwMjIsMC4zNTIwNTM1OTc0NzQ3MTUsMS4yNTUxMTU5Njk4MDU5MTMKNTQsQVNELFNjYW5uZXJfQSxGZW1hbGUsMTMuMDYzNjI5OTE5MTAxODEyLDAuMTQ5MzEyMTk0MjA2OTU1NjMsMC4yMTU3OTIzMjM1NDUzMDA0OCwwLjI1NzMwNjg5NzM1NjY4OTY2LDAuMTAzNjA1MjQ3Nzg3NTE0MjcsMC4zNjMxMTI3ODU4MDAxMjcsMC40MzI5ODg5MTcyNzcxNTg3LC0wLjUwODg0NTI3Mzg3NzgyODMsLTAuMTYxODQwODUxOTQzNzI0MSwtMC4wNTQzMjEzNjc1Njg5NDcwMSwtMC4xMDM0ODkwNzc1ODY5OTAyNywwLjk1NTQ2MTE2OTQ5NTEzMiw0LjM0NTYwMzcyODAxMzk3OAo1NSxBU0QsU2Nhbm5lcl9DLE1hbGUsMTEuNTAwODI5NzUzNDgyNTA2LDAuNTg5OTYyNzQwOTM3NjgzMSwwLjcxMjU4MzYwMjQxODMwODMsMC41MTI2NDA4MDgyNDMzODQyLDAuMzkzNzAwODUwNDYwMTE4OCwwLjUxMjE5MTE1ODE1MDQzOTgsMC41MTY5NDY2MzA0NTAxMjM4LDAuNTQxMjYzNjg5NjE3MDA2MSwtMC4xODQyMjgyNDgyMTI0NDg0LDAuMDQzMjIzODQ3ODQxOTQyMzEsLTEuMDkwNjU5MDk4NTMzNTI0NywwLjg3MjQ4MjI3MzQyOTE0NzEsMC40ODc0MTc4NDY1OTcyNjM5CjU2LFRELFNjYW5uZXJfQixNYWxlLDEwLjcyMzU2ODQwNTEwMjczMiwwLjEwNzUxNjIxNjQ4Nzk2NTMyLDAuMzQwMzc3NTQ3NDU5ODM5NywwLjM0MzYxNDY0NjE3MTY4MjIsMC40NDMwODA0NjYwMDQ1NzgzLDAuNDE0MTg2MzIzNDA5NjE4NSwwLjYzNTM3NzY2NDA5ODAwMjcsLTAuMDE4MDQ4ODg2MDM1OTc3ODYsLTAuNDMzMTc5MjA5MDAxMzU2MiwtMC4xNzM2MzI1MjUxMTY1OTA1LDEuMDc4NzIzNjU0MzIxNjk0LC0xLjI4ODE5OTE5NDU0ODk0NjYsLTAuMTgxMjk1NTQ2MDMwMDY1NjcKNTcsQVNELFNjYW5uZXJfQyxNYWxlLDE2LjI1MDAwMzM0NDgwMjQzLDAuMDczODA3Mjg0NTUwMzgwODcsMC4xMzc0MTY1NzQ1NDc0OTUyMywwLjE5NDkxNTc5MjA3MDY1NjUsMC4zNzM0MDExMDY1MTY0NzE2LDAuMzM2MDQxNjU0OTA4OTAxMTQsMC4xNzI1NTY5NjIwMDgzOTE2OCwtMC43MTcwNzc2OTcyMDEyODE0LDAuMTEwMjA1MjMzODM0NTkzMzIsLTAuNTc5MTM2NjQ5NDQwNTU3NSwtMC40NjYwNTQ1MDE3MDU2NDQxNiwtMC43MDMxNzk2MjczNTE3OTYxLC0wLjU0ODAzMDg4MDY4ODM2MTQKNTgsVEQsU2Nhbm5lcl9DLEZlbWFsZSwxMi4wMjQwOTAwODI5ODcyMDIsMC4yNDUyNDkyNzk5MDg0NjI1LDAuNjAyNjc5MTI5MzU4OTE0LDAuNTY3MzY4MDUxNTQ0MDgyNCwwLjYxNjc4NzEyOTA2NDM0OTgsMC41NjE2ODg4OTg4NDI1MzA3LDAuNTgwNzk5ODAzNzU5NzM2OCwwLjQ0ODMzOTgxNDMxNjM5MDgsLTAuNDUxNDk5MDU5ODUwMjEwMSwwLjA5Nzg5NDM5OTYxMjI3MjkyLDEuMjk0NjQ5OTY3MDMyNzkzOCwwLjUzMzU4NjI2MTU3NzE4MjUsMi40Mzg0NDI5OTQ0NDg2NTQzCjU5LFRELFNjYW5uZXJfQyxNYWxlLDguMTUxNDMyNjYyMDU3MTA4LDAuMjc3MjM4NzUxMjc5MzUyOSwwLjU1Mjg0NTM1Mjg1MDk0ODQsMC42MDIyNjI5Mjg0MjU5NzcsMC41MTA2MzAwODkwMDM0NDMsMC40NzczMDM2Njc0NzI5OTg3NCwwLjUzNTE3Njg0Mjk4NzEwMzEsMC4zMDM0NzY2MjY4MzY4MTExLC0wLjA3OTg3NzE0MDM0NjA0MDMyLDAuMDEyNjYwMDA3Mzc4ODczMTgsLTAuMTYzNzgxNzAwMzg1Mjg2NCwwLjQyNDkzODUwNTI4MzExMjQsMS4xMzU5MTE1MjMzMjkwMjE2CjYwLFRELFNjYW5uZXJfQyxGZW1hbGUsMTUuODI4MjkwMDAwMzU2MDEsMC4wODA5MjE1NTg1NjkxOTg1NCwwLjMyNjA0NDA3MjgyMjAzMjcsMC4yNzkwMzM4ODAyOTk5NzY2NywwLjI0MDAwMjk0OTM2Nzg5MzUsMC4yMzc0NTg5NjQyMzUyNzk3LDAuMzUyNTcxNjYzMzQ4MTk2NDUsLTAuMzc2OTczNTU1NDc2OTI1NywwLjA5NjYxNzM0NTg3MjY1MDQ5LC0wLjMwNjYyNjIwNTkwNTQzMDc3LDIuMjcxNDUwMDA0ODQ5NTY1LDAuOTA2OTI1MjcwMDA5MDIxNiwwLjA0NDIyOTk4ODE1NDY0NDYK');
+        if (!response.ok) throw new Error('Network response failed');
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = 'MRI_dataset.csv';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.dispatchEvent(new MouseEvent('click'));
+        document.body.removeChild(a);
+        setTimeout(() => {
+          window.URL.revokeObjectURL(blobUrl);
+        }, 100);
+        return false;
+      } catch (error) {
+        console.error('Download failed:', error);
+        alert('Download failed. Please try again.');
+      }
+    }
+    downloadFile(event);
+  " has_icon="TRUE"><i class="fa fa-save"></i> Download the first 60 participants</button>
+</div>
+</div>
+</div>
+<p><br></p>
+<ul>
+<li>Since then, you collected 30 more:</li>
+</ul>
+<p><br></p>
+<div class="text-center">
+<div class="cell">
+<div class="cell-output-display">
+<button class="btn btn-default" onclick="
+    async function downloadFile(event) {
+      event.preventDefault();
+      try {
+        const response = await fetch('data:text/csv;base64,aWQsZGlhZ25vc2lzLHNpdGUsc2V4LGFnZSxtb3Rpb24sRkFfdW5jaW5hdGVfTCxGQV91bmNpbmF0ZV9SLEZBX3NsZl9MLEZBX3NsZl9SLEZBX2Npbmd1bHVtLEZDX2Zyb250b3BhcmlldGFsLEZDX0RNTixGQ19zYWxpZW5jZSxleGVjX3Njb3JlLHdvcmtpbmdfbWVtb3J5LGF0dGVudGlvbl9zY29yZQoxLFRELFNjYW5uZXJfQixNYWxlLDEzLjExNTUzNDk2Mjk2Njc4MiwwLjUxMzcwMzMwODg1MzA4NTMsMC4zNjYwOTQ4ODU4ODI1Mjk5LDAuMzE5OTI4MzU1MTg0NzQ2MDUsMC4yMjU1NjI3Njc5MjM2NzIsMC4zNDIyNjIxMTEwMjAyNzAzLDAuMzQxMzgxNTE1Mzc3NTI3MTQsLTAuMzA0NTU4ODM3ODYzNDAxOTMsLTAuMDg1NTUyNDM4MjU0OTkzMiwtMC4yODg1Nzc3MDAyOTM2MzAxNywtMS40NjA1NDAyMDU1NTEyMzM1LDAuMDAyOTM0NDM5OTE0MTk3NywwLjc3NjA5NzcxMjk3NzE4OTgKMixURCxTY2FubmVyX0MsTWFsZSwxNi42MjIyNjQ3NDIwOTYxMjQsMC4zMDYxMDQxMjY3Nzk2MDIzLDAuNDkxNDA5MTMyMTIwODQ2ODYsMC42MjMzOTk0MDA0MTI0OTY4LDAuNTU0OTY3MjMyMTA3OTQ1MSwwLjQxODE4NTY1Mjg3NzE3NDI0LDAuNjk2MTQ3MDM0MTIwODM4OCwwLjMzNjg1MjE1NzE3NDM0NjM2LDAuMzU2MzQ1NDYyOTA1MTgxLC0wLjA5OTIxNTI0NjQxNjQxMDIyLC0wLjAwMzgxOTc2NDYzODM1NTM5LC0xLjkxNTczMzMxNTk4NTE4MywtMi4zODA3MjI0ODE4NzE2OTEKMyxURCxTY2FubmVyX0IsTWFsZSwxNS43NzAxODQ4OTE2OTczNywwLjMwMDExMjUyNTE0NjU3MzQ0LDAuMjc5OTY3MTEyNzY0Mjg1MywwLjMzNzM4NzUzNDgwMzU0OTI3LDAuMzg0NDQ5MjQwNDY3MTYxNjcsMC4yMzI3NjkyMTM0NjM1MTU2LDAuMjAwMzM1MDI0NTEyNDkyMDUsLTAuNDc4ODk1MDcyOTI1ODk4MSwwLjYxODc1NjQ2NDg0Mzk4NTksLTAuMTYwMDc4MTA1NjE1Mjk1NDgsLTAuMTk1MDA5MDcxMjI1MDQxNjksLTAuNjEzMjI2NzA0OTY0MjA5MSwtMC4xMjUyMDg0NzI1OTU1OTM1Ngo0LFRELFNjYW5uZXJfQixNYWxlLDExLjgyNjUzNTkzNTg0Mjg3LDAuMTEyMjMzMTA2NTM3MTczMDQsMC4zNjAzMDQyMTA5MDU2MzA5LDAuNDE0Mzk4MjgxNzUxNzU3MiwwLjUyMzMwMTc3Njk5NzI2OSwwLjM3Mjg4NTY3MzYxODQ4ODczLDAuNDkwNjAxMDYwMDgzODMwNjQsMC4xMTc3MjU2NzYxODYxMzg1NCwwLjE5MzI2NzU5Mzg2MTM5OTA4LDAuMTMyOTE4NzU3NzczMDgxNjgsLTEuMzUyMjE5NzQwNzUyOTkxNywyLjIzOTQ3NDg4MjI3MzgzODQsMS4yNjgzMjQyNzQxMDczMTc1CjUsQVNELFNjYW5uZXJfQixNYWxlLDE0Ljc3MTc1NTAwMDEzODU1LDAuMTYzMTM3MTg2ODgxNzQ4OSwwLjYxNjQ0NjAwNTUxNzQ3ODcsMC42NTM4MjM5NjI5NTg2NTM0LDAuNTkxOTk5MDE5NzE0ODM1OSwwLjUzMDMzMzIzMjkxNzMyMiwwLjY4MTM5NTc1MzgwMDEzNTQsMC43NjQwMTgxMzYzMDE1OTM4LDAuMTQzOTk3MjA0NjkyNzY0NjQsMC4wNTAxNDk3NTExMzI3MTY5NCwxLjUyMDAyMzkxNDcwMDk3ODIsLTAuNjU2NzYyMjQ2MTIyOTUxNSwtMS40NTI0NTYyMTQzMzE1ODMKNixBU0QsU2Nhbm5lcl9DLEZlbWFsZSwxNy4yMDc2MjI2MjM3NzYyMDYsMC45MTIxODgzNTcyOTkxNTAyLDAuMzM3MTQ1MjI0OTE3NTQ5NywwLjMyNDYzMTg0MDU1NTg5NjQ0LDAuMjIyNDY1ODI3NjM3NzY5MywwLjI1OTkzODQ1MzMyMDMxNjYsMC4yOTU1OTk0NzY5MjEzMjc2NSwwLjE0NzI2MTY1NzIzNDE2NDc2LC0wLjA5NDI0ODk3OTA5ODkwNjYyLDAuMDkwNzMyNzc4MzUxMjAxNjIsLTAuMjI5NzQ0MDAyMjgzNzQ4Niw0LjI1NjQxODk0MTIyNjA2MjUsLTIuMjc1NDU0MTQ5MzI2MTE4NAo3LFRELFNjYW5uZXJfQixNYWxlLDEzLjY2MjUxNzcyNDAzODMzLDAuMzA5NDU2NjEzNDM4MTYxMTcsMC4zODkxMjQyODMyMzA5MTQ4NiwwLjQ3ODU4Mzk4NDk0NjY2NTEsMC40MjMzMzI5Nzk3NDU2MjQ5NSwwLjQ1MTQ1NDcxNTE3NTI3NjgsMC40OTg0Njg5NDMxNjQwMDY4LC0wLjQ1MzI4MTY2NjI5NjI4MDg2LC0wLjI4ODQwNTg5OTI5NjgxODU0LDAuMTIxODEwMjg5NDE0NjA4NTQsLTAuODQxNDQzOTA1MzEyMDA0LDAuMTc0MTQ5NTY5MzI2MjI5OTYsLTAuMjE2MTM5NjM4OTgxNDE1NjQKOCxURCxTY2FubmVyX0IsRmVtYWxlLDExLjYwMjE0MjE3NjU4MjkyLDAuNDE5MTEzNjU2OTc3NDY2OSwwLjU3Nzk4MDY4ODExMjY2MDYsMC42MTk2MTg3OTg2OTI4NTY1LDAuNTM3Njc3MTc2NTUxMTgwMywwLjU5MDE3MTgyNTI3OTU1NzEsMC43NzQzMDQ4MTU1MDI2NzgzLDAuNDA4Mzk1OTQ1MDE5OTMxLC0wLjQwNzcwNzc3NDkxNjM3MDMsMC4yNzYxOTEzNjc5MTI2MTk4MywtMC4yODcyNTk5MjY1MTE2MDU2LDEuNTAzMTQzMDA3NjA2OTkwNSwxLjk0NzI2ODQ1NjA5ODc0NjMKOSxBU0QsU2Nhbm5lcl9BLE1hbGUsMTAuMzQyNTE5MjEyMjY1ODI0LDAuNDYwNTc1MTQ1NjU4OTgxMiwwLjE5MTc0NzUwNjE0MTU5MDksMC4zMjQ4NjU0OTU2NjI3NTI4LDAuMjQxOTczMzYyMjAzMjc0MTIsMC4yOTAzODE2MDk2NjU0OTYzLDAuNDE5MTY5NzQ4NjE0NTMyNiwwLjA2NDY5NDQ0NjM2Njk3NjU4LDAuMzcyOTkxOTQ2NTkxMzI1NDUsMC4xMDU0MjQ4MjQ1ODA0NDUzLC0xLjAzNzk3NTg4ODYxNjUzNDQsMC43OTM5OTkzNjA1Njc4NTUsLTEuNDMyNjQ3MTM0MTcyMTIxMgoxMCxURCxTY2FubmVyX0MsTWFsZSw4LjgwNjAzODE2MzAxOTc3NSwwLjI4NzQ1NTczNzYwMTA0ODAzLDAuNTUwMzYzMTQyOTI5ODQ2NiwwLjUwNDgxNjU0NDQ5Nzg1MSwwLjU3OTA0NjM1NzYxMTc3MTMsMC4zNzExNTYyMTg5MTIzODc3LDAuNTE2Mzc0Nzc2MjA1NDQ5NSwwLjM2NDAyNzIyNzMzNDk5NTUsLTAuMDQ4MzA1MjE5NTYxMTU5MDcsMC4xNjQ5MjgxOTg0NzExOTE1OCwtMi40ODQ0NTg4NTA5NjM3NjQ0LDEuOTQyNzE0ODc3MDUwMzY2NCwtMS42MTY0MjY2Njc2NjAwOTUKMTEsVEQsU2Nhbm5lcl9BLEZlbWFsZSw5LjczNjAwMDg4MzIwMjMyLDAuNTUxNTUwMzkxNzA2NDQ2OCwwLjIxOTY2MjE2MjIyODIxMDEsMC4xOTU0MTc5MTU0NjY5NTA4LDAuMzkxMzgxNDY4OTA3MTA4OSwwLjI4NzQ3NTYxODAxOTQxNDA3LDAuNDMzMjIyODg4MjA5MTE4NywwLjIwNzUzNTE2MDAyMTk0NDksLTAuMDY0MTc3MzIzMTc1NjEyOTgsMC4yNDQ5NDIxMzU4MTg3NTkxMiwwLjE2MjA3NDIzNjQwMTE1MzIsMy4yNDgyNTk2OTE0ODc4MDEyLDAuNTIyNjg3ODkyODU2OTEzNQoxMixURCxTY2FubmVyX0IsTWFsZSwxMC40OTA2NzE2MDM5MjgyODIsMC4yMDY1NTM2ODY4NjE0ODg1NiwwLjU3MzAxNTE1NjIyNzE3MiwwLjc2NjM0Mzg2NTUzNjU1NTUsMC43NTAwNDQ2MTQ3MjYxNTU1LDAuNTQ0MTYwNTAyMDU5NjkwOCwwLjc0ODUwMzYzMTM3MjM1NzIsLTAuMDI1NTg5OTMwNzM4NjMzMTksMC4yOTgwMDQ4NTg5NjExNjg0NiwtMC4yNzcyODc3MTAzODk1MzA0LC0wLjQ4NzE1Nzc4MTE2NDgwMDI0LC0xLjAyNjI2MDcxMjYxMzQ1OTUsLTIuNjM3ODM3MzQyODYyNzk2CjEzLEFTRCxTY2FubmVyX0EsRmVtYWxlLDEzLjA0NTkxNjE1MTQ5MjQ0MiwwLjIxOTY5Mzg2ODg1NDg2NDEsMC44MjAwOTQxNzA2Njc4MDQyLDAuODQyOTE3NDAzMzMyMTUzMSwwLjY2ODY0NzQ4MjExMTI5MDMsMC41Nzc5NTk4Mzg5NjAwNTc4LDAuODgyMjE3MTU2MjY5MDYzNCwwLjEwNjI1MzU4MTIzNzY3MDI2LC0wLjM0ODI2MTU0NDE0ODEzMDEsMC4zMTE1MDE1NzAyMjk4Nzc4LC0wLjEwMjM5MDI2NDIxODE5NDk2LDAuOTk5Nzk3Mzg3NjE2NzgzOCwtMC43NDg2MzAzNTY5ODEzODE5CjE0LFRELFNjYW5uZXJfQixGZW1hbGUsOS4zODgwMjE1ODIzODMyNzIsMC40NjgzNTI2MjY4MDMwMjQ1LDAuNDA0MjM5Njk3NzUwMDg2OSwwLjQ2MjY2NzIwMjY0NDcxNjcsMC41MjEwODQ3MDQ2NTQyNjY1LDAuNDYwOTQzNzczODQ1ODE3OSwwLjUyNDMyMTY5MjY2NzU0OTIsLTAuNTExMDc3NTcyMjk1ODYxMSwwLjQ0MDE4MDEwMjY4MzY3OTEzLC0wLjEyNzY5NzEwNjY5NDQyMjc1LC0xLjI3NjA2NzkyNTQ5ODM2MjUsLTEuNjIyNDM2NjE0MjYwMDE5NSwwLjY4MjM2MTU4MTg4NTY1NTIKMTUsQVNELFNjYW5uZXJfQixGZW1hbGUsOC45NTI0MTk4MTMwMDMyMjgsMC4xNDYwNzQwNDkxODQ5MTgxMiwwLjM0NjE1MDY3ODU4MjgyMDk1LDAuMTQ5MDEyOTUyMzA0NDAzNCwwLjMwMDc5ODQyMDU1NTI0MzEsMC4yNzA4NTg1MTkzNzU4Mzg5NCwwLjUxNjczMzY4NTM1OTY3NDksLTAuMjk4OTU1MDk3ODI5NzgzMjUsMC40MjI2OTE0NTM4ODA0MTQ5LDAuMDM5ODA1MTIzNTM0MDE0OCwtMC4wMzg1NDExODU1NTYwNTIwMSwwLjM5NDc0NDQ4NTY3OTYxNjgsMC44NDMxNTY5Njg0MTQ5NDgyCjE2LFRELFNjYW5uZXJfQSxGZW1hbGUsMTMuNDIwMTQ3NDc1MzI0ODYsMC4yMDMwMzEyMTExMDEzNzQ2OCwwLjU3NDEwNDI3MzM1MjA2MjIsMC40NTUxNjgzMTEyMjM5ODUyNywwLjQ2MzQ0NDk0MDk1MTczOTgsMC40MDUyOTE1NDAxNjM4MTc0NywwLjQ2NTA4OTk5MzIyMTI0MTg0LDAuMzg4Njg5NjAwNzQ0NjQ3MiwwLjU1NTQzNTY2MzIwMTc2NTMsLTAuMTc2ODk2Mjg0Njc1MjMwNCwwLjY1NTQyNTI4MjI2NDY1NzMsNS4xNjUyNTQzMzc1MjY3NjY1LC0wLjEzNTA3OTAxNTQwNzg4NzAzCjE3LFRELFNjYW5uZXJfQixGZW1hbGUsMTIuNjE4NzI4MjYzNTA0NDEsMS41MzQwMTg0OTM2Mjk1MzM4LDAuNDkyMzg0MjgwMTAxNTE0MSwwLjQ4MTgxMTAwNzcxMzUyNTUzLDAuNDczNzg0NzIxNzQ3NzgzNzQsMC4zNTM1Nzg0NTgzMjkyMjY3LDAuNDMzODE3NjIxMDg5Mjg5NiwwLjU0Mzg5MjY1MjA5OTM0ODgsLTAuMTUxNTM4NjQyMTMzMTM1NiwtMC4wMDE2NjkzOTk4NjcxMDMyOSwwLjQzMjE2MTIxMTYxODQ4NCwtMS4wNDkzMTQ5MTc0NjA1MTEsMC42NDcxOTc0MDc4OTg0NTQ2CjE4LFRELFNjYW5uZXJfQyxNYWxlLDE1LjEzMDM3MDYwMDEzMjIxNSwwLjI5MTgyNjA1MDgwMzksMC41Njk3NzcyMDYwNTY0MDUxLDAuNjEwNjgzMDgzNDE5MTgxNCwwLjQ0Mzk5OTU4NTQ0NDQwOTIsMC41MzI1OTU1NzIxNDA1LDAuNTU3MDkwNjU5OTg5NDE4MSwwLjAyODMxMjU2MzkxMTA4Njc0LC0wLjM4NDE0MjQ4MzA3NTY1Njc0LDAuMTgzOTg5ODc1OTcxNzM2NzIsMS45MzYxODEzNTEwODkxODA4LDEuMjUyMjc2NDU1NDQ3MDc2LC0wLjc0MTIyODgyMjIxNTkxNjgKMTksVEQsU2Nhbm5lcl9BLE1hbGUsMTAuMjg2MTEyNjY4MTQxNzMxLDAuNDQ0NDQ1MjcyNDM4NzUxMjYsMC41ODgzODc5MTExNjU2NzE5LDAuNzI2MTI2MDM0NTM2NTQxOCwwLjcxNDUwODE5MTA2MjI1NjgsMC42Mjg0OTk3MDcxMTQyOTIzLDAuNTAxMjA4MjUzNzc0MTg5OSwwLjE0ODY2MDA1MzQ2NDM5NTI2LC0wLjAzMTkwNTM1NzYzNTkxNjU0LDAuMDk0NTEzMTMxOTAzNDg4MTIsMS41NzcxNTYxMjY1ODI5Nzc0LC0wLjA2MzQ5MDA0MjQwOTcyOTEsMC4wNTcwMjExMzMyMjcyMjM2MwoyMCxBU0QsU2Nhbm5lcl9BLEZlbWFsZSwxMi42NjQ4MjI2Mjk2MTE1MDksMC4yNTEyODc0ODk2MDIxNTYzNiwwLjYzMDI4NjE1NzY2NTE1NjIsMC42MDM3NzUzMTE5NzAzOTE0LDAuNTIxNzg0MDM5NDkzNjQ4LDAuNjgxMjM3MDYwNTk3NDg4NywwLjYwODMyMDQyMzQxMDU2MzYsMC4zMjM2NDY3NjczNzY3MzM2NSwtMC40OTI1Mjg0OTEzMjIyOTQ2LDAuMTU2MjgxMzIzOTM5MTczOCwtMS4wNTg0NjY5MDM4NDM0MzExLC0wLjM5OTAxNjA0NjE0NzkzMjA3LDAuNzU5NjM1NzMxMDk1NzkxNwoyMSxURCxTY2FubmVyX0EsTWFsZSwxMy43NDQwNzEzMTQ0NTQ1MjUsMC4xNjUxNTkyMDA4NjYxODkzLDAuMzYxMjU5NjI2MTI1MzM1LDAuMzc5NjYyMjU1MzEzNDg5NDYsMC41MTgzOTM5NjA3Mjg3Mzg3LDAuMzY4NjQ4NTg1MDIwNjQ2LDAuMzQ4MDg0NDYyMzc5NzczMSwwLjIyNTM3NTYzMzY5NDkwODIzLC0wLjIzNTY1NjMyNzM1MTc1NDI0LC0wLjE0NjcwNDg2MTQzMTc5OTUzLDAuMjYyNTIyODYyMzU5MjYyLC0xLjYzMTIxMDQxMjQ4MTkxNDUsMS4xNzk3OTcyNTc4NTgxODM3CjIyLFRELFNjYW5uZXJfQyxGZW1hbGUsMTcuMTE4NTgzODA3Nzg1MTcsMC42NjkwOTYxNTY1NzAwOTQ4LDAuODA5MzQyMzI0OTIzMDA5MywwLjc1OTEzOTM1NDgwMjY4NSwwLjgxMDk4Mzk3NTUzMTQ2MDEsMC40NjgwNjI1MTY2NDcyMzg5NywwLjY1NjgwOTMyNzU4ODA4MjcsMC43MjQwMzk0Mzg4OTY5ODgsLTAuNjI4Nzk0MzUzNTQyMzIzNywtMC4xODkwNDU1NTAyNDQ5Mjc3LC0wLjcxOTgyMzU0MDgxMDIzODksLTAuOTIwNTg3MzQ3Mzc5NzE0LDAuNTU2ODc4OTA5MTAxMDcxOQoyMyxURCxTY2FubmVyX0MsRmVtYWxlLDE0LjU1MjYyMTcyMzQ3MjM2OCwwLjI3ODA1Nzc4NjYwOTkyMTUzLC0wLjA0NTk4NjY5NjYwNzY2MDUzLC0wLjA0NTAzNDcyNDEzMDM3MDc0LDAuMDI4NTI5NDk1MDAzNzc1MzMsMC4wNTI1NTczMzc2MjU4MTU5OSwtMC4wMzU5NDMxMDYxNjEwNzI2NiwtMC40MDU0NzI5NTEwOTY2OTI4LC0wLjAzMTc2MDc3NjI3MDIxODI4LC0wLjYzMTE5MTY0MDc2NzU2MjQsLTAuMTQwNzI1MzQ1NDEyOTQ5NCwxLjEyNTYyMDczMjQyOTY1LC0wLjQxMDEyMTYyNTI2NDI0OQoyNCxBU0QsU2Nhbm5lcl9CLE1hbGUsMTAuNzAxNDE2NDM1NTEyNDEyLDEuNDg0NDgxODQ5MTEzOTQ5LDAuNTE2NzU2OTkxNzQwNDU1NiwwLjY2ODU5MzQyMzQ3MTY3MzksMC42MjcxMjE5NDA0MzQ3MDI4LDAuNjA3NTAwMzAyOTQ0NTM0OSwwLjczNzE4NjgxOTM5NTg4MDcsMC41MzA0ODYyNzMzMzgyMzYzLC0wLjE5MTA5NTEyNjUxNjc5NTcsMC4yMDgyMDI4NjU0OTQwMzQyLDAuMzg2MTM4MjkyMjgwMTMxNiwtMi4yOTE4NTQwOTE2MzE2OTgsMS4yODgzNDE2ODIzMTk3MDM2CjI1LEFTRCxTY2FubmVyX0EsRmVtYWxlLDExLjc2MzIxOTU4NTQxNDg4NiwwLjE5NzQ3NDMxNTE2MzczNTYsMC4zMzAxNTkwMzM5MDcwNzIyLDAuMzYyNDA2NDcxNzE4MTMzOSwwLjQ4Mzg4NTUwMTY2NjY5MTc1LDAuNDc2NjI0MjUyMzU3OTQzOCwwLjU1OTUwMDkxNzc0MTcxMTgsMC4wODUxNjMxMTkwNzM0Mjg5OCwwLjU0ODU2MjYwNjE5ODkzMjYsMC4wNDEyMzY0OTE2MDQwODI4NCwtMi4zODMwOTg3OTI1NzExMDM0LC0xLjU3NDc1Njc5NDcxMjMwOTgsMC4yNzg5MDY4ODA4MjU3NzY4NgoyNixURCxTY2FubmVyX0MsRmVtYWxlLDEzLjczMDgzOTMwNDM2OTIyNSwwLjAzMDgwMjA4MjI1ODM1MzczLDAuNjI4MDA3Mjg3NDA5NjgxNiwwLjQ4NDYxOTczMDEzNjIxMDcsMC41MjM4NDc5NjY2OTE5NDg3LDAuNTczODE4NTQ2MjcyMTk0OCwwLjYwNDgzMzQyNTc5NjMwODMsMC41MzQzNTU4MDk5MjI3MjYsMC42MDQ4NDg5MjcyNDAxNDU1LC0wLjEwMzI5Mjk2ODkxNTk3ODk2LDIuMDE3MDMxMTI5NDA5MzI1LC0wLjEzNzcwNjgxOTQ5OTUyNCwtMC40NzkzMTU2NjI2OTQxMTI4NQoyNyxBU0QsU2Nhbm5lcl9CLE1hbGUsNy43MDE0MDgxODMyNTg5MzEsMC4yMDE5NTA1OTIzMzI2MDY4NywwLjU3ODgzMDg3NzMyNjM5NjIsMC40OTg4OTk2NzEwODY1NjA1LDAuNDk1NzM1NDQ0NTAyMTQyMiwwLjY1ODMyNzkxMzQwNTMxNDYsMC42OTU4MjY1OTk4NjcyNTU4LDAuNzEzNDQ5NjkzNDM3NDIzMywtMC41ODkyMDcxMjYwNjE1NzcxLC0wLjMyMTEyMjA5NTkzMjE2ODk1LC0xLjYxNzI2OTE3MjcwNDYzNDIsMC45MTc0NTExNDQ1Mzg3ODk2LC0wLjE4OTkzNTcyOTQ0MjY3Njg0CjI4LEFTRCxTY2FubmVyX0IsTWFsZSwxMy4yNTAxMDYxOTU2NjA2NzgsMC4zNzQxNzUyNDI1ODg2NTczNiwwLjUxMzYyMTEzNDQ2NTQzNTQsMC41NDkwODczNTI3ODUyNzc4LDAuMzQ3MDUzMTMwNzQ4MTgsMC40ODY2NjM2MzI0ODA5OTA5LDAuNTQyMDM5NTc1NTQ2MzQ0OSwtMC40MDg0NzA2MDI0NzI4NDA2LC0wLjI2NjY0MDg1ODk2MzI1NDQsMC4wMDUwMDIzNDQ1OTgyNDI3MiwtMC42NzE1MjIyNDQwMjY5MDI5LDAuMDI0MTc4NTk5NDc0MDYwNDYsLTAuMjQwNTMwMDkxMTQ3NDYyMDQKMjksVEQsU2Nhbm5lcl9DLE1hbGUsMTMuODg4NTI5NDM4Nzg5OTcsMC4zMTMzMzY4NjkxNDUyNTM0LDAuNDA5MDYwNjEyNzYzMzM5MiwwLjU0MTI4Mjg0NDQ0MjUyMTYsMC41MjQxNTI2Nzk4MzkwNDEzLDAuNTIzNTc2NzUyMjEzMDYxNCwwLjQ2MTQxODQ3ODU1ODEyNzM0LC0wLjI2NTIzNTcwMDI0MTQxNTEsMC4zNDE4ODc2MjMzMjY3NjIxLC0wLjQ5NTY3NjUwMTU3NzA2MzYsMC4zMDQxNTAxMjc0OTUwNDAzMywwLjY1NDAyMzk1OTQ2NzQ1NzUsLTAuMzIyNDAyOTk0Mzk0NzYzNAozMCxURCxTY2FubmVyX0EsTWFsZSwxMC4xMzY2MjgyNDY3NjkwNjIsMC4yMTU0MTk2NDE1NDk3NTIxMywwLjM2MDU3MzAzOTE4MzIzNzcsMC40NTkwMjU4MTIyMDYwOTM5LDAuNTMzMTU5NzIwODM3NDY1OSwwLjU4NjM1OTEyODUyNDg3NjQsMC40OTQ2Nzc4MTU2ODY3MjA0LDAuNTYxNDY3NjIxNzU1NzQyOCwtMC4yOTg3MDM1NzA2MDEwODk1NCwwLjAyMzk3OTI5Mjk5ODY1NzcsLTAuMDczNTgzNDE5MTYzMzE0NTEsMC43MzMxMzE2MjEyODQ0NDc0LDEuNDQ1NzI5Njk3Nzg1Njk1Mwo=');
+        if (!response.ok) throw new Error('Network response failed');
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = 'MRI_dataset2.csv';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.dispatchEvent(new MouseEvent('click'));
+        document.body.removeChild(a);
+        setTimeout(() => {
+          window.URL.revokeObjectURL(blobUrl);
+        }, 100);
+        return false;
+      } catch (error) {
+        console.error('Download failed:', error);
+        alert('Download failed. Please try again.');
+      }
+    }
+    downloadFile(event);
+  " has_icon="TRUE"><i class="fa fa-save"></i> Download the next 30 participants</button>
+</div>
+</div>
+</div>
+<p><br></p>
+<p>The study was motivated by identifying candidate white matter tracts and resting state network activity that may predict executive functioning scores (<code>exec_score</code>), working memory (<code>working_memory</code>) and sustained attention (<code>attention_score</code>) across neurotypical and autistic chidren, though you may explore alternative questions too. Participants’ sex and age were confirmed prior to their scan, which was conducted at three different scanners depending on schedule availability (<code>site</code>). All participants either had a previously confirmed ASD diagnosis or were neurotypical (NT, <code>diagnosis</code>). Fractional anisotropy (FA) indices for the left and right uncinate tract (<code>FA_uncinate_L</code> and <code>FA_uncinate_R</code>, respectively) and cingulum were quantified, alongside mean frontoparietal (<code>FC_frontoparietal</code>) and default mode network (<code>FC_DMN</code>) functional connectivity. The total aggregate level of translational and rotational motion was recorded for each participant (<code>motion</code>).</p>
+<ul>
+<li>What is optional stopping? Why does it risk inflating the false positive rate? What is the impact of changing the number of observations added to each ‘peek’ of the data?</li>
+<li>Click the button below to determine your role for this dataset:</li>
+</ul>
+<p><br></p>
+<div class="text-center">
+<div class="cell">
+<div class="sourceCode cell-code hidden" id="cb6" data-startfrom="460" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 459;"><span id="cb6-460"><a href="#cb6-460" aria-hidden="true" tabindex="-1"></a>viewof run2 <span class="op">=</span> {</span>
+<span id="cb6-461"><a href="#cb6-461" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> button <span class="op">=</span> <span class="fu">html</span><span class="vs">`&lt;button style="background-color: white; color: black;"&gt;Find role&lt;/button&gt;`</span><span class="op">;</span></span>
+<span id="cb6-462"><a href="#cb6-462" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> clickCount <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-463"><a href="#cb6-463" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-464"><a href="#cb6-464" aria-hidden="true" tabindex="-1"></a>  button<span class="op">.</span><span class="at">onclick</span> <span class="op">=</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb6-465"><a href="#cb6-465" aria-hidden="true" tabindex="-1"></a>    clickCount<span class="op">++;</span></span>
+<span id="cb6-466"><a href="#cb6-466" aria-hidden="true" tabindex="-1"></a>    button<span class="op">.</span><span class="at">value</span> <span class="op">=</span> clickCount<span class="op">;</span></span>
+<span id="cb6-467"><a href="#cb6-467" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-468"><a href="#cb6-468" aria-hidden="true" tabindex="-1"></a>    <span class="pp">setTimeout</span>(() <span class="kw">=&gt;</span> {</span>
+<span id="cb6-469"><a href="#cb6-469" aria-hidden="true" tabindex="-1"></a>      button<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">backgroundColor</span> <span class="op">=</span> <span class="st">'orange'</span><span class="op">;</span></span>
+<span id="cb6-470"><a href="#cb6-470" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span> <span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb6-471"><a href="#cb6-471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-472"><a href="#cb6-472" aria-hidden="true" tabindex="-1"></a>    button<span class="op">.</span><span class="fu">dispatchEvent</span>(<span class="kw">new</span> <span class="bu">CustomEvent</span>(<span class="st">'input'</span>))<span class="op">;</span></span>
+<span id="cb6-473"><a href="#cb6-473" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb6-474"><a href="#cb6-474" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-475"><a href="#cb6-475" aria-hidden="true" tabindex="-1"></a>  button<span class="op">.</span><span class="at">value</span> <span class="op">=</span> clickCount<span class="op">;</span> </span>
+<span id="cb6-476"><a href="#cb6-476" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> button<span class="op">;</span></span>
+<span id="cb6-477"><a href="#cb6-477" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell" data-input="run2">
+<div>
+<div id="webr-2" class="exercise-cell">
+
+</div>
+<script type="webr-2-contents">
+eyJhdHRyIjp7ImVjaG8iOmZhbHNlLCJlZGl0IjpmYWxzZSwiZXZhbCI6dHJ1ZSwiaW5wdXQiOlsicnVuMiJdfSwiY29kZSI6IlxuXG5pZiAocnVuMiA+PSAxKSB7XG4gIGNhdChzYW1wbGUoYyhcIlAtaGFja2VyXCIsIFwiSG9uZXN0IGFuYWx5c3RcIiksIDEpKVxufSJ9
+</script>
+</div>
+</div>
+</div>
+<p><br></p>
+<ul>
+<li><p>While your initial power analyses suggested an n of 90, how reliable are power analyses anyway?. Now that you have the extra 30 participants, you could combine the datasets. If you are a p-hacker, simulate ‘peeking’ at your data: rerun your analysis at different samples, i.e.&nbsp;<span class="math inline">\(n = 60\)</span>, <span class="math inline">\(n = 65\)</span>, <span class="math inline">\(n = 70\)</span>, and so on, adding a few rows at a time until your <span class="math inline">\(p\)</span>-value of interest crosses the threshold, then stop! If you’re p-hacking,</p></li>
+<li><p>Just like Q5, please prepare your findings in a Quarto document and be ready to present your analyses to the rest of the group.</p></li>
+</ul>
+<ol start="7" type="1">
+<li>For both datasets, answer the following:</li>
+</ol>
+<ul>
+<li><p>Which analytic choices most changed your conclusions?</p></li>
+<li><p><em>If you were the p-hacker</em>, how many unique combinations did you try before choosing the ones you reported?</p></li>
+<li><p>Did you find yourself rationalizing the results you encountered? Why might these rationalizations creep into data analysis and how would you prevent them?</p></li>
+<li><p><em>If you were the honest analyst</em>, did you feel a pressure to modify your analyses when your pre-registered plan yielded results you weren’t expecting?</p></li>
+</ul>
+<ol start="8" type="1">
+<li>Which p-hacking strategies did the authors find to inflate the false positive rate the most?</li>
+</ol>
+<ul>
+<li>Is p-hacking a phenomenon of just small samples? Which strategies appear to worsen with increasing sample size?</li>
+<li>What approaches do the authors raise to combat p-hacking?</li>
+<li>The paper termed these practices as “Big Little Lies”. In reality, however, many researchers engage in these behaviors unwittingly. Do you think the term “<span class="math inline">\(p\)</span>-hacking” as implying malicious intent is appropriate or might it conceal systemic issues with accepted inferential criteria across scientific institutions?</li>
+<li>What is a Bayes factor? How might it be more robust to the effect of optional stopping?</li>
+<li>Is the compendium exclusively a p-value problem?</li>
+</ul>
+<p>We end on a quote from Werner Heisenberg: <em>“What we observe is not nature itself, but nature exposed to our method of questioning.”</em> (Physics and Philosophy: The Revolution in Modern Science, 1958)</p>
+
+
+<script type="webr-data">
+eyJvcHRpb25zIjp7ImJhc2VVcmwiOiJodHRwczovL3dlYnIuci13YXNtLm9yZy92MC41LjIvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsiZXZhbHVhdGUiLCJrbml0ciIsImh0bWx0b29scyIsInRpZHl2ZXJzZSJdLCJyZXBvcyI6W119LCJyZW5kZXJfZGYiOiJkZWZhdWx0In0=
+</script>
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV8yO1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItMiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJfd2Vicl92YWx1ZV8yID0ge1xuICBjb25zdCB7IGhpZ2hsaWdodFIsIGI2NERlY29kZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcbiAgY29uc3Qgc2NyaXB0Q29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLTItY29udGVudHNcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBibG9jayA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKHNjcmlwdENvbnRlbnQpKTtcblxuICAvLyBEZWZhdWx0IGV2YWx1YXRpb24gY29uZmlndXJhdGlvblxuICBjb25zdCBvcHRpb25zID0gT2JqZWN0LmFzc2lnbih7XG4gICAgaWQ6IFwid2Vici0yLWNvbnRlbnRzXCIsXG4gICAgZWNobzogdHJ1ZSxcbiAgICBvdXRwdXQ6IHRydWVcbiAgfSwgYmxvY2suYXR0cik7XG5cbiAgLy8gRXZhbHVhdGUgdGhlIHByb3ZpZGVkIFIgY29kZVxuICBjb25zdCByZXN1bHQgPSB3ZWJST2pzLnByb2Nlc3Moe2NvZGU6IGJsb2NrLmNvZGUsIG9wdGlvbnN9LCB7cnVuMn0pO1xuXG4gIC8vIEVhcmx5IHlpZWxkIHdoaWxlIHdlIHdhaXQgZm9yIHRoZSBmaXJzdCBldmFsdWF0aW9uIGFuZCByZW5kZXJcbiAgaWYgKG9wdGlvbnMub3V0cHV0ICYmICEoXCIyXCIgaW4gd2ViUk9qcy5yZW5kZXJlZE9qcykpIHtcbiAgICBjb25zdCBjb250YWluZXIgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpO1xuICAgIGNvbnN0IHNwaW5uZXIgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwiZGl2XCIpO1xuXG4gICAgaWYgKG9wdGlvbnMuZWNobykge1xuICAgICAgLy8gU2hvdyBvdXRwdXQgYXMgaGlnaGxpZ2h0ZWQgc291cmNlXG4gICAgICBjb25zdCBwcmVFbGVtID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudChcInByZVwiKTtcbiAgICAgIGNvbnRhaW5lci5jbGFzc05hbWUgPSBcInNvdXJjZUNvZGVcIjtcbiAgICAgIHByZUVsZW0uY2xhc3NOYW1lID0gXCJzb3VyY2VDb2RlIHJcIjtcbiAgICAgIHByZUVsZW0uYXBwZW5kQ2hpbGQoaGlnaGxpZ2h0UihibG9jay5jb2RlKSk7XG4gICAgICBzcGlubmVyLmNsYXNzTmFtZSA9IFwic3Bpbm5lci1ncm93IHNwaW5uZXItZ3Jvdy1zbSBtLTIgcG9zaXRpb24tYWJzb2x1dGUgdG9wLTAgZW5kLTBcIjtcbiAgICAgIHByZUVsZW0uYXBwZW5kQ2hpbGQoc3Bpbm5lcik7XG4gICAgICBjb250YWluZXIuYXBwZW5kQ2hpbGQocHJlRWxlbSk7XG4gICAgfSBlbHNlIHtcbiAgICAgIHNwaW5uZXIuY2xhc3NOYW1lID0gXCJzcGlubmVyLWJvcmRlciBzcGlubmVyLWJvcmRlci1zbVwiO1xuICAgICAgY29udGFpbmVyLmFwcGVuZENoaWxkKHNwaW5uZXIpO1xuICAgIH1cblxuICAgIHlpZWxkIGNvbnRhaW5lcjtcbiAgfVxuXG4gIHdlYlJPanMucmVuZGVyZWRPanNbXCIyXCJdID0gdHJ1ZTtcbiAgeWllbGQgYXdhaXQgcmVzdWx0O1xufVxuIn0seyJjZWxsTmFtZSI6IndlYnItd2lkZ2V0LTEiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJ7XG4gIC8vIFdhaXQgZm9yIG91dHB1dCB0byBiZSB3cml0dGVuIHRvIHRoZSBET00sIHRoZW4gdHJpZ2dlciB3aWRnZXQgcmVuZGVyaW5nXG4gIGF3YWl0IF93ZWJyX3ZhbHVlXzE7XG4gIGlmICh3aW5kb3cuSFRNTFdpZGdldHMpIHtcbiAgICB3aW5kb3cuSFRNTFdpZGdldHMuc3RhdGljUmVuZGVyKCk7XG4gIH1cbiAgaWYgKHdpbmRvdy5QYWdlZFRhYmxlRG9jKSB7XG4gICAgd2luZG93LlBhZ2VkVGFibGVEb2MuaW5pdEFsbCgpO1xuICB9XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici0xIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldCIsInNvdXJjZSI6Il93ZWJyX3ZhbHVlXzEgPSB7XG4gIGNvbnN0IHsgaGlnaGxpZ2h0UiwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIC8vIERlZmF1bHQgZXZhbHVhdGlvbiBjb25maWd1cmF0aW9uXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHtcbiAgICBpZDogXCJ3ZWJyLTEtY29udGVudHNcIixcbiAgICBlY2hvOiB0cnVlLFxuICAgIG91dHB1dDogdHJ1ZVxuICB9LCBibG9jay5hdHRyKTtcblxuICAvLyBFdmFsdWF0ZSB0aGUgcHJvdmlkZWQgUiBjb2RlXG4gIGNvbnN0IHJlc3VsdCA9IHdlYlJPanMucHJvY2Vzcyh7Y29kZTogYmxvY2suY29kZSwgb3B0aW9uc30sIHtydW4xfSk7XG5cbiAgLy8gRWFybHkgeWllbGQgd2hpbGUgd2Ugd2FpdCBmb3IgdGhlIGZpcnN0IGV2YWx1YXRpb24gYW5kIHJlbmRlclxuICBpZiAob3B0aW9ucy5vdXRwdXQgJiYgIShcIjFcIiBpbiB3ZWJST2pzLnJlbmRlcmVkT2pzKSkge1xuICAgIGNvbnN0IGNvbnRhaW5lciA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJkaXZcIik7XG4gICAgY29uc3Qgc3Bpbm5lciA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJkaXZcIik7XG5cbiAgICBpZiAob3B0aW9ucy5lY2hvKSB7XG4gICAgICAvLyBTaG93IG91dHB1dCBhcyBoaWdobGlnaHRlZCBzb3VyY2VcbiAgICAgIGNvbnN0IHByZUVsZW0gPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwicHJlXCIpO1xuICAgICAgY29udGFpbmVyLmNsYXNzTmFtZSA9IFwic291cmNlQ29kZVwiO1xuICAgICAgcHJlRWxlbS5jbGFzc05hbWUgPSBcInNvdXJjZUNvZGUgclwiO1xuICAgICAgcHJlRWxlbS5hcHBlbmRDaGlsZChoaWdobGlnaHRSKGJsb2NrLmNvZGUpKTtcbiAgICAgIHNwaW5uZXIuY2xhc3NOYW1lID0gXCJzcGlubmVyLWdyb3cgc3Bpbm5lci1ncm93LXNtIG0tMiBwb3NpdGlvbi1hYnNvbHV0ZSB0b3AtMCBlbmQtMFwiO1xuICAgICAgcHJlRWxlbS5hcHBlbmRDaGlsZChzcGlubmVyKTtcbiAgICAgIGNvbnRhaW5lci5hcHBlbmRDaGlsZChwcmVFbGVtKTtcbiAgICB9IGVsc2Uge1xuICAgICAgc3Bpbm5lci5jbGFzc05hbWUgPSBcInNwaW5uZXItYm9yZGVyIHNwaW5uZXItYm9yZGVyLXNtXCI7XG4gICAgICBjb250YWluZXIuYXBwZW5kQ2hpbGQoc3Bpbm5lcik7XG4gICAgfVxuXG4gICAgeWllbGQgY29udGFpbmVyO1xuICB9XG5cbiAgd2ViUk9qcy5yZW5kZXJlZE9qc1tcIjFcIl0gPSB0cnVlO1xuICB5aWVsZCBhd2FpdCByZXN1bHQ7XG59XG4ifSx7ImNlbGxOYW1lIjoid2Vici1wcmVsdWRlIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoid2ViUk9qcyA9IHtcbiAgY29uc3QgeyBXZWJSLCBDaGFubmVsVHlwZSB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZS5XZWJSO1xuICBjb25zdCB7XG4gICAgV2ViUkV2YWx1YXRvcixcbiAgICBXZWJSRW52aXJvbm1lbnRNYW5hZ2VyLFxuICAgIHNldHVwUixcbiAgICBiNjREZWNvZGUsXG4gICAgY29sbGFwc2VQYXRoXG4gIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHN0YXR1c0NvbnRhaW5lciA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKFwiZXhlcmNpc2UtbG9hZGluZy1zdGF0dXNcIik7XG4gIGNvbnN0IGluZGljYXRvckNvbnRhaW5lciA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKFwiZXhlcmNpc2UtbG9hZGluZy1pbmRpY2F0b3JcIik7XG4gIGluZGljYXRvckNvbnRhaW5lci5jbGFzc0xpc3QucmVtb3ZlKFwiZC1ub25lXCIpO1xuXG4gIGxldCBzdGF0dXNUZXh0ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudChcImRpdlwiKVxuICBzdGF0dXNUZXh0LmNsYXNzTGlzdCA9IFwiZXhlcmNpc2UtbG9hZGluZy1kZXRhaWxzXCI7XG4gIHN0YXR1c1RleHQgPSBzdGF0dXNDb250YWluZXIuYXBwZW5kQ2hpbGQoc3RhdHVzVGV4dCk7XG4gIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgSW5pdGlhbGlzZWA7XG5cbiAgLy8gSG9pc3QgaW5kaWNhdG9yIG91dCBmcm9tIGZpbmFsIHNsaWRlIHdoZW4gcnVubmluZyB1bmRlciByZXZlYWxcbiAgY29uc3QgcmV2ZWFsU3RhdHVzID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvcihcIi5yZXZlYWwgLmV4ZXJjaXNlLWxvYWRpbmctaW5kaWNhdG9yXCIpO1xuICBpZiAocmV2ZWFsU3RhdHVzKSB7XG4gICAgcmV2ZWFsU3RhdHVzLnJlbW92ZSgpO1xuICAgIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoXCIucmV2ZWFsID4gLnNsaWRlc1wiKS5hcHBlbmRDaGlsZChyZXZlYWxTdGF0dXMpO1xuICB9XG5cbiAgLy8gTWFrZSBhbnkgcmV2ZWFsIHNsaWRlcyB3aXRoIGxpdmUgY2VsbHMgc2Nyb2xsYWJsZVxuICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKFwiLnJldmVhbCAuZXhlcmNpc2UtY2VsbFwiKS5mb3JFYWNoKChlbCkgPT4ge1xuICAgIGVsLmNsb3Nlc3QoJ3NlY3Rpb24uc2xpZGUnKS5jbGFzc0xpc3QuYWRkKFwic2Nyb2xsYWJsZVwiKTtcbiAgfSlcblxuICAvLyB3ZWJSIHN1cHBsZW1lbnRhbCBkYXRhIGFuZCBvcHRpb25zXG4gIGNvbnN0IGRhdGFDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItZGF0YVxcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGRhdGEgPSBKU09OLnBhcnNlKGI2NERlY29kZShkYXRhQ29udGVudCkpO1xuXG4gIC8vIEdyYWIgbGlzdCBvZiByZXNvdXJjZXMgdG8gYmUgZG93bmxvYWRlZFxuICBjb25zdCBmaWxlc0NvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwidmZzLWZpbGVcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBmaWxlcyA9IEpTT04ucGFyc2UoYjY0RGVjb2RlKGZpbGVzQ29udGVudCkpO1xuXG4gIC8vIFVzZSBQb3N0TWVzc2FnZSBjaGFubmVsIGZvciBhc3luYyBjb21tdW5pY2F0aW9uXG4gIC8vIFdlIGRvIG5vdCBleHBlY3QgdG8gdGFrZSBuZXN0ZWQgcHJvbXB0IGlucHV0IGluIFF1YXJ0byBMaXZlIGNlbGxzXG4gIGRhdGEub3B0aW9ucy5jaGFubmVsVHlwZSA9IENoYW5uZWxUeXBlLlBvc3RNZXNzYWdlO1xuXG4gIC8vIEluaXRpYWxpc2Ugd2ViUiBhbmQgc2V0dXAgZm9yIFIgY29kZSBldmFsdWF0aW9uXG4gIGxldCB3ZWJSUHJvbWlzZSA9IChhc3luYyAod2ViUikgPT4ge1xuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgd2ViUmA7XG4gICAgYXdhaXQgd2ViUi5pbml0KCk7XG5cbiAgICAvLyBJbnN0YWxsIHByb3ZpZGVkIGxpc3Qgb2YgcGFja2FnZXNcbiAgICAvLyBFbnN1cmUgd2ViUiBkZWZhdWx0IHJlcG8gaXMgaW5jbHVkZWRcbiAgICBkYXRhLnBhY2thZ2VzLnJlcG9zLnB1c2goXCJodHRwczovL3JlcG8uci13YXNtLm9yZ1wiKVxuICAgIGF3YWl0IGRhdGEucGFja2FnZXMucGtncy5tYXAoKHBrZykgPT4gKCkgPT4ge1xuICAgICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyBwYWNrYWdlOiAke3BrZ31gO1xuICAgICAgcmV0dXJuIHdlYlIuZXZhbFJWb2lkKGBcbiAgICAgICAgd2Vicjo6aW5zdGFsbChwa2csIHJlcG9zID0gcmVwb3MpXG4gICAgICAgIGxpYnJhcnkocGtnLCBjaGFyYWN0ZXIub25seSA9IFRSVUUpXG4gICAgICBgLCB7IGVudjoge1xuICAgICAgICBwa2c6IHBrZyxcbiAgICAgICAgcmVwb3M6IGRhdGEucGFja2FnZXMucmVwb3MsXG4gICAgICB9fSk7XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG5cbiAgICAvLyBEb3dubG9hZCBhbmQgaW5zdGFsbCByZXNvdXJjZXNcbiAgICBhd2FpdCBmaWxlcy5tYXAoKGZpbGUpID0+IGFzeW5jICgpID0+IHtcbiAgICAgIGNvbnN0IG5hbWUgPSBmaWxlLnN1YnN0cmluZyhmaWxlLmxhc3RJbmRleE9mKCcvJykgKyAxKTtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcmVzb3VyY2U6ICR7bmFtZX1gO1xuICAgICAgY29uc3QgcmVzcG9uc2UgPSBhd2FpdCBmZXRjaChmaWxlKTtcbiAgICAgIGlmICghcmVzcG9uc2Uub2spIHtcbiAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBDYW4ndCBkb3dubG9hZCBcXGAke2ZpbGV9XFxgLiBFcnJvciAke3Jlc3BvbnNlLnN0YXR1c306IFwiJHtyZXNwb25zZS5zdGF0dXNUZXh0fVwiLmApO1xuICAgICAgfVxuICAgICAgY29uc3QgZGF0YSA9IGF3YWl0IHJlc3BvbnNlLmFycmF5QnVmZmVyKCk7XG5cbiAgICAgIC8vIFN0b3JlIFVSTHMgaW4gdGhlIGN3ZCB3aXRob3V0IGFueSBzdWJkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBpZiAoZmlsZS5pbmNsdWRlcyhcIjovL1wiKSkge1xuICAgICAgICBmaWxlID0gbmFtZTtcbiAgICAgIH1cblxuICAgICAgLy8gQ29sbGFwc2UgaGlnaGVyIGRpcmVjdG9yeSBzdHJ1Y3R1cmVcbiAgICAgIGZpbGUgPSBjb2xsYXBzZVBhdGgoZmlsZSk7XG5cbiAgICAgIC8vIENyZWF0ZSBkaXJlY3RvcnkgdHJlZSwgaWdub3JpbmcgXCJkaXJlY3RvcnkgZXhpc3RzXCIgVkZTIGVycm9yc1xuICAgICAgY29uc3QgcGFydHMgPSBmaWxlLnNwbGl0KCcvJykuc2xpY2UoMCwgLTEpO1xuICAgICAgbGV0IHBhdGggPSAnJztcbiAgICAgIHdoaWxlIChwYXJ0cy5sZW5ndGggPiAwKSB7XG4gICAgICAgIHBhdGggKz0gcGFydHMuc2hpZnQoKSArICcvJztcbiAgICAgICAgdHJ5IHtcbiAgICAgICAgICBhd2FpdCB3ZWJSLkZTLm1rZGlyKHBhdGgpO1xuICAgICAgICB9IGNhdGNoIChlKSB7XG4gICAgICAgICAgaWYgKCFlLm1lc3NhZ2UuaW5jbHVkZXMoXCJGUyBlcnJvclwiKSkge1xuICAgICAgICAgICAgdGhyb3cgZTtcbiAgICAgICAgICB9XG4gICAgICAgIH1cbiAgICAgIH1cblxuICAgICAgLy8gV3JpdGUgdGhpcyBmaWxlIHRvIHRoZSBWRlNcbiAgICAgIHJldHVybiBhd2FpdCB3ZWJSLkZTLndyaXRlRmlsZShmaWxlLCBuZXcgVWludDhBcnJheShkYXRhKSk7XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG5cbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYEluc3RhbGxpbmcgd2ViUiBzaGltc2A7XG4gICAgYXdhaXQgd2ViUi5ldmFsUlZvaWQoYHdlYnI6OnNoaW1faW5zdGFsbCgpYCk7XG5cbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYFdlYlIgZW52aXJvbm1lbnQgc2V0dXBgO1xuICAgIGF3YWl0IHNldHVwUih3ZWJSLCBkYXRhKTtcblxuICAgIHN0YXR1c1RleHQucmVtb3ZlKCk7XG4gICAgaWYgKHN0YXR1c0NvbnRhaW5lci5jaGlsZHJlbi5sZW5ndGggPT0gMCkge1xuICAgICAgc3RhdHVzQ29udGFpbmVyLnBhcmVudE5vZGUucmVtb3ZlKCk7XG4gICAgfVxuICAgIHJldHVybiB3ZWJSO1xuICB9KShuZXcgV2ViUihkYXRhLm9wdGlvbnMpKTtcblxuICAvLyBLZWVwIHRyYWNrIG9mIGluaXRpYWwgT0pTIGJsb2NrIHJlbmRlclxuICBjb25zdCByZW5kZXJlZE9qcyA9IHt9O1xuXG4gIGNvbnN0IHByb2Nlc3MgPSBhc3luYyAoY29udGV4dCwgaW5wdXRzKSA9PiB7XG4gICAgY29uc3Qgd2ViUiA9IGF3YWl0IHdlYlJQcm9taXNlO1xuICAgIGNvbnN0IGV2YWx1YXRvciA9IG5ldyBXZWJSRXZhbHVhdG9yKHdlYlIsIGNvbnRleHQpXG4gICAgYXdhaXQgZXZhbHVhdG9yLnByb2Nlc3MoaW5wdXRzKTtcbiAgICByZXR1cm4gZXZhbHVhdG9yLmNvbnRhaW5lcjtcbiAgfVxuXG4gIHJldHVybiB7XG4gICAgcHJvY2VzcyxcbiAgICB3ZWJSUHJvbWlzZSxcbiAgICByZW5kZXJlZE9qcyxcbiAgfTtcbn1cbiJ9XX0=
+</script>
+<div id="exercise-loading-indicator" class="exercise-loading-indicator d-none d-flex align-items-center gap-2">
+<div id="exercise-loading-status" class="d-flex gap-2">
+
+</div>
+<div class="spinner-grow spinner-grow-sm">
+
+</div>
+</div>
+<script type="vfs-file">
+W10=
+</script>
+
+</main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6IlxuXG52aWV3b2YgcnVuMSA9IHtcbiAgY29uc3QgYnV0dG9uID0gaHRtbGA8YnV0dG9uIHN0eWxlPVwiYmFja2dyb3VuZC1jb2xvcjogd2hpdGU7IGNvbG9yOiBibGFjaztcIj5GaW5kIHJvbGU8L2J1dHRvbj5gO1xuICBsZXQgY2xpY2tDb3VudCA9IDA7XG4gIFxuICBidXR0b24ub25jbGljayA9ICgpID0+IHtcbiAgICBjbGlja0NvdW50Kys7XG4gICAgYnV0dG9uLnZhbHVlID0gY2xpY2tDb3VudDtcbiAgICBcbiAgICBzZXRUaW1lb3V0KCgpID0+IHtcbiAgICAgIGJ1dHRvbi5zdHlsZS5iYWNrZ3JvdW5kQ29sb3IgPSAncmVkJztcbiAgICB9LCAwKTtcblxuICAgIGJ1dHRvbi5kaXNwYXRjaEV2ZW50KG5ldyBDdXN0b21FdmVudCgnaW5wdXQnKSk7XG4gIH07XG5cbiAgYnV0dG9uLnZhbHVlID0gY2xpY2tDb3VudDsgXG4gIHJldHVybiBidXR0b247XG59XG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTIiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJ2aWV3b2YgcnVuMiA9IHtcbiAgY29uc3QgYnV0dG9uID0gaHRtbGA8YnV0dG9uIHN0eWxlPVwiYmFja2dyb3VuZC1jb2xvcjogd2hpdGU7IGNvbG9yOiBibGFjaztcIj5GaW5kIHJvbGU8L2J1dHRvbj5gO1xuICBsZXQgY2xpY2tDb3VudCA9IDA7XG4gIFxuICBidXR0b24ub25jbGljayA9ICgpID0+IHtcbiAgICBjbGlja0NvdW50Kys7XG4gICAgYnV0dG9uLnZhbHVlID0gY2xpY2tDb3VudDtcbiAgICBcbiAgICBzZXRUaW1lb3V0KCgpID0+IHtcbiAgICAgIGJ1dHRvbi5zdHlsZS5iYWNrZ3JvdW5kQ29sb3IgPSAnb3JhbmdlJztcbiAgICB9LCAwKTtcblxuICAgIGJ1dHRvbi5kaXNwYXRjaEV2ZW50KG5ldyBDdXN0b21FdmVudCgnaW5wdXQnKSk7XG4gIH07XG5cbiAgYnV0dG9uLnZhbHVlID0gY2xpY2tDb3VudDsgXG4gIHJldHVybiBidXR0b247XG59XG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6InNoaW55SW5wdXQoJ3J1bjEnKSJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgncnVuMicpIn1dfQ==
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../..";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Multiple_regression_2025.html" class="pagination-link" aria-label="Session 21: Multiple Regression">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Session 21: Multiple Regression</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://caius-gibeily.github.io/r4dss25/edit/main/docs/p_hacking_2025.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://caius-gibeily.github.io/r4dss25/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

@@ -1,0 +1,46 @@
+---
+title: "Session 7: Iteration"
+format: html
+editor: visual
+---
+
+This session will build on last week’s methods for writing efficient code and reducing needless copy-and-paste through another pillar of programming: iteration. You are likely already familiar with using iteration, perhaps in the form of `for` or `while` loops in base R or another programming language. By building and then applying functions in Excel to multiple cells, you have also performed iteration. As with function writing, the goal is not to become fully proficient in the minutiae of iteration but rather to support thinking programmatically about writing efficient code. We will also be relying on iteration in the upcoming statistics sessions.
+
+**Extract examples from your previous work** Before reading the book chapter, we'd like you to try recalling any examples of how you might have used iteration in your past work, whether in R, MATLAB, Excel or another language. What problem were you attempting to address and how did you use iteration to address it? Be prepared to share these examples in class.
+
+**Book chapter reading.** Please read [Chapter 26](https://r4ds.hadley.nz/iteration.html){target="_blank"} in *R for Data Science* and then complete the exercises in the chapter.
+
+**Tutorials.** Go through the *r4ds.tutorials: 26-iteration* tutorial. *Warning*: there is a bug in the tutorial in *Exercise 2, Save your work*. You will need to copy and paste the code block where you initialized `gapminder` in the previous exercise to get the code to run. Unfortunately, the tutorial does not maintain the object between tabs.
+
+**Exercises.**
+
+1.  As we will be especially drawing on `map()` iteration during the statistics training, let's focus on writing them.
+
+-   Take the simple `vec` object below and try writing a `map()` function to return the square of each element. Use `list_c()` instead of `list_rbind()`. Of course, using a map iteration here is rather inefficient since many of R's base functions are already 'vectorized', allowing them to perform multi-element operations without an explicit iteration. How should you square each element without using iteration? Knowing when to avoid explicit iteration will also improve the efficiency of your code.
+
+-   Within the `map()`, now save the output of vec when squared, cubed, and raised to the power of 4 in a tibble and collapse the output into a single tibble object.
+
+```{r}
+#| eval: false 
+vec <- 1:10
+```
+
+2.  Let's now consider a basic tibble, `dat` with three normally distributed random variables, `x1`, `x2` and `x3`.
+
+-   Use a map to return the mean and standard deviation for each variable. Compare the output with the use of `across()` instead.
+-   How could you transform the output using `across()` into the same structure as the first, with separate columns for the mean and standard deviation?
+
+```{r}
+#| eval: false 
+dat <- tibble(
+  x1 = rnorm(100,mean= 4, sd = 1),
+  x2 = rnorm(100, mean = 2,sd = 10),
+  x3 = rnorm(100, mean= 8, sd = 2)
+)
+```
+
+-   Let's now plot a histogram for each variable. Map through `dat`, using `ggplot` to construct histogram objects. Since you're creating a list of ggplot objects, `list_rbind()` won't work here. Use `patchwork::wrap_plots` to show the plots side-by-side.
+
+3.  Finally, come up with two of your own exercises, one involving modifying columns of a tibble (i.e. using `across()`, `if_any()` or `if_all()`) and the other, involving a map function. If you're feeling adventurous, you could also try experimenting with `map2()` or integrating your exercises into functions. Like last week, please try embedding them into a Quarto document, using code folding to hide the solutions. Your exercise could also be based on the iterations example from your previous work.
+
+You do *not* need to send your answers ahead of time but please be prepared to briefly **present** your exercises during the group meeting next Wednesday (February 4). You do *not* need to send answers to the r4ds tutorials or book chapter exercises.

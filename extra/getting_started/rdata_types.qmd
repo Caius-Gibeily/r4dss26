@@ -1,0 +1,56 @@
+---
+title: Data types
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - dplyr
+output: 
+  learnr::tutorial:
+    progressive: true
+toc: true
+---
+
+While the pre-Socratics divided substances into four elements - fire, water, air and earth - in R, we could consider data types as falling into four main flavours: numbers, strings, logicals and factors.
+
+## Numbers
+
+You may recall from set theory that natural numbers $\mathbb{N}$ include the counting numbers. R has a generic class of numerics; numerics include both integers and doubles (called floats in Python). Try defining a new numeric variable:
+
+```{webr}
+mynum <- 5
+```
+
+What type of data is it? You can use `typeof()` and `class()` to determine the specific and generic category of the data. Try each below:
+
+```{webr}
+class(mynum)
+```
+
+```{webr}
+typeof(mynum)
+```
+
+## Characters
+
+Characters (also known as strings) are simply text variables. Often, these will be directory addresses, titles on plots or data frames headings. To define them in R (and MATLAB and Python), just place `'` or `"` around the string:
+
+```{r}
+mystring <- "Caligula"
+typeof(mystring)
+```
+
+While out of scope in this training, you can find more information on using regular expressions to filter string data [here](https://cran.r-project.org/web/packages/stringr/vignettes/regular-expressions.html)
+
+## Logicals
+
+![](images/booles.jpeg){width="360"}
+
+At Queen's College, Cork, Ireland, George Boole devised the fundamental axioms of symbolic logic and what would eponymously be called Boolean logic. His work established logic gates that would prove pivotal to Alan Turing's work and the development of computers. In R, logicals take two values: `TRUE` and `FALSE`, also represented as `1` or `0`. You can define them as follows:
+
+```{webr}
+a_cat_is_a_reptile <- FALSE # or F
+
+a_gecko_is_a_reptile <- TRUE # or T
+typeof(a_gecko_is_a_reptile)
+```

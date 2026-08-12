@@ -1,0 +1,180 @@
+---
+title: "Session 9: Covariance & Correlation"
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - dplyr
+    - ggplot2
+    - MASS
+---
+
+{{< include ../_extensions/live/_knitr.qmd >}}
+
+This week we will continue our statistics adventure by learning about covariance (video 1) and Pearson’s correlation (video 2). These concepts build directly on variance and standard deviation, helping us quantify the relationship between two variables.
+
+As before, after watching the videos, we’ll cement the ideas through a set of exercises in R. We’ll use our Thursday group meeting to discuss results and interpretations.
+
+Let's begin by watching [Video 1](https://www.youtube.com/watch?v=qtaqvPAeEJY){target="_blank"} (*Covariance, Clearly Explained!!!*)
+
+Up to this point, we have been considering population estimates from a single variable, e.g. the expression level of gene X mentioned in Josh's video. Such estimates are helpful: by knowing how a particular variable is distributed, we can determine the probability of sampling particular values from the population. But we're often interested in identifying the relationships between different variables: how does rate of plant growth vary with respect to watering frequency and volume? Covariance tells us the extent to which two variables align in how they vary around their respective means.
+
+1   Let's explore this by first generating two random variables $x_1$ and $x_2$, where each row in the dataset is an observation. 
+
+-   Use the function to create a dataset comprising 100 observations and two variables. The population variance of both should be 25 with a mean of 10 for the first and 20 for the second.
+
+
+```{r}
+#| eval: false
+library(tidyverse)
+
+generate_data <- function(n1,mu1,sd1, n2,mu2,sd2) {
+  tibble(
+    x1 = rnorm(n1,mu1,sd1),
+    x2 = rnorm(n2,mu2,sd2)
+  )
+}
+
+```
+
+-   Use `summarize()` with `across()` to calculate the variances and means of each variable. What are the sample means and variances for each variable?
+
+-   Briliant. Now, use `ggplot()` to create a scatterplot of x1 against x2. Explain what you see in the plot.
+
+-   If the two variables have the same variance, does that tell you anything about the covariance of the two variables? What do you expect the covariance will be from just looking at the plot? Add `geom_smooth(method = "lm")`. What can you say about the relationship of the two variables?
+
+2.   Fill in this function to calculate the covariance between two variables. How does it differ from the calculation of variance? If you wanted to use this function to calculate the variance of, say `x1`, what might you input for the function's `var1` and `var2` arguments?
+
+```{r}
+#| eval: false
+find_cov <- function(var1,var2) {
+  diffs_var1 <- __________
+  diffs_var2 <- __________
+  cov_var1_2 <- sum(______ * ______) 
+  cov_var1_2 / (_____ - 1)
+}
+```
+
+-   Use the function to calculate the covariance of the sample. Try generating new data a few times and calculating the covariance for each. What do you notice about the sign (+/-) and magnitude of the covariance?
+
+-   Let's now calculate the covariance again, but this time after sorting both variables in ascending order. You can `mutate` and create new variables, `x1sorted` and `x2sorted`, each using `sort`. Now `summarize` the covariance between the two sorted variables using the `find_cov`. Now sort the second in descending order by setting `sort(x2, decreasing = TRUE)`. Why does sorting the variables in this way influence the covariance?
+
+3.   Let's create a new tibble where the second variable is related to the first but with an added bit of noise. Modify `generate_data()` such that instead of drawing `x1` and `x2` from separate random samples, `x2` should be created by mutating `x1` with a bit of added random noise: `x2 = x1 + rnorm(n = 100, mean = 0, sd = 1)`
+
+-  Josh showed how covariance changes as a result of the scale of the data. Calculate the covariance of your sample using `summarize` and your function, `find_cov`. Make a note of the covariance. Now, using your new data, let's transform the second variable's variance by simply multiplying it by a scalar and shifting the mean by some quantity using the function below.
+
+```{r}
+#| eval: false
+cov_scale <- function(dat,scale=1, mean_shift=0) {
+    dat |> summarize(
+    scale = scale,
+    mean_shift = mean_shift,
+    cov_xy = find_cov(dat[[1]],dat[[2]]*scale + mean_shift),
+  ) |> tibble()
+  
+}
+```
+
+-   Let's run the following code to calculate the covariance of your data with different scalings.
+
+
+```{r}
+#| eval: false
+cov_scaling <- map(seq(1,100,10), 
+               \(x) cov_scale(df,scale=x)) |>
+  list_rbind()
+                                                      
+```
+
+-   Plot the output of `cov_scaling`. What happens to covariance as the scaling increases? Does the relationship between the variables change?
+
+- Instead of scaling the data, let's now shift the mean of the data within the sequence `seq(1,100,10)`. Plot the relationship again. Why does scaling, but not mean shifting, affect the covariance?
+
+```{r}
+#| eval: false
+cov_meanshift <- map(seq(1,100,10), 
+               \(x) cov_scale(df,mean_shift=x)) |>
+  list_rbind()
+                                                      
+```
+
+-   Given the sensitivity of the covariance to the scale of the data data, reporting a single covariance value would be meaningless. Instead, we need a _standardized_ value that is scale-invariant. Think about how you might devise an equation to standardize the covariance. Hint: try pre-standardizing the variables before calculating covariance. 
+
+-   Modify the `find_cov` function to find the standardized covariance and then rerun the `cov_scaling` and `cov_meanshift` code blocks. Did your function behave as expected? What range of values do the covariances for your mean-shifted and rescaled variables take?
+
+## Correlation
+
+4.    Let's continue the StatQuest by watching [Video 2](https://www.youtube.com/watch?v=xZ_z8KWkhXE){target="_blank"} (*Pearson's Correlation, Clearly Explained!!!*).
+
+-   Josh explained how correlations offer a simple means of testing the linear relationship between two variables, falling between -1 and 1. To get an intuition for detecting linear correlation values in data, let's start with a fun correlation guessing game. Run the following code block online and set `my_guess` to your estimate of the data's correlation. Try re-running the code a few times until you feel confident estimating correlation.
+
+```{webr}
+#| echo: FALSE
+corr_samples <- function(n = 100){
+  corr <- sample(seq(-1,1,0.1), 1)
+  m <- mvrnorm(n = n, 
+               mu = c(0,0),
+               Sigma = matrix(c(1, corr, corr, 1), nrow = 2))
+  df <- tibble(x = m[,1], y = m[,2])
+  
+  return(list(corr, df))
+}
+
+check_value <- function(guess, corr) {
+  if (!is.na(guess) && abs(guess - corr) <= 0.1) {
+    cat("Correct! The true correlation is", corr)
+  } else {
+    cat("Nice try. The true correlation is", corr)
+  }
+}
+```
+
+```{webr}
+samples <- corr_samples(n=100)
+ggplot(samples[[2]], aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method="lm", se = FALSE)
+```
+
+```{webr}
+# Replace 0 with your guess between -1 and 1
+my_guess <- 0
+check_value(my_guess,samples[[1]])
+```
+
+5.   An important concept to parse out is the difference between covariance and correlation. We saw above how scaling the data influenced the covariance between two variables and how, by normalizing your variables, your covariance values always fell between -1 and 1. You have just calculated correlation! Pearson's correlation is simply the normalized covariance or said another way, covariance between two z-scored variables.
+
+-   To belabor this point futher, take the function `cov_scale` and replace your normalized `find_cov()` function with `cor()`, R's inbuilt correlation function. Compare the values with those you calculated using the standardized `find_cov`.
+
+6.   Finally, Josh highlighted the importance not just of correlation as an estimate of the relationship between two variables, but the degree of *confidence* we have in that relationship. He showed how, for any two points of data (where the standard deviation of both variables \> 0), that the correlation will always equal 1 or -1. 
+
+-   Try this yourself: pass two vectors of length 2 into `cor`. For example, you might choose `c(1,2)` and `c(-5,20)`. 
+
+-   As sample size increases, the confidence in the correlation, even if that correlation = 0, also increases. We will explore this idea of confidence now.
+
+-   Study the function below. Can you explain what each part of the function is doing? Copy the code into RStudio and set `n`, the number of observations, to 5 and run the code, saving the output to an object. You don't have to specify `nruns`.
+
+```{r}
+#| eval: false
+generate_corr_hist <- function(n, nruns = 1000) {
+  chance_corrs <- map(1:nruns, \(i) {
+    df <- generate_data(n1 = n, mu1 = 0,
+                        sd1 = 5, 
+                        n2 = n,
+                        mu2 = 0,
+                        sd2 = 5) 
+    
+    cor(df[[1]], df[[2]])
+  }) |> as.numeric()
+  
+  tibble(corrs = chance_corrs)
+}
+
+```
+
+
+-    Use `ggplot` to draw a histogram of the values and a density plot with the `geom_density` argument. You can set `bw =` (smoothing bandwidth) to make the curve look smooth like you did last week.
+-    Now calculate the probability of finding a correlation value \>= 0.5 using methods similar to those you might have used last week. Now calculate the probability of finding a correlation more extreme than 0.5 or -0.5. Make a note of these probabilities
+-    Now set `n` to 30 and rerun this process. You may wish to create a function to calculate the probability.
+-    Set `n` to 100 and rerun it one final time. What do you notice about the shape of the histogram and density plots? How are the probability values changing and why is this occurring?
+-    As a bonus exercise, create a plot that overlays all of the density plots onto one graph.

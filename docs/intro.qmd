@@ -1,0 +1,63 @@
+---
+title: "Welcome to R4DSS26"
+format: html
+---
+
+### Welcome to R for Data Science and Statistics 2026 (R4DSS)!
+
+These trainings aim to equip you with the tools you need to feel confident in performing your own data analayses using R. Why R and not, say, Excel or SPSS? While such software are intuitive to use, they offer less flexibility than the typical suite of scientific programming languages. R's well organised and documented syntax, abundance of libraries for analysis and visualization and established community of contributors make it a powerful ally when mastered.
+
+No matter your prior familiarity with R or data science techniques more broadly, we hope you'll gain something from these sessions. The course will be organised as follows:
+
+-   Weekly virtual classes on Thursday at 9am
+
+-   One-on-one meetings with Hasse to discuss any challenges encountered in the exercises and track personal growth
+
+-   Weekly readings and exercises from the 2nd Edition of [R for Data Science](https://r4ds.hadley.nz/) by Hadley Wickham, Mine Cetinkaya-Rundel and Garrett Grolemund and the corresponding `r4ds.tutorials` package
+
+### Getting started: installing R and RStudio (skip if they are already installed)
+
+### Creating a new project in RStudio
+#### Option 1: Create a New Project from Scratch
+  -   Open RStudio
+  -   Go to the top menu → `File` → `New Project`...
+      You’ll see three main options:
+      a.  New Directory → to start a fresh project
+        -   Choose New Directory (for a fresh start).
+        -   Pick a project type. Most often, you'll choose `New Project` (plain R project)
+        -   Give it a name, like `r4dss_project`
+        -   Click `Create Project`
+        RStudio will then create a new folder for the project and set it as your working directory. It will also add a new file ending in `.Rproj` in the working directory of the project
+      b.  Existing Directory → if you already have a folder with files
+      c.  Version Control → to clone a GitHub or Git repo
+
+#### Option 2: Make an Existing Folder into a Project
+  -   If you already have R scripts and data in a folder:
+  -   Go to File ▸ New Project...
+  -   Select Existing Directory
+  -   Browse to your folder
+  -   Click Create Project
+  -   RStudio adds the `.Rproj` file there — you can now open it anytime to jump right back into that project setup.
+
+
+### Cheatsheets and other helpful resources
+
+Here are some useful cheatsheets and resources to have handy as you continue your R journey!
+
+#### Cheatsheets
+
+-   [RStudio IDE cheatsheet](https://rstudio.github.io/cheatsheets/html/rstudio-ide.html){target="_blank"}
+
+-   [Data tidying with `tidyr`](https://rstudio.github.io/cheatsheets/html/tidyr.html){target="_blank"}
+
+-   [Data visualization with `ggplot2`](https://rstudio.github.io/cheatsheets/html/data-visualization.html){target="_blank"}
+
+-   [A compiled list of reference cheatsheets](https://artsci.usu.edu/math-stats/amlc/files/r-studio-reference-sheets-compilation.pdf){target="_blank"}
+
+#### Supplementary books
+
+-   [Hands-on Programming with R](https://rstudio-education.github.io/hopr/){target="_blank"}
+
+-   [Advanced R](https://adv-r.hadley.nz/index.html){target="_blank"}
+
+-   [Tidyverse Style Guide](https://style.tidyverse.org/){target="_blank"}

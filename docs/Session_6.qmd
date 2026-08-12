@@ -1,0 +1,20 @@
+---
+title: "Session 6: Functions"
+format: html
+---
+
+In this session, we learn how to write our own functions in R to reduce repetition, improve clarity, and make our code easier to maintain. Functions allow you to bundle a sequence of operations into a reusable tool with clear inputs and outputs. You will see how functions support a tidy, consistent workflow and help scale your data analysis.
+
+We do not expect you to master every aspect of writing functions in R at this stage. Instead, the goal is for you to become familiar with the idea of functions and understand how they are structured and used. This exposure is important because we will rely on writing and using custom functions during the upcoming statistics training, where they will play a central role in helping us understand the mechanics of statistical analysis.
+
+**Book chapter reading.** We will learn about functions by reading **Chapter 25** in *R for Data Science*. Ignore the exercises in the book, instead we want you to write a few exercises yourself (more about this below).
+
+**Tutorials.** Go through the *r4ds.tutorials: 25-functions* tutorial. 
+
+**Exercises.** You should come up with three exercises of your own. One exercise should focus on a data transformation task, one on summarizing data, and one on creating a plot helper function. For each exercise, the solution should involve writing a custom R function, and you should clearly describe the problem and state what the function is expected to do. At least one of your exercises must require the use of [tidy evaluation with embracing](https://r4ds.github.io/bookclub-r4ds/tidy-evaluation-and-embracing.html){target="_blank"} (<code>{{ ... }}</code>). Your functions should be realistic and preferably motivated by real data analysis tasks you have encountered at Marcus.
+
+The aim is not only to write functions that work, but to reflect on why a function is useful, how to choose good inputs, and when and why embracing is needed. You should complete all of this work in a Quarto document, including both the exercise descriptions and their solutions. Use *code folding* to hide solutions and display them only when the code chunk is actively expanded. The button used to expand the code should say *Show Solution*.
+
+Be prepared to briefly **present** your exercises and functions during the group meeting next Wednesday (January 28).
+
+**Send** Hasse your tutorial answers, along with both the `.qmd` file and the rendered HTML output containing your own exercises and solutions, by the end of the day Tuesday.

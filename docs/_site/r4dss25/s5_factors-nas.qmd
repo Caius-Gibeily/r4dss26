@@ -1,0 +1,36 @@
+---
+title: "Factors and Missing values"
+format: html
+editor: visual
+---
+
+## Reading
+
+This week, we'll be reading
+
+<a href="https://r4ds.hadley.nz/factors.html" target="_blank" class="btn"> Chapters 16 and 18 </a>
+
+Please complete exercises
+
+1.  r4ds.tutorials: 16-factors
+
+2.  r4ds.tutorials: 18-missing-values
+
+
+```{=html}
+<style>
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007BFF; /* Bootstrap blue */
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+.btn:hover {
+  background-color: #00008B;
+}
+</style>
+```

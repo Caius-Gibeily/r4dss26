@@ -1,0 +1,43 @@
+---
+title: "Introduction"
+format: html
+editor: visual
+---
+
+## Welcome to R for Data Science 2025
+
+Whether you have had zero or some R training already, we hope you'll derive something from this class! The class aims to furnish you with the skills you'll need to perform your own analytical projects in R by teaching the basics of data science. While this course cannot teach everything, we hope that by its end, you'll have the resources to seek out the knowledge, whether its the syntax of some \`function()\` or the challenge of handling the many errors you'll face along the journey to proficiency.
+
+Throughout the fellowship, you may have a dataset plonked on your (virtual) desk, requiring you *somehow* to 'clean' the data, visualize it and use statistical methods to understand it. Herculean? Not when you appreciate that each stage is modular. By breaking down this pipeline into modules, you realize the sheer flexibility R provides.
+
+## How the course is structured
+
+Leveraging pre-existing and powerful resources, this course will closely mirror Hadley Wickham's open-source *R for Data Science* book.
+
+The course includes both synchronous and asynchronous elements across 6 sessions, 1 per week. Asynchronously, we will have
+
+-   Chapter readings from *R4DS*
+
+-   Exercises within RStudio that parallel the *R4DS* content
+
+-   Optional supplementary exercises and tutorials accessed from this website
+
+During our virtual synchronous classes, there will be the opportunity to raise any questions from the asynchronous materials.
+
+## Getting started with R and RStudio
+
+To leverage the full power, not of the dark side, but of R, RStudio offers an attractive virtual environment that integrates script editing, a console for executing commands, a variable explorer and a data visualization port, all for free. Before installing RStudio, however, make sure a version of R \>= 4.2.0 is installed. You will find more instructions on installing both [here](https://r4ds.hadley.nz/intro.html#r).
+
+## Installing `r4ds.tutorials`
+
+To run the exercises for the class in your local RStudio build, you will first need to install `r4ds.tutorials`. To do so, run the following code in your console (the tutorials will touch on this later):
+
+``` r
+install.packages("r4ds.tutorials")
+```
+
+When you come to use it, you will run
+
+``` r
+library(r4ds.tutorials)
+```

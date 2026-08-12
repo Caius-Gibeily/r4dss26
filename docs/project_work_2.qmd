@@ -1,0 +1,68 @@
+---
+title: "Session 19: Project work II"
+format: html
+---
+
+After another five weeks of training, it is time to return to your own project data. In this part of the course, you will practice applying the methods we have covered so far, with particular focus on more recent topics such as ANOVA, chi-square tests, and multiple comparisons correction.
+
+Although this session is based on your own project data, the exercises will also involve manipulating and restructuring variables, as well as some simulation. This is done to ensure that the statistical concepts we study can be clearly illustrated in a controlled way, since real datasets do not always naturally contain the structure needed to demonstrate these ideas.
+
+By next Wednesday, you should be prepared to present your work, together with a report that includes figures and your main statistical conclusions. Your report should clearly show what you did, what you found, and how you interpret your results. Organize your work in Quarto, combining code, results, and reflections into a single self-contained document.
+
+1. In your own dataset, identify two variables that you will use for the following analyses. One of these variables must be categorical; choose a variable with multiple distinct categories, ideally as many as your data reasonably allow. The second variable, which will serve as the outcome, can be either numeric or categorical. 
+
+  * Create a visualization that shows the relationship between the two variables you selected. Choose a plot type that is appropriate for the types of variables you are working with. 
+  
+  * Run an omnibus test (ANOVA or chi-square) to assess the overall relationship between the two variables, taking into account repeated observations if relevant. Calculate an appropriate measure of effect size. Use a resampling technique (bootstrapping or permutation) to estimate the statistical significance. 
+  
+  * Irrespective of the outcome of the omnibus test, perform follow-up post hoc tests (e.g., pairwise comparisons of means or analysis of standardized residuals). Create a table that includes the uncorrected p-values as well as p-values adjusted for multiple comparisons using two approaches: one that adjusts each comparison separately (for example Bonferroni or FDR), and one that directly accounts for multiple testing through permutation.
+  
+  * Finally, extend your earlier visualization to summarize the post hoc results. Add information about the pairwise comparisons to the plot, indicating significance using both uncorrected and adjusted p-values. The plot should clearly show how the interpretation of the results changes depending on whether multiple comparisons are accounted for.
+
+2. In this exercise, you will analyze the relationship between two variables in your dataset using several different approaches. The goal is to compare how different ways of representing the same data affect the results you obtain.
+
+  * Start by selecting two continuous variables from your dataset. These can be the same two numeric variables you analysed for exercise 3 in the *Project work 1* session, or different ones if you so prefer. We will refer to these variables as `x` and `y`. Compute the correlation between `x` and `y`, and assess its significance using a permutation test. Record the correlation coefficient and the p-value, and briefly describe what you conclude from this analysis.
+ 
+  * Next, mutate a new version of `x` by dividing it into 6 groups of roughly equal size, for example using the `ntile()` function as described [here](https://dplyr.tidyverse.org/reference/ntile.html#ref-examples){target="_blank"}. Now use this grouped version of `x` to run a one-way ANOVA with `y` as the outcome, by calculating the F-statistic and using permutation to compute the p-value. Record the results and the group means.
+  
+  * Then, create a second version of `x` in which it is divided into only 3 groups. As above, run a one-way ANOVA with `y` as the outcome and record the results.
+  
+  * Now compare the results from the analyses you have just performed. How does the statistical significance differ across the different versions of `x`? Do the conclusions you would draw about the relationship between `x` and `y` change depending on how `x` is represented? Before continuing, briefly note whether you expected these differences, and why.
+  
+  * In the next step, create a categorical version of `y` by dividing it into two groups representing values above and below the median. Using this categorical version of `y` together with your three-group version of `x`, perform a chi-square test of independence, again relying on permutation to calculate the p-value. Record the results and compare them to your earlier analyses. To what extent do the different approaches lead to similar or different conclusions?
+  
+  * Finally, we want you to investigate whether the patterns you observed are specific to your dataset or reflect a more general phenomenon. Using your data as a reference, the task is to simulate data where the population correlation matches the correlation you observed at the start of this exercise. Since we have not previously simulated data with a given correlation, we provide some starter code to guide you. In the code chunk below, we use the `mvrnorm()` function from the `MASS` package to draw two variables from a *multivariate normal distribution*. Here, "multivariate" means that, in addition to specifying the means and variances, we can also control the covariance between the sampled variables by supplying a variance–covariance matrix (`Sigma =`) as input. In the example code below we set the variance to 1 (the diagonal in the `sigma` matrix) so that any value specified for `r` represents the correlation.
+  
+```{r}
+#| eval: false
+library(MASS)
+
+r <- 0.3
+sigma <- matrix(c(1, r, r, 1), nrow = 2)
+
+df <- mvrnorm(n = 100, mu = c(1, 1), Sigma = sigma) |> 
+  as_tibble()
+```
+
+  * Now use methods you have learned throughout the course to write code that generates 10,000 simulated datasets. Each dataset should contain two variables, with a sample size and correlation structure chosen to resemble what you observed in your own data. For each simulated dataset, do the following: 
+     
+     a. For each simulated dataset, calculate the p-value for the correlation between the two variables. For computational efficiency, use the `cor.test()` function, and use the `tidy()` function from the `broom` package to extract the p-value from the output. 
+     
+     b. For each simulated dataset, create grouped versions of one of the variables (referred to as `x` above) using the `ntile()` function to form approximately equal-sized groups. As before, create one version with six groups and one with three groups. Use the `aov()` function to perform ANOVAs for each version, and use `tidy()` to extract and store the corresponding p-values. 
+     
+     c. Now create a two-group version of the y variable. For each simulated dataset, run a chi-square test using the `chisq.test()` function to examine the relationship between this two-group version of `y` and the three-group version of `x`. Save the resulting p-values using the `tidy()` function 
+     
+     d. Study the proportion of significant p-values (i.e., the statistical power) for each of the different representations of the simulated data, and visualize the results. Explain what you observe. 
+ 
+  3. Using the same simulation approach as in the previous exercise, compute appropriate measures of effect size corresponding to each analysis (for example correlation, eta-squared, or Cramer’s V, depending on the representation). To do this, modify the code you have already written so that it also returns effect size estimates in addition to p-values. In other words, keep the same simulation structure, but extend the output so that each simulated dataset includes both the p-value and the corresponding effect size measure for each analysis.
+
+::: {.callout-note}
+Although these effect size measures are defined on different scales, they can be considered comparable enough for the purpose of examining overall patterns in the simulations. In particular, since most are bounded between 0 and 1, and correlations can be interpreted in terms of absolute strength, we will focus on how they behave rather than on exact numerical equivalence.
+:::
+
+  * Examine how the distribution of effect sizes differs across representations, and visualize these distributions to better understand how effect size estimates vary depending on how the data are represented. Compare these patterns to the results you obtained for statistical power in the previous exercise. 
+
+  * As an additional step, examine how effect sizes behave when focusing only on statistically significant results across simulations. Compare these selected effect sizes to the overall distribution of effect sizes across all simulations. Visualize this by highlighting or coloring the effect sizes corresponding to significant results within the same distribution plot. Reflect on how restricting attention to significant results influences the estimated magnitude of effects.
+  
+  
+

@@ -1,0 +1,24 @@
+---
+title: "Session 2: Data transformation"
+format: html
+---
+This week, we will learn how to transform and summarize data efficiently using the `dplyr` package (also part of the tidyverse). You will explore core functions — such as `filter()`, `select()`, `mutate()`, `summarize()`, and `group_by()` — to help focus on the most relevant parts of a dataset and reveal meaningful patterns. We will also use the pipe operator (`|>`) to link commands together into clear, readable workflows for data analysis.
+
+As we did last week, we will continue our R training by reading the *R for Data Science* textbook, working through interactive tutorials that accompany the readings, and completing the chapter exercises. 
+
+Again, the following order of activities is recommended:
+
+**Step 1: Book chapter reading.** Read [chapter 3](https://r4ds.hadley.nz/data-transform.html){target="_blank"} in the *R for Data Science*. We are skipping chapter 2 because we already talked about most of its content last Wednesday. Leave the exercises for later.    
+
+**Step 2: Interactive tutorial.** Go through the *r4ds.tutorials: 03-data-transformation* interactive tutorial. 
+
+There is not much to add about this week’s tutorial, as the process for completing it is more or less the same as last time. One note, however: toward the end of the tutorial, a strong statement is made discouraging the use of `group_by()` in favor of the `.by` argument within `summarize()`. We do not share this view — we will continue using `group_by()` frequently throughout the data science and statistics training.  
+
+**Step 3: Book chapter exercises.** Go back to the [book chapter](https://r4ds.hadley.nz/data-transform.html){target="_blank"} and complete the exercises. This week, there are `6 + 7 + 6 = 19` exercises in total. Store you answers in an R script and call this file *Session_2.R*. 
+
+**Step 3.5: One-on-one meetings.** As we did last week, we’ll hold individual check-ins on Monday, with each meeting scheduled for about 30 minutes. If you need more time or extra help, you are welcome to request a longer session.
+
+**Step 4: Send Answers.** Please send both your tutorial exercise answers (the HTML file) and your book chapter exercise answers (as an R script) to Hasse on Slack by the end of the day Tuesday. 
+
+**Step 5: Wednesday group discussion.** We will meet as a group on Wednesday to review the material covered, address any questions, and reflect on your progress. 
+

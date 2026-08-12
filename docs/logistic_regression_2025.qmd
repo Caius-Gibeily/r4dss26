@@ -1,0 +1,340 @@
+---
+title: "Session 23: Logistic Regression"
+format: html
+---
+
+In this session, we will learn about logistic regression. There are several excellent StatQuest videos that cover this topic, and as usual we will combine them with custom exercises. Let’s get right to it. Start by watching [this video](https://youtu.be/vN5cNN2-HWE?si=QrBTTVfvaNtxC7OH){target="_blank"} (*Logistic Regression Details Pt1: Coefficients*). 
+
+Here is data we can use to work through some examples, demonstrating how to think about coefficients from a logistic regression model: 
+
+```{r}
+#| eval: true
+#| warning: false
+library(tidyverse)
+d1_log <- tibble(x = 1:20,
+                 y = c(0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 
+                       0, 1, 1, 0, 1, 1, 1, 1, 1, 1))
+```
+
+Josh starts his tutorial by showing a plot of the data he has generated. Logistic regression plots can be produced directly in `ggplot` without having to worry about running separate models and calculating predicted values. 
+
+1. Recreate the code to produce the plot below. Hint: you will need to specify the `method` and `method.args` arguments. 
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 3.5
+d1_log %>% 
+  ggplot(aes(x = x, 
+             y = y)) +
+  geom_point(aes(color = as.factor(y)),
+             size = 3) +
+  geom_smooth(method = "glm",
+              method.args = list(family = "binomial"), 
+              se = FALSE, 
+              color = "black") +
+  labs(y = "Probability of y = 1", 
+       color = "y") +
+  theme_linedraw(base_size = 14) +
+  theme(legend.position = "none") +
+  scale_color_manual(values = c("red", "blue"))
+  
+```
+
+The points in the plot represent observed values of `y`, which can only be `0` or `1`, plotted against `x`. The black sigmoid (S-shaped/squiggly) curve is the logistic regression fit and represents the model’s estimated probability that `y = 1` for each value of `x`.
+
+Josh points out that plots like the one above have a y-axis limited to probability values between `0` and `1`. He also notes that, when performing calculations for regression models, it is often easier to work on a scale that is not constrained in this way. This need for an unconstrained domain has important implications for how logistic regression is performed, and is achieved by transforming the response from probability to *log-odds*, which allows the y-axis to range from negative to positive infinity.
+
+We can use the *logit function* to calculate log-odds from probabilities: 
+
+$$\text{log-odds} = \log\!\left(\frac{p}{1 - p}\right)$$
+2. To get a sense of how probability relates to log-odds, try substituting values of $p$ between `0` and `1` into the logit function. How can you obtain a log-odds value of zero? How large does the probability need to be for the log-odds to exceed 10? Later, we will examine how probabilities and log-odds compare for the `d1_log` data.
+
+Josh explains that the logit transformation turns the sigmoid-shaped probability curve into a straight line on the log-odds scale. Although logistic regression is often visualized using an S-shaped curve, the model coefficients are estimated and reported in terms of log-odds. To illustrate this, we now show how to fit a logistic regression model in R using the `glm()` function with `family = binomial()` to indicate binary data. We then use the `tidy()` function from the `broom` package to extract the model coefficients and related statistics. Shortly, we will demonstrate how the best-fitting line can be found using *maximum likelihood*.
+ 
+
+```{r}
+#| eval: false
+#| warning: false
+glm(y ~ x, data = d1_log, family = binomial()) |>  
+  broom::tidy()
+```
+
+3. Interpret the estimated intercept and slope coefficients. What does each coefficient represent on the log-odds scale?
+
+4. Now that we have obtained coefficients from a logistic regression model fit to the `d1_log` data, we can use these coefficients to calculate predicted values on the log-odds scale. Use the `mutate()` function to add predicted values to the `d1_log` data object. Use the predicted values to produce a plot like this (we will not extend the y-axis to negative and positive infinity as Josh did): 
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 3.5
+
+fit <- glm(y ~ x, data = d1_log, family = binomial())
+  
+intercept <- fit %>%   
+  broom::tidy() %>% 
+  filter(term == "(Intercept)") %>% 
+  pull(estimate)
+
+slope <- fit %>%   
+  broom::tidy() %>% 
+  filter(term == "x") %>% 
+  pull(estimate)
+
+d1_log %>% 
+  mutate(preds = intercept + slope * x) %>% 
+  ggplot(aes(x = x, 
+             y = preds)) +
+  geom_line() +
+  labs(y = "log(odds of y = 1)") +
+  theme_linedraw(base_size = 14)
+  
+```
+
+The predicted *probabilities* are then obtained by applying the so called *logistic function* to convert the predicted log-odds to values between 0 and 1. This is the equation used: 
+
+$$p = \frac{1}{1 + e^{-\eta}}$$
+
+Where: 
+
+  * $p$ = probability
+  * $\eta$ = log-odds
+
+5. Use the logistic function to calculate predicted values on the probability scale. Plot these values and verify that they align with the sigmoid curve shown in the first plot from the beginning of the session. Compare the values on the log-odds scale to the corresponding probabilities and describe any patterns you observe. Pay particular attention to how probabilities change as log-odds move from negative to positive values, and how probabilities behave for relatively large or small log-odds. Based on your observations, think about if is makes sense to translate the coefficients from the model output into probabilities and explain any limitations of doing so.
+
+Because logistic regression is formulated on the linear log-odds scale, it is straightforward to apply the same statistical inference methods we have used previously. In particular, working on this unbounded and linear scale allows us to use permutation to compute p-values. 
+
+6. We want to test whether the x-variable has a significant effect on the log-odds (and therefore also the probability) of `y = 1`. Josh demonstrates this using a *Wald test*, but for this exercise you should instead use permutation. Reuse the code from the session on linear regression to test whether the slope coefficient is statistically significant. Check your calculations by comparing the permutation-based p-value to the p-value obtained from the `glm()` output.
+
+7. It is a good idea to practice recognizing how patterns in data translate into predicted probabilities. Below, we show several heatmaps where `white = 0` and `black = 1`. For each heatmap, try to predict what the corresponding probability curve will look like. Then, use the `tibble()` function to turn the plot into data, and finally apply the same method used for the first plot in this session to produce the probability curve. Hint: The x-values are evenly spaced between `0` and `1`. You can create this sequence using the `seq()` function. Also, make sure the y-axis limits are set to `0` and `1` for all plots, as this makes it easier to compare results across different visualizations.
+ 
+**A.** 
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| fig-align: left
+#| fig-width: 9
+#| fig-height: 1.4
+
+tibble(x = seq(0, 1, length.out = 20),
+       y = c(0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 
+             0, 1, 0, 1, 0, 1, 0, 1, 0, 1), 
+       col = 1:20) %>% 
+  pivot_longer(cols = 1:2) %>% 
+  ggplot(aes(x = col, y = name, fill = value)) +
+  geom_tile(color = "lightgray", 
+            size = 1) +
+  theme_minimal(base_size = 16) +
+  scale_fill_gradient(low = "white", high = "black") +
+  labs(x = NULL, 
+       y = NULL) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_discrete(position = "right") +
+  theme(axis.text.x = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.text.y = element_text(hjust = 0, margin = margin(l = -20)),
+        legend.position = "none")  
+```
+
+**B.** 
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| fig-align: left
+#| fig-width: 9
+#| fig-height: 1.4
+
+tibble(x = seq(0, 1, length.out = 20),
+       y = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+             0, 1, 1, 1, 1, 1, 1, 1, 1, 1), 
+       col = 1:20) %>% 
+  pivot_longer(cols = 1:2) %>% 
+  ggplot(aes(x = col, y = name, fill = value)) +
+  geom_tile(color = "lightgray", 
+            size = 1) +
+  theme_minimal(base_size = 16) +
+  scale_fill_gradient(low = "white", high = "black") +
+  labs(x = NULL, 
+       y = NULL) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_discrete(position = "right") +
+  theme(axis.text.x = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.text.y = element_text(hjust = 0, margin = margin(l = -20)),
+        legend.position = "none")  
+```
+
+**C.** 
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| fig-align: left
+#| fig-width: 9
+#| fig-height: 1.4
+
+tibble(x = seq(0, 1, length.out = 20),
+       y = c(1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 
+             1, 0, 1, 0, 1, 0, 0, 0, 0, 0), 
+       col = 1:20) %>% 
+  pivot_longer(cols = 1:2) %>% 
+  ggplot(aes(x = col, y = name, fill = value)) +
+  geom_tile(color = "lightgray", 
+            size = 1) +
+  theme_minimal(base_size = 16) +
+  scale_fill_gradient(low = "white", high = "black") +
+  labs(x = NULL, 
+       y = NULL) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_discrete(position = "right") +
+  theme(axis.text.x = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.text.y = element_text(hjust = 0, margin = margin(l = -20)),
+        legend.position = "none")  
+```
+
+**D.** 
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| fig-align: left
+#| fig-width: 9
+#| fig-height: 1.4
+
+tibble(x = seq(0, 1, length.out = 20),
+       y = c(1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 
+       col = 1:20) %>% 
+  pivot_longer(cols = 1:2) %>% 
+  ggplot(aes(x = col, y = name, fill = value)) +
+  geom_tile(color = "lightgray", 
+            size = 1) +
+  theme_minimal(base_size = 16) +
+  scale_fill_gradient(low = "white", high = "black") +
+  labs(x = NULL, 
+       y = NULL) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_discrete(position = "right") +
+  theme(axis.text.x = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.text.y = element_text(hjust = 0, margin = margin(l = -20)),
+        legend.position = "none")  
+```
+
+**E.** 
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| fig-align: left
+#| fig-width: 9
+#| fig-height: 1.4
+
+tibble(x = seq(0, 1, length.out = 20),
+       y = c(0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 
+             1, 1, 1, 1, 1, 0, 0, 0, 0, 0), 
+       col = 1:20) %>% 
+  pivot_longer(cols = 1:2) %>% 
+  ggplot(aes(x = col, y = name, fill = value)) +
+  geom_tile(color = "lightgray", 
+            size = 1) +
+  theme_minimal(base_size = 16) +
+  scale_fill_gradient(low = "white", high = "black") +
+  labs(x = NULL, 
+       y = NULL) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_discrete(position = "right") +
+  theme(axis.text.x = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.text.y = element_text(hjust = 0, margin = margin(l = -20)),
+        legend.position = "none")  
+```
+
+
+8. The next heatmap has a discrete x-variable. Create a tibble corresponding to the plot and use the `glm()` function to run a logistic regression on these data. Revisit the second part of the video linked at the top of this page (starting at 10:45) and follow Josh's instructions on how to interpret the coefficients. Then, complete the code chunk by filling in the blanks to calculate the coefficients "by hand".
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| fig-align: left
+#| fig-width: 9
+#| fig-height: 1.4
+
+tibble(x = c(rep(0, 10), rep(1, 10)),
+             y = c(0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 
+                   0, 0, 0, 0, 1, 1, 1, 1, 1, 1), 
+       col = 1:20) %>% 
+  pivot_longer(cols = 1:2) %>% 
+  ggplot(aes(x = col, y = name, fill = value)) +
+  geom_tile(color = "lightgray", 
+            size = 1) +
+  theme_minimal(base_size = 16) +
+  scale_fill_gradient(low = "white", high = "black") +
+  labs(x = NULL, 
+       y = NULL) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_discrete(position = "right") +
+  theme(axis.text.x = element_blank(), 
+        panel.grid = element_blank(), 
+        axis.text.y = element_text(hjust = 0, margin = margin(l = -20)),
+        legend.position = "none")  
+```
+    
+```{r}
+#| eval: false
+intercept <- log(___ / ___)
+slope <- log((___ / ___) / (___ / ___))
+```
+
+\
+
+Next, we will explore how to find the best-fitting line/curve using *maximum likelihood*. Watch this [video](https://youtu.be/BfKanl1aSG0?si=n_WdFaQST56lniB5){target="_blank"} (*Logistic Regression Details Pt 2: Maximum Likelihood*) to see the explanation. 
+
+Imagine you are in a situation where you do not have access to the `glm()` function and need a way to find the best-fitting line/curve. Using maximum likelihood to do so is actually quite straightforward. All that is required is a function that calculates the likelihood for a given set of data and coefficients, and then performing a search using this function to find the coefficients combination that results in the largest likelihood value.
+
+Computing the (log) likelihood involves a few different steps, some of which we have already covered above. First, we calculate model predictions on the log-odds scale using a set of candidate coefficients (Josh refers to this as “projecting the original data points onto the candidate line”). Next, we use the *logistic function* to convert the log-odds predictions into probabilities. We then calculate the likelihood for each observation: for observations where `y = 1`, this is equal to the predicted probability, and for observations where `y = 0`, it is equal to one minus the predicted probability. Finally, we take the log of these likelihoods and sum them to obtain the log-likelihood.
+ 
+9. Fill in the blanks in the code chunk below to complete the function so that it correctly calculates the log-likelihood.
+ 
+```{r}
+#| eval: false
+log_lik <- function(data, x_col, y_col, intercept, slope){
+  data |>  
+    mutate(lo_pred = _____ + _____ * {{_____}}, 
+           prob_pred = 1 / (1 + exp(_____)),
+           lik = ifelse({{_____}} == 1, _____, 1 - _____), 
+           ll = log(_____)) |>  
+    summarise(log_lik = sum(_____))
+}
+```
+
+10. Below are some data. Your task is to find values of the coefficients that give the *largest (maximum) log-likelihood* for the logistic regression model. Instead of the two search approaches we have used before (grid search and random search), we will now use a more adaptive strategy. Begin with a set of candidate values for the intercept and slope and calculate the corresponding log-likelihood. Then repeat the process, each time comparing your result to earlier attempts and keeping track of the values that give the highest log-likelihood so far. Use these results to guide your next guesses. If a new set of coefficients gives a larger log-likelihood, continue exploring values in a similar direction and nearby range. If not, try changing direction (for example, increasing instead of decreasing a coefficient) or trying a larger step away from your current values. Continue this process until your guesses begin to cluster around similar values. Compare your final estimates to the output from `glm()`.
+ 
+ 
+```{r}
+#| eval: false
+d2_log <- tibble(x = 1:20,
+                 y = c(0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 
+                       0, 1, 1, 0, 1, 1, 0, 1, 1, 1))
+```
+
+11. Watch the third StatQuest [video](https://youtu.be/xxFYro8QuXA?si=8oYV94cKbZhk82ZR){target="_blank"} (*Logistic Regression Details Pt 3: R-squared and p-value*) on logistic regression. Once you are familiar with how to calculate McFadden’s pseudo R^2^, write code to compute this effect size for both the `d1_log` and `d2_log` datasets. Then compare your results with the output from the `pR2()` function in the `pscl` package.
+
+12. Just like in linear regression, logistic regression can be extended to include multiple predictors, forming what is often called multiple logistic regression. In this exercise we explore this idea in practice. This time we will work with the `Pima.tr` dataset from the `MASS` package, which contains information on diabetes status and several clinical predictors. We will use the variable `type` as the outcome, indicating whether or not an individual has diabetes. Begin by exploring the dataset and its variables using the help page in R (`?Pima.tr`). You may use any predictors in the dataset and include interaction terms. As you build your model, aim to keep only terms whose regression coefficients are statistically significant (p < .05 in the model output), corresponding to meaningful improvements in model fit. To evaluate model performance, calculate McFadden’s pseudo-R^2 using `pR2()`. Your goal is to find a model with a large pseudo-R^2^ while retaining only statistically significant coefficients.
+
+
+
+
+
+
+  

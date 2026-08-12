@@ -1,0 +1,46 @@
+project:
+  type: website
+
+website:
+  title: "Data Science and Statistics in R for Fellowship"
+  repo-url: https://caius-gibeily.github.io/r4dss25/
+  repo-actions: [edit, issue]
+  repo-subdir: "docs"
+  page-navigation: true
+  sidebar:
+    contents:
+      - section: R for Data Science 2025-26
+        contents:
+          - intro.qmd
+          - Session_1.qmd
+          - Session 2.qmd
+          - Session 3.qmd
+          - Session_4.qmd
+          - Session 5.qmd
+          - Session_6.qmd
+          - Session_7.qmd
+      - section: R for Statistics 2026
+        contents: 
+          - Variance_2025.qmd
+          - cov.qmd
+          - Standard_error_2025.qmd
+          - Permutation_2025.qmd
+          - power_2025.qmd
+          - project_work_1.qmd
+          - anova_2025.qmd
+          - Post-hoc_2025.qmd
+          - stats_journal_club.qmd
+          - rm-anova_2025.qmd
+          - chisq_2025.qmd
+          - project_work_2.qmd
+          - linear_regression_2025.qmd
+          - Multiple_regression_2025.qmd
+          - p_hacking_2025.qmd
+          - logistic_regression_2025.qmd
+          - Non_linear_2025.qmd
+          - project_work-III.qmd
+          - FDA_2025.qmd
+          
+theme:
+  light: cosmo
+  dark: darkly

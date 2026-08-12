@@ -1,0 +1,86 @@
+---
+title: Data structures
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - dplyr
+output: 
+  learnr::tutorial:
+    progressive: true
+toc: true
+---
+
+You've now seen how R represents different data types, how to perform basic operations in R and define variables! It would now be worthwhile to discuss how these different data types can be stored.
+
+## Vectors
+
+
+Previously, we saw how variables can be assigned using the `<-` operator. These singular values, whether of type numeric, character or logical, were scalars. Vectors, alternatively, may store multiple values of some data type (scalars are therefore vectors of size 1). Creating vectors in R is as straightforward as `c()` (stands for concatenate). For example, `myVector <- c(1,2,3)` to create a vector of numeric elements 1,2,3. `c()` may also be used to concatenate two vectors together:
+```{webr}
+#| exercise: ex_1
+vector1 <- c(1,2,3)
+vector2 <- c(4,5,6)
+vector3 <- c(vector1,vector2)
+```
+
+
+### Filling vectors
+To create a vector comprising a sequence of numbers, you can use`start:end`. For example, `myseq <- 1:10` will create a vector of size 10 with numbers between 1 and 10. You could also use `seq(start,end,interval)`.
+Sometimes you may need to create a vector comprising a repeat value. To do so, use `rep`()`:
+
+```{webr}
+#| exercise: ex_2
+myrep <- rep(1,10) 
+```
+
+Let's put these functions to good use! Please create the following vector as efficiently as possible:
+
+[1, 1, 1, 1, 1, 1, 2, 2, 2, 2 ,2, 2, 4, 5, 6]
+
+```{webr}
+#| exercise: ex_3
+________
+```
+
+::: callout-note
+Vectors may be of any data type but not a mixture. Combining them together will cause R to coerce data into one type. Try this out below. Which data types are dominant when they're combined together?
+:::
+
+```{webr}
+#| exercise: ex_4
+vecmix1 <- c("foo",3)
+vecmix2 <- c(TRUE, 4)
+vecmix3 <- c(FALSE, 5, "world")
+
+vecmix4 <- c(FALSE, NA, 3)
+```
+## Converting between data types
+When you tried to combine different data types together, R performed *implicit coercion*, namely, transformed the data without telling you. The programmer can also *explicitly* coerce data using conversion functions:
+| Conversion               | Usage         |
+|--------------------------|---------------|
+| To numeric               | `as.numeric`  |
+| To character             | `as.character`|
+| To logical               | `as.logical`  |
+| To complex number        | `as.complex`  |
+| To factor                | `as.factor`   |
+
+
+Try converting the following:
+```{webr}
+#| exercise: ex_5
+vec1 <- c(1,2,5) # Convert into factor vector
+```
+```{webr}
+#| exercise: ex_4
+vec2 <- c("5","6","9") # Convert to numeric
+```
+## Matrices and arrays
+
+## Data frames
+
+## Tibbles
+
+
+
+The `echo: false` option disables the printing of code (only output is displayed).

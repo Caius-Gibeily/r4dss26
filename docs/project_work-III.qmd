@@ -1,0 +1,25 @@
+---
+title: "Session 25: Project work III"
+format: html
+editor: visual
+---
+
+As we rapidly approach the end of the training, this session will serve as its conclusion: an opportunity to reminisce and reflect on everything we have discussed and apply it to your own dataset.
+
+By next Wednesday, we would like you to prepare a short Quarto report using a dataset you are currently working with. Please aim to present for around *20 minutes*. 
+Your report should contain
+  -   A short introduction/rationale to the project
+  -   Your analytic methods 
+  -   Descriptive statistics on participants included in the study
+  -   A results section containing
+      -   Results of statistical analyses conducted
+      -   Effect sizes 
+      -   Informative data visualizations
+  -   Your inferences from the data and conclusions
+  
+Since this will be the final report we ask you to make and present, it would be great if you could incorporate methods covered throughout the training, for example, bootstrapped confidence intervals, permutation testing, max-stat permutation for multiple comparisons and linear and logistic regression.
+
+Please also include in your report a comparison between fitting linear and nonlinear (GAM) models, evaluating the models' fits to your data by inspecting their residuals. 
+Finally, try something new: it could be a statistical method the training has not covered, a novel way to visualize your data, or a new way to use simulation. An opportunity to exercise your researcher degrees of freedom!
+
+Please send your report to Hasse and Caius by the end of the day on Tuesday 23rd. If we have time after presentations, we can open the floor to any questions or feedback you might have on any portion of the training. 

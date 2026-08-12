@@ -1,0 +1,62 @@
+---
+title: "chisq"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+```{r}
+library(tidyverse)
+
+d1_cs <- tibble(
+  group = rep(c("A", "B", "C"), c(38, 42, 40))) %>%
+  mutate(category = c(
+    rep(c("X1", "X2", "X3", "X4"), c(10, 10, 9, 9)),
+    rep(c("X1", "X2", "X3", "X4"), c(12, 10, 11, 9)),
+    rep(c("X1", "X2", "X3", "X4"), c(12, 9, 10, 9))
+  ))
+
+```
+
+```{r}
+break_assoc <- function(data, variable_to_shuffle){
+  data %>% 
+    mutate(shuffled = sample({{variable_to_shuffle}}, replace = FALSE))
+}
+
+chi_sq <- function(data, group, category, count){
+  data %>%
+    group_by({{group}}) %>%
+    mutate(row_total = sum({{count}})) %>%
+    ungroup() %>%
+    ## Now the column total
+    group_by({{category}}) %>%
+    mutate(column_total = sum({{count}})) %>%
+    ungroup() %>%
+    # now the grand total
+    mutate(grand_total = sum({{count}}),
+           expected = row_total * column_total / grand_total,
+           resid = ({{count}} - expected) / sqrt(expected))
+}
+
+d_counted <- d1_cs %>% count(group,category) 
+
+%>% 
+  chi_sq(group, category, n)
+
+resid_null <- map(1:1000, \(i) {
+  d1_cs %>% 
+    break_assoc(category) %>%
+    count(group,shuffled) %>% 
+    chi_sq(group, shuffled, n) %>%
+   max(resid))
+}) %>% list_rbind()
+
+# visualisation - 
+# 176
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

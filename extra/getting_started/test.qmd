@@ -1,0 +1,296 @@
+---
+title: Creating Exercises
+subtitle: Evaluate learner code, providing support with hints and solutions
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - dplyr
+toc: true
+---
+
+{{< include ../_extensions/live/_knitr.qmd >}}
+{{< include ../_extensions/live/_gradethis.qmd >}}
+
+
+
+## Measures of Central Tendency
+
+A measure of central tendency is a single value that attempts to describe a set of data by identifying the central position within that set of data. The mean and median are the most commonly used measures of central tendency for numerical data. \## The Mean The mean, one of the simplest concepts in statistics, is a quantity representing the "center" of a collection of numbers and is intermediate to the extreme values of the set of numbers. The mean can be calculated by taking the sum of the values in a series and dividing by the number of values (see @eq-mean). However, the mean can also be thought of as a quantity that minimizes the distance from all values in set of numbers. Although thinking about the mean in this way may seem unnecessarily indirect (perhaps even silly), we will use this perspective to demonstrate some coding concepts that we need to know to facilitate calculating more complex things down the line. In addition, thinking about the mean as a value that minimizes the distance from all numbers in a series of numbers taps into the concept of *sum of squares*, something we will talk about more in future sessions.
+
+<p style="margin:35px;">
+
+</p>
+
+$$\Large \bar{x}= \frac{1}{n} \sum_{i=1}^{n}(x_i)$$ {#eq-mean}
+
+<p style="margin:50px;">
+
+</p>
+
+### Searching for the mean
+
+@fig-plot shows a schematic of how we might think about searching for the mean by introducing guesses (g~1~, g~2~, g~3~). The best guess will be the one that minimizes the distance from the guessed value and the observed numbers (y~1~, y~2~, y~3~). But how should be summarize the distances across observations?
+
+
+```{webr}
+#| setup: true
+#| exercise: ex_3
+library(dplyr)
+```
+
+```{webr}
+#| exercise: ex_3
+starwars |> ______
+```
+
+::: { .hint exercise="ex_3"}
+::: { .callout-note collapse="false"}
+## Hint 1
+
+Consider using the `filter()` function from `dplyr`.
+
+```r
+starwars |> filter(______)
+```
+:::
+:::
+
+::: { .hint exercise="ex_3"}
+::: { .callout-note collapse="false"}
+## Hint 2
+
+You should filter the dataset using the `species` column.
+
+```r
+starwars |> filter(species == ______)
+```
+:::
+:::
+
+::: { .solution exercise="ex_3" }
+::: { .callout-tip collapse="false"}
+## Fully worked solution:
+
+Use the `filter()` function from `dplyr`:
+
+```r
+starwars |>                                 #<1>
+    filter(species == "Droid")              #<2>
+```
+
+1. Take the `starwars` dataset, and then,
+2. Filter for the "Droid" species.
+
+:::
+:::
+
+
+```{webr}
+#| exercise: ex_3
+#| check: true
+gradethis::grade_this_code()
+```
+
+```{r}
+#| echo: FALSE 
+#| message: FALSE
+#| warning: FALSE
+#| fig-align: "center"
+#| fig-width: 4.5
+#| fig-height: 2.5
+#| out-width: "80%"
+#| label: fig-plot
+#| fig-cap: Schematic representing the process of how to search for the mean
+library("tidyverse")
+d <- tibble(guess = rep(c("GUESS 1", "GUESS 2", "GUESS 3"), 
+                        each = 3),
+            y = rep(c(1, 3, 4), 3))
+d %>% 
+  ggplot(aes(x = guess, 
+             y = y)) +
+  geom_point(alpha = 0) +
+  annotate("point", x = c(0.85, 1.85, 2.85), 
+           y = 3.5, 
+           shape = 21, 
+           size = 2.5, 
+           stroke = 1) +
+  annotate("text", x = c(0.75, 1.75, 2.75), 
+           y = 3.5, 
+           label = "y[1]", 
+           size = 3, 
+           parse = TRUE, 
+           family = "Nunito Sans") +
+  annotate("point", x = c(1.15, 2.15, 3.15), 
+           y = 2.8, 
+           shape = 21, 
+           size = 2.5, 
+           stroke = 1) +
+  annotate("text", x = c(1.05, 2.05, 3.05), 
+           y = 2.8, 
+           label = "y[3]", 
+           size = 3, 
+           parse = TRUE, 
+           family = "Nunito Sans") +
+  annotate("point", x = c(1, 2, 3), 
+           y = 1.4, 
+           shape = 21, 
+           size = 2.5, 
+           stroke = 1) +
+  annotate("text", x = c(0.9, 1.9, 2.9), 
+           y = 1.4, 
+           label = "y[2]", 
+           size = 3, 
+           parse = TRUE, 
+           family = "Nunito Sans") +
+  annotate("segment", 
+           y = 3.5, 
+           yend = 2.6, 
+           x = 0.85, 
+           linetype = "dashed") +
+  annotate("segment", 
+           y = 2.8, 
+           yend = 2.6, 
+           x = 1.15, 
+           linetype = "dashed") +
+  annotate("segment", 
+           y = 1.4, 
+           yend = 2.6, 
+           x = 1, 
+           linetype = "dashed") +
+  annotate("segment", 
+           x = 0.8,
+           xend = 1.2, 
+           y = 2.6, 
+           color = "darkblue", 
+           linewidth = 1) +
+  annotate("text", 
+           y = 2.6, 
+           x = 1.28,
+           label = "g[1]",
+           size = 3,
+           parse = TRUE, 
+           family = "Nunito Sans") +
+  annotate("segment", 
+           y = 3.5, 
+           yend = 2.4, 
+           x = 1.85, 
+           linetype = "dashed") +
+  annotate("segment", 
+           y = 2.8, 
+           yend = 2.4, 
+           x = 2.15, 
+           linetype = "dashed") +
+  annotate("segment", 
+           y = 1.4, 
+           yend = 2.4, 
+           x = 2, 
+           linetype = "dashed") +
+  annotate("segment", 
+           x = 1.8,
+           xend = 2.2, 
+           y = 2.4, 
+           color = "darkorange", 
+           linewidth = 1) +
+  annotate("text", 
+           y = 2.4, 
+           x = 2.28,
+           label = "g[2]",
+           size = 3,
+           parse = TRUE, 
+           family = "Nunito Sans") +
+  annotate("segment", 
+           y = 3.5, 
+           yend = 2.2, 
+           x = 2.85, 
+           linetype = "dashed") +
+  annotate("segment", 
+           y = 2.8, 
+           yend = 2.2, 
+           x = 3.15, 
+           linetype = "dashed") +
+  annotate("segment", 
+           y = 1.4, 
+           yend = 2.2, 
+           x = 3, 
+           linetype = "dashed") +
+  annotate("segment", 
+           x = 2.8,
+           xend = 3.2, 
+           y = 2.2, 
+           color = "darkred", 
+           linewidth = 1) +
+  annotate("text", 
+           y = 2.2, 
+           x = 3.28,
+           label = "g[3]",
+           size = 3,
+           parse = TRUE, 
+           family = "Nunito Sans") +
+  labs(y = NULL, 
+       x = NULL) +
+  theme_minimal() +
+  theme(panel.grid.minor = element_blank(), 
+        text = element_text(size = 10, family = "Nunito Sans", face = "plain"))
+```
+
+## Sum of Squares
+
+In statistics, the sum of squares is a measure of variability or dispersion within a set of data. It represents the sum of the squared differences between each data point and a central value, typically the mean (or in our case each guess). It is a fundamental concept in regression analysis and ANOVA, helping to assess how well a model fits the data. @eq-ssqg shows how the concept of sum of squares can be adopted to our *guess the mean* scenario.\
+
+<p style="margin:30px;">
+
+</p>
+
+$$\Large SSQ_{g_1}= \sum_{i=1}^{n}(y_i - g_1)^2$$ {#eq-ssqg}
+
+<p style="margin:35px;">
+
+</p>
+
+If we translate @eq-ssqg to plain English, it tells us that in order to calculate SSQ~g1~, we should calculate the difference between our guess (g~1~) and our y-values (y~1~ - g~1~, y~2~ - g~1~, y~3~ - g~1~), then square the differences and finally sum up the squared differences. Why do square the differences before summing, you might ask? In the context of statistical analysis, the squaring operation in the *sum of squares* is used because: \* By squaring, all deviations are treated as positive values, preventing cancellation effects when calculating the total dispersion or variation. For the purpose of what we are doing today, this is the most important reason why we square the differences. \* Squaring also has the effect of giving more weight to larger deviations. This means that data points further away from the mean (or guess in our case) will have a greater impact on the overall sum of squares, which can be desirable in many statistical applications. \* From a mathematical perspective, squaring is often preferred because it leads to simpler calculations, especially when dealing with derivatives in optimization problems. We may or may not talk more about this in the future.
+
+```{webr}
+#| context: output
+mean_guess_sm <- tibble(y = rep(c(3.5, 2.8, 1.4), 3),
+                        guess = rep(c("g1", "g2", "g3"), each = 3),
+                   guess_value = rep(c(2.6, 2.4, 2.2), each = 3))
+```
+
+## Turn math into code
+
+Through out this training, we will use our R skills to help us unpack the mathematics underlying statistical methods. We will start by writing code that will for each of our guesses (g~1~, g~2~, g~3~) in @fig-plot calculate the *sum of squares* as described in @eq-ssqg. A small data frame (tibble) `mean_guess_sm`, containing the values in @fig-plot, has already been generated. Use the interactive code block below to take a look at these data.
+
+<p style="margin:30px;">
+
+</p>
+
+```{webr}
+mean_guess_sm
+```
+
+<p style="margin:35px;">
+
+</p>
+
+Great, we have some data and it seems to correspond well with @fig-plot. Now we are going to go through the different parts of @eq-ssqg and turn them into R code. First, let's add a new column to `mean_guess_sm` containing the difference between the y-values and the guess values. To do this we will use the `mutate()` function from the `dplyr` package (part of the tidyverse). We will call the new variable `diff`.
+
+<p style="margin:30px;">
+
+</p>
+
+```{webr}
+mean_guess_sm %>% 
+  mutate(diff = y - guess_value)
+```
+
+<p style="margin:35px;">
+
+</p>
+
+We see that calculating the difference results in both positive and negative values. If not dealt with, this could cause cancellation effects issues (as mentioned above). This is (one of the reasons, the most important reason) why we next square the differences.
+
+<p style="margin:30px;">
+
+</p>
+

@@ -1,0 +1,52 @@
+---
+title: "Session 16: Stats Journal Club"
+format: html
+---
+
+This week, we will (mostly) take a break from coding and instead read and discuss a paper that is particularly relevant because, among other reasons, in the past few sessions we have covered topics such as statistical power, the winner’s curse, and multiple comparisons. The paper we will discuss is "Power failure: why small sample size undermines the reliability of neuroscience" by Button et al. (Nature Reviews Neuroscience, 2013). It is considered a landmark article because it exposed a fundamental problem in neuroscience (and many other fields): most studies are underpowered, leading to unreliable, inflated, and non-reproducible results.  
+
+Read the [paper](https://www.nature.com/articles/nrn3475){target="_blank"} carefully and review the list of discussion points below. This list will form the basis of our discussion on Thursday. 
+
+* At the beginning of the paper, it is stated that problems regarding the reliability of research output can, to some extent, be explained by how a highly competitive research environment incentivizes researchers to engage in questionable practices. What are some examples of such incentives, and how might they relate to the ways data are analyzed and results are reported? 
+
+* The paper suggests that false positives may disproportionately affect the most prominent journals in neuroscience. If this is the case, what factors might explain it?
+
+* Many researchers assume that low statistical power merely increases the chance of missing an effect. Discuss why the consequences of underpowered studies extend far beyond this. 
+
+* What is the relationship between power and the “positive predictive value” (PPV)? What is the prior probability of an effect? 
+
+* Some of the examples in the paper refer to an effect size metric called *odds ratio*. What does it measure and when is it typically used?   
+
+* Why do inflated effect sizes create a cycle of non-replicability, and can you think of some examples of how this cycle might be broken?
+
+* Use the data in the chunk below and code from the session when we discussed Cohen's d and statistical power to show that what is described in Figure 1 (that attempting to replicate a significant effect that only barely achieved nominal statistical significance and that uses the same sample size as the original study, will only achieve ~50% power) holds true. 
+
+```{r}
+#| eval: false
+original_study <- tibble(values = c(-1.48, 1.58, -0.96, -0.92, -2.00, 
+                                    -0.27, -0.32, -0.63, -0.11, 0.43,
+                                    -0.20, -0.81, -0.20, 0.59, 0.43, 
+                                    -0.12, 1.70, 0.92, 1.09, 0.29),
+                         group = rep(c("A", "B"), each = 10))
+```
+
+* What does *vibration of effects* refer to? Is this concept related to multiple comparisons and the importance of accounting for multiplicity in significance testing (things we discussed last week)?  
+
+* Why is publication bias more likely to affect low-powered studies? 
+
+* What are some reasons why smaller studies may also show poorer experimental design and how might experimental design bias the outcome of the study?
+
+* The median power of studies (~21%) shown in the paper is quite low indeed, meaning 4 out of 5 real effects would go undetected. Still, many researchers do not routinely perform a priori power analyses. Why do think investigators continue to design underpowered studies?
+
+* What are the broader consequences of low-powered research for the field? Discuss the ethical implications of conducting underpowered studies.
+
+* Are there contexts where small sample sizes are justified? Are there contexts where underpowered studies are justified? 
+
+* What practical solutions do Button et al. propose?
+
+* The paper was published in 2013. Do you think much has changed in the way neuroscience research is conducted since then? 
+
+* If you could rewrite the incentive system for neuroscience, what changes would best reduce underpowered research in your opinion?
+
+
+

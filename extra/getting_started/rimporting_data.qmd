@@ -1,0 +1,57 @@
+---
+title: Importing data
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - dplyr
+output: 
+  learnr::tutorial:
+    progressive: true
+toc: true
+---
+
+## Introduction
+
+### Load a CSV File
+
+```{r}
+library(tidyverse)
+library(webr)
+```
+
+## 1. Saving data into an importable format
+
+Preformatting your data in a spreadsheet editor like Excel or LibreOffice Calc is a great way to start working with data in R. But how should the data be formatted and through what wizardry are they imported into R? Ideally, you'd like to do most of your data manipulations, summary statistics and analyses in a programming language like R, rather than in Excel. The power of excel is the ability to organise your dataset interactively. A few key principles will help guide how you should prepare your dataset before importing into R
+
+1.  Make sure your headers do not contain problematic characters or duplicate names. What are problematic characters? Punctuation marks (i.e. `!,?,:` ), letters with accents. These characters may distort how R reads the header names. Best practice is to use clear, all lower-case header titles
+
+2.  Ensure that data entries are tabulated in rows and data fields (i.e. variables) are in columns. One should be able to query any data entry and access its fields (in theory at least)
+
+3.  If you have missing values, don't panic! Just don't replace them with `0`. If you have continuous data, 0 entries may be ambiguous since 0 is a valid answer. The entry may be left blank; R will interpret these blanks as NAs (not applicables). Alternatively, when reading in data, you can tell R to set particular values as NAs
+
+Take a look at this small dataset of six languages, the number of fluent speakers and a binary variable indicating whether the language is natural or constructed.
+
+![](images/before-01.png)
+
+A better format would be
+
+![](images/after.png)
+
+We now notice that all the headers are written lowercase now with a removal of the space in the second header title. We have also recoded the natural columns to 1s and 0s since this column represents a Boolean (yes/no) variable. When the dataset is loaded, we can then ensure R reads it as a Boolean (or logical) variable by using `data$natural <- as.logical(data$natural)`.
+
+If you were to save this spreadsheet now, by default Excel would export it with a proprietary .xlsx extension that includes unnecessary formatting information. Instead, select "Save a copy" and scroll down to \*.csv, saving the .csv file in your data repo
+
+### 2. Importing CSV files with `read_csv()`
+
+Let's try reading in a sample dataset. Data were collected by Dr. Kristen Gorman and the Palmer Station, Antarctica, showing three species of penguin. You can learn more about the data here: <https://allisonhorst.github.io/palmerpenguins/>
+
+```{webr}
+penguins <- read_csv("https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/inst/extdata/penguins.csv")
+```
+
+There are different ways of interrogating the data you have imported. Some of these functions are `head()`, `tail()` and `str()`. Try out some of these yourself!
+
+```{webr}
+head(penguins)
+```

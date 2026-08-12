@@ -1,0 +1,409 @@
+---
+title: "Session 21: Multiple Regression"
+format: live-html
+engine: knitr
+webr:
+  autoload-packages: true
+  packages: ["plotly", "tibble"]
+---
+
+{{< include ../_extensions/live/_knitr.qmd >}}
+
+In the previous session, we modeled relationships between two variables by using one variable to predict another. In many real world situations however, outcomes depend on several variables at the same time. For example, engagement during the R training discussion sessions might depend on both preparation and sleep. Multiple regression extends the ideas from linear regression to situations where we use several variables together to make predictions. Importantly, the core ideas remain the same. We still make predictions, calculate residuals, and search for the coefficients that minimize prediction error. The main difference is that we now use more than one predictor variable at a time.
+
+Last time, we searched through many possible lines to find the combination of coefficients that minimized the residual error. As we mentioned then, this is not a very efficient way to fit a regression model, but it gives us an intuitive understanding of what the model is actually doing. In this session, we will use a similar approach. The difference is that instead of searching for the best line, we will search for the best plane.
+
+We will now introduce a simulated dataset that we will use in the first part of this session. The data contains an outcome variable `y` and two predictor variables `x1` and `x2`. You can download the dataset using the button below and load it into R so that we can begin exploring how adding a second predictor changes our model.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(downloadthis)
+
+set.seed(1)
+
+n <- 200
+
+df_1 <- tibble(x1 = rnorm(n),
+               x2 = rnorm(n),
+               error = rnorm(n)) |> 
+  mutate(y = 2 + (3 * x1) + (1 * x2) + error) |> 
+  select(x1, x2, y)
+
+df_1 %>% 
+  download_this(
+    output_name = "df_1",
+    output_extension = ".csv",
+    button_label = "Download df_1 as csv",
+    button_type = "default",
+    has_icon = TRUE,
+    icon = "fa fa-save",
+    csv2 = FALSE
+  )
+```
+
+<p style="margin:30px;">
+
+1. Once you have loaded the dataset, begin by exploring the relationships between `y`, `x1`, and `x2`. To do this, use the `GGally` package (which extends `ggplot2` by adding functions that simplify combining geoms with transformed data) and create a pairwise plot using `ggpairs()` (a function that produces a matrix of plots showing all pairwise relationships between variables). Take a moment to look at how each variable relates to the others, and note any patterns that stand out.
+
+In the previous session, our predictions were based on a line defined by an intercept and a slope. In multiple regression, predictions are instead based on a plane (when working with two predictor variables). Rather than using one predictor variable to make predictions, we now combine information from both `x1` and `x2`.
+
+Our predictions now take the following form:
+
+$$
+\hat{y} = b_0 + b_1 x1 + b_2 x2
+$$
+
+Here, $b_0$ represents the intercept, while $b_1$ and $b_2$ determine how strongly `x1` and `x2` influence the predicted values of `y`.
+
+Before we systematically search for the best combination of coefficients, it is helpful to build some intuition for what the model is doing. Each choice of coefficients defines a different plane in three dimensional space. These planes represent different ways of describing how `x1` and `x2` relate to `y`. To get a better sense of this, you will now explore how changing the coefficients changes the plane and how well it fits the data.
+
+2. In the interactive code chunk below, replace the zeros with values that make the plane fit the data points as closely as possible. You can click and drag on the plot to rotate it and explore the relationships between `y`, `x1`, and `x2`. Finding a good combination of coefficients will likely require some trial and error, but use the patterns you observed in the `ggpairs()` visualization to guide your guesses. 
+
+```{webr}
+#| message: true
+#| warning: false
+#| echo: false
+#| define: 
+#|   - draw_3d_plot
+
+set.seed(1)
+
+n <- 200
+
+df_1 <- tibble(x1 = rnorm(n),
+               x2 = rnorm(n),
+               error = rnorm(n)) |> 
+  mutate(y = 2 + (3 * x1) + (1 * x2) + error) |> 
+  select(y, x1, x2)
+
+grid <- expand.grid(
+  x1 = seq(min(df_1$x1), max(df_1$x1), length.out = 30),
+  x2 = seq(min(df_1$x2), max(df_1$x2), length.out = 30)
+)
+
+make_surface <- function(b0, b1, b2){
+  matrix(b0 + b1 * grid$x1 + b2 * grid$x2, nrow = 30)
+}
+
+draw_3d_plot <- function(b0, b1, b2){
+  plot_ly() |>
+    add_markers(
+      data = df_1,
+      x = ~x1, y = ~x2, z = ~y,
+      marker = list(size = 4, color = "black", opacity = 0.5),
+      hoverinfo = "none"
+    ) |>
+    add_surface(
+      x = sort(unique(grid$x1)),
+      y = sort(unique(grid$x2)),
+      z = make_surface(b0, b2, b1),
+      showscale = FALSE,
+      opacity = 0.6,
+      colorscale = list(c(0, 1), c("steelblue", "steelblue")),
+      hoverinfo = "none"
+    ) |>
+    layout(width = 500, 
+           height = 450, 
+           hovermode = FALSE,
+           showlegend = FALSE,
+           scene = list(
+             camera = list(
+               eye = list(x = 1.1, y = 1.1, z = 2)
+             ),
+             xaxis = list(showspikes = FALSE, autorange = "reversed"),
+             yaxis = list(showspikes = FALSE),
+             zaxis = list(showspikes = FALSE)
+           ),
+           margin = list(
+             l = 80,
+             r = 0,
+             b = 0,
+             t = 0
+           )) |> 
+    config(displayModeBar = FALSE, 
+           scrollZoom = FALSE)
+}
+
+```
+
+::: {.columns}
+
+::: {.column width="15%"}
+:::
+
+::: {.column width="70%"}
+```{webr}
+#| message: true
+#| warning: false
+#| autorun: true
+draw_3d_plot(b0 = 0, b1 = 0, b2 = 0)
+```
+:::
+
+::: {.column width="15%"}
+:::
+
+:::
+
+\
+\
+
+When we talked about linear regression with one predictor, we used predictions to compute residuals and then summarized model fit using the residual sum of squares (RSS). We will now apply the same idea in the context of multiple regression. The overall strategy remains unchanged: use the model to make predictions, calculate residuals from those predictions, and then summarize the residuals into a single measure of model fit. 
+
+3. Copy the `rss()` function from last week and modify it so that it takes two slope coefficients as input. Then use the function to calculate the RSS for your best guesses from exercise 2. 
+
+Last week, we used a brute force search to find the coefficient values that minimized the RSS. We can now extend the same idea to multiple regression. Instead of searching across possible values for a single slope coefficient, we now search across combinations of several coefficients simultaneously.
+
+As the number of coefficients increases, a full grid search quickly becomes computationally expensive because the number of coefficient combinations grows very rapidly. Instead of systematically evaluating every possible combination, we will generate many random guesses within a reasonable range of values. While this approach may not identify the exact best coefficients, it will often get us close enough to find a very good fitting model.
+
+4. There are many ways we could implement a random search procedure. Below, we provide the scaffold for one possible approach using the `runif()` function, which draws random values from a uniform distribution (meaning that all values within the specified range are equally likely to be selected). Fill in the blanks in the code below. Your work in exercise 2 should help you identify sensible ranges to search within. Then identify the combination of coefficients that produces the smallest RSS. 
+
+```{r}
+#| eval: false
+coef_search <- map(1:10000, \(i) {
+  b0 <- runif(n = 1, min = ___, max = ___)
+  b1 <- runif(n = 1, min = ___, max = ___)
+  b2 <- runif(n = 1, min = ___, max = ___)
+  
+  df_1 |> 
+    rss(_____) |> 
+    mutate(b0 = b0, b1 = b1, b2 = b2)
+}) |> 
+  list_rbind()
+```
+
+While the random search approach can help us find a reasonably good fitting model, it is still computationally inefficient and does not guarantee that we identify the exact coefficient values that minimize the RSS. In practice, we typically rely on specialized optimization algorithms implemented in functions such as `lm()`, which can efficiently identify the coefficient values that minimize the RSS.
+
+5. Fit the multiple regression model using `lm()`. Compare the coefficients produced by `lm()` to the best values you found through your random search procedure. Hint: additional predictors can be added to the model formula using `+`.
+
+  * Interpret the coefficients in this model, focusing on what each coefficient represents when more than one predictor is included in the model. In particular, consider how this interpretation differs from the case of a single predictor model you have seen in earlier work.
+
+
+In the session on simple linear regression, many different statistical ideas turned out to be closely connected because the model only involved a single predictor. Correlations, slope coefficients, $R^2$, and permutation-based significance tests were often telling very similar stories about the same underlying relationship between two variables. In multiple regression, these ideas begin to separate into genuinely different concepts because the model must now account for several predictors simultaneously.
+
+The interpretation of $R^2$ itself remains unchanged: it still measures the proportion of variation in the outcome variable explained by the model. However, in multiple regression the explained variation now comes from several predictors working together rather than from a single predictor alone.
+
+The `r2()` function we wrote last week allows us to calculate $R^2$ for simple linear regression. In that case, the model only included a single predictor. To extend this idea to multiple regression, we now need to update the function so that predictions are based on two predictors instead of one. The logic for calculating $R^2$ remains exactly the same: we compare the variation explained by the model to the total variation in the outcome.
+
+6. Modify the `r2()` function so that it works for a multiple regression model with two predictors. In particular, update the prediction step so that it includes both `x1` and `x2`. Then complete the remaining parts of the function so that $R^2$ is calculated correctly. Call the new function `r2_multi`.
+
+  * Use the appropriate `r2*()` function to compute $R^2$ for:
+  
+    a. A model with `x1` as the only predictor (simple regression version)
+    
+    b. A model with `x2` as the only predictor (simple regression again)
+    
+    c. A model with both `x1` and `x2` as predictors (multiple regression)
+    
+    Compare the results. Does the model with both predictors explain substantially more variation than the models with only one predictor? How does the combined $R^2$ compare to the individual $R^2$ values in this case?
+    
+::: {.callout-note}    
+In multiple regression, adding additional predictors will never decrease $R^2$, even if the new predictors contain very little meaningful information. Because of this, statisticians often use related measures such as *adjusted* $R^2$, which penalize models for unnecessary complexity by adjusting for the ratio between the number of observations and the number of predictors in the model. Unlike ordinary $R^2$, adjusted $R^2$ can therefore decrease when additional predictors fail to improve the model sufficiently. We will not focus on adjusted $R^2$ here, but it is important to keep in mind that larger models do not automatically represent better models.
+:::
+  
+Last week, we used simulation and resampling approaches to assess whether the relationship between a predictor and an outcome variable appeared stronger than we would expect by chance. We will not repeat those ideas in detail here. Instead, we will extend the same logic to a new question that arises in multiple regression: *Does adding another predictor meaningfully improve the model fit?* We can investigate this by comparing a simpler model containing only `x1` to a larger model containing both `x1` and `x2`.  
+
+To assess whether the additional explanatory power of `x2` is larger than we would expect by chance, we begin by fitting the simpler model containing only `x1`. The residuals from this model represent the variation in y that remains unexplained after accounting for `x1`. If `x2` does not contain meaningful additional information, then randomly reassigning these residuals should not systematically improve the fit of the larger model. This type of procedure, often called *residual permutation*, constructs a null distribution for the improvement in model fit by repeatedly permuting the residuals and recalculating the difference in explained variance between the two models. The resulting distribution represents the kinds of improvements in fit ($\Delta R^2$) we would expect to observe by chance alone. The observed value of $\Delta R^2$ from the original data can then be compared to this null distribution to assess whether the improvement in model fit is larger than we would expect by chance.
+
+7. Complete the code below to generate one permuted dataset under the assumption that `x2` does not provide meaningful additional explanatory power beyond `x1`. The code (if written correctly) should:
+  
+    a. Fit a smaller model with only *x1* as the predictor
+    
+    b. Extract predictions and residuals from this smaller model (here relying on the base R functions `predict()` and `residuals()`)
+    
+    c. Randomly permute (shuffle) the residuals
+    
+    d. Create a new outcome variable by adding the permuted residuals back onto the original predictions
+    
+    e. Fit both a smaller and a larger model to the permuted data so that we can compare how much additional variation is explained when `x2` is added to the model.
+    
+    f. Finally calculate how much more variation is explained when `x2` is added to the model.
+    
+```{r}
+#| eval: false
+small_mod <- lm(y ~ x1, data = df_1)
+
+df_perm <- df_1 |>
+  mutate(pred = predict(_____),
+         resid = residuals(_____),
+         resid_perm = sample(_____),
+         y_perm = _____ + _____)
+
+mod_small <- lm(y_perm ~ x1, data = _____)
+mod_large <- lm(y_perm ~ x1 + x2, data = _____)
+
+r2_small <- broom::glance(_____) |> pull(r.squared)
+r2_large <- broom::glance(_____) |> pull(r.squared)
+
+tibble(delta_r2 = _____ - _____)
+```
+
+ * Extend the code from above to repeat the residual permutation procedure 10,000 times. For each iteration, compute the change in explained variance when adding `x2` to the model ($\Delta R^2$), and store these values to form a null distribution. Next, visualize the null distribution of $\Delta R^2$ and add the observed $\Delta R^2$ from the original (non-permuted) data to the plot. Finally, compute a permutation-based p-value, representing the proportion of permuted datasets in which the improvement in model fit ($\Delta R^2$) is at least as large as the improvement observed in the real data.
+ 
+ * Compare your residual permutation results to the output from `lm()` + `broom::tidy()`. Which p-value in this output corresponds to the one you just calculated using residual permutation?
+ 
+We will now apply the same workflow to new datasets generated under different conditions. Although the computational steps remain the same, the interpretation of the results changes substantially depending on the relationships between the predictors and the outcome variable. Download the new data linked below.
+
+::: {.columns}
+
+::: {.column width="30%"}
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+set.seed(1)
+n <- 100
+
+df_2 <- tibble(x1 = rnorm(n),
+               x2 = rnorm(n),
+               error = rnorm(n)) |> 
+  mutate(y = 2 + (1.5 * x1) + (0.001 * x2) + error) |> 
+  dplyr::select(x1, x2, y)
+
+df_2 |>  
+  download_this(
+    output_name = "df_2",
+    output_extension = ".csv",
+    button_label = "Download df_2 as csv",
+    button_type = "default",
+    has_icon = TRUE,
+    icon = "fa fa-save",
+    csv2 = FALSE
+  )
+```
+:::
+
+::: {.column width="30%"}
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+set.seed(1)
+n <- 100
+
+d <- MASS::mvrnorm(n = n, mu = c(0, 0), 
+                   Sigma = matrix(c(1, .9, .9, 1), nrow = 2), 
+                   empirical = TRUE)
+
+df_3 <- tibble(x1 = d[,1],
+               x2 = d[,2],
+               error = rnorm(n)) |> 
+  mutate(y = 1 + (0.5 * x1) + (0.5 * x2) + error) |> 
+  dplyr::select(x1, x2, y)
+
+df_3 %>% 
+  download_this(
+    output_name = "df_3",
+    output_extension = ".csv",
+    button_label = "Download df_3 as csv",
+    button_type = "default",
+    has_icon = TRUE,
+    icon = "fa fa-save",
+    csv2 = FALSE
+  )
+```
+:::
+
+:::
+
+<p style="margin:30px;">
+
+8. Apply the analysis workflow developed in this session to `df_2` and `df_3`. Begin by visualizing the relationships between the variables before fitting both a smaller model (`y ~ x1`) and a larger model (`y ~ x1 + x2`). Then calculate and compare the corresponding $R^2$ values, compute the observed $\Delta R^2$, and use residual permutation to generate a null distribution for $\Delta R^2$. Visualize each null distribution together with the observed $\Delta R^2$, and calculate a permutation-based p-value assessing whether adding `x2` meaningfully improves the model fit. After completing the analyses, compare the results across the two datasets and reflect on how differences in the relationships between the predictors influence the interpretation of the models and the permutation-based inference results.
+
+  * As a final step, use `lm()` to fit separate simple regression models for each predictor individually (for example, `y ~ x1` and `y ~ x2`) and examine their $R^2$ values and model summaries using `broom::glance()` and `broom::tidy()`. Compare these results to the permutation-based inference results from the multiple regression models. In particular, consider whether predictors that appear important in isolation also provide substantial additional explanatory power once other predictors are already included in the model.
+
+
+So far, we have assumed that the relationship between a predictor and the outcome is constant across all observations. We now relax this assumption by allowing the effect of `x1` to differ between two groups defined by a binary variable (`group`, coded 0/1). This is an example of an interaction, where the effect of one variable depends on the value of another.
+
+9. You will now explore two new datasets that both contain `y`, `x1`, and `group`. Download these data by clicking the buttons below. 
+
+::: {.columns}
+
+::: {.column width="30%"}
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+set.seed(1)
+
+n <- 25
+
+df_4a <- tibble(x1 = rnorm(n), 
+                error = rnorm(n)) |> 
+  mutate(y = 1 + 1.2 * x1 + error, 
+         group = 0) |> 
+  dplyr::select(x1, group, y)
+
+df_4b <- tibble(x1 = rnorm(n), 
+                error = rnorm(n)) |> 
+  mutate(y = 2 + 1.2 * x1 + error, 
+         group = 1) |> 
+  dplyr::select(x1, group, y)
+  
+df_4 <- rbind(df_4a, df_4b)
+
+df_4 |>  
+  download_this(
+    output_name = "df_4",
+    output_extension = ".csv",
+    button_label = "Download df_4 as csv",
+    button_type = "default",
+    has_icon = TRUE,
+    icon = "fa fa-save",
+    csv2 = FALSE
+  )
+```
+:::
+
+::: {.column width="30%"}
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+set.seed(1)
+
+n <- 25
+
+df_5a <- tibble(x1 = rnorm(n), 
+                error = rnorm(n)) |> 
+  mutate(y = 1 + 1.2 * x1 + error, 
+         group = 0) |> 
+  dplyr::select(x1, group, y)
+
+df_5b <- tibble(x1 = rnorm(n), 
+                error = rnorm(n)) |> 
+  mutate(y = 1 + -1.2 * x1 + error, 
+         group = 1) |> 
+  dplyr::select(x1, group, y)
+
+df_5 <- rbind(df_5a, df_5b)
+
+df_5 %>% 
+  download_this(
+    output_name = "df_5",
+    output_extension = ".csv",
+    button_label = "Download df_5 as csv",
+    button_type = "default",
+    has_icon = TRUE,
+    icon = "fa fa-save",
+    csv2 = FALSE
+  )
+```
+:::
+
+:::
+
+<p style="margin:30px;">
+
+  * For both `df_4` and `df_5`, begin by visualizing (using regular `ggplot()`) the relationship between `x1` and `y`, coloring or grouping points by `group`, and adding simple trend lines for each group. Pay attention to whether the relationship between `x1` and `y` appears similar or different across the two groups.
+
+  * Next, fit two models (using `lm()`) to each dataset: an additive model (`y ~ x1 + group`) and an interaction model (`y ~ x1 * group`). Use `broom::tidy()` to inspect and compare the estimated coefficients from the two models (note that the interaction term is the one including a `:`), and `broom::glance()` to compare overall model fit statistics (including $R^2$). In particular, examine whether allowing the effect of `x1` to vary by group leads to a noticeable improvement in model fit.
+
+  * Relate the model results back to the patterns you observed in the plots. Focus especially on how the relationship between `x1` and `y` changes (or does not change) across groups, and how this is reflected in the presence or absence of an interaction effect.
+
+
+

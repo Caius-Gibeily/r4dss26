@@ -1,0 +1,189 @@
+---
+title: "Session 14: One-way ANOVA"
+format: html
+---
+
+So far, the statistical modeling we have learned about has focused on comparing two groups. But what if you have more than two groups you would like to compare? This is where analysis of variance, or ANOVA, comes in. 
+
+Start by watching this [video](https://youtu.be/9cnSWads6oo?si=erE6hsfMxS0D-6Ck){target="_blank"} from *zedstatistics* (another nice resource from a different part of the world). You can skip the last few minutes of the video on how to use Excel (we would never!) to run an ANOVA. 
+
+We will explore some ANOVA concepts using three data sets that can be generated using this code:
+
+```{r}
+#| eval: false
+d1 <- tibble(values = c(2.95, 5.12, 5.68, 5.43, 5.12, 
+                        2.81, 1.62, 2.51, 1.94, 3.92, 
+                        5.72, 6.81, 4.88, 4.67, 
+                        1.81, 4.32, 3.09, 3.02), 
+             group = c(rep(c("A", "B"), each = 5), 
+                       rep(c("C", "D"), each = 4)))
+
+d2 <- tibble(values = c(4.76, 2.76, 4.31, 7.48, 4.99, 
+                        3.29, 4.71, 1.07, 1.17, 
+                        5.72, 4.31, 4.23, 7.81, 
+                        4.27, 3.93, -0.08, 3.32, 3.86), 
+             group = c(rep("A", 5),
+                       rep(c("B", "C"), each = 4),
+                       rep("D", 5)))
+
+d3 <- tibble(values = c(5.86, 3.91, 5.2, 3.52, 
+                        4.84, 3.03, 3.27, 2.92, 
+                        5.36, 4.06, 4.21, 4.58, 2.69, 
+                        4.23, 4.77, 4.19, 3.01, 2.27),
+             group = c(rep(c("A", "B"), each = 4), 
+                       rep(c("C", "D"), each = 5)))
+```
+ 
+1. Copy the code and run it on your machine. Create a plot for each tibble (or one plot with three facets if you so prefer) showing the mean and standard deviation of each group, using `geom_pointrange()`. Looking at these plots, see if you can guess which data will have the smallest and largest F-statistic. 
+
+  * Calculate the total sum of squares (TSS) of the values in `d1`. This will be as simple as taking each value and subtracting the grand mean (the mean of all observations ignoring the groups), squaring the deviations and summing them up. This should remind you of how we calculate variance since the variance is the mean sum of squares! 
+  
+  * Next, let's calculate the sum of squares within (SSW, also known as the residual sum of squares), still focusing on the `d1` data. This calculation will be very similar to how you computed the TSS, but now you will compare each group's values to the group mean and sum up the sum of squares of each group so that when you are done you have one value. 
+  
+  * What we have left is the sum of squares between (SSB). This is a measure of how spread out the group means are. We calculate the SSB by comparing the group means to the grand mean, and multiply each squared deviation by the number of observations in each group, and finally sum it all up. Note that the easiest way to do this using `dplyr` methods is to rely on `mutate()` for all calculations except the final summation. This way you will get the group mean squared deviations from the grand mean duplicated as many times as you have observations per group. Summing up these duplicated values will be the same mathematically as multiplying each group's squared deviation by the number of observations per group and then summing. We recommend using a combination of these verbs (in this order): `mutate()` (to first calculate the grand mean), `group_by()`, `mutate()` (to calculate group means and deviations), `ungroup()` and `summarize()`. 
+  
+  * Check your calculations by showing that if you add the sum of squares within and the sum of squares between you get the total sum of squares. 
+  
+  * Now calculate the F-statistic. This involves degrees of freedom. We will most likely talk more about degrees of freedom in the future, but for now all you need to know is that much like when we divided the sum of squares by n-1 to get the variance (the mean sum of squares), we now divide the SSW and SSB by the degrees of freedom to get the mean SSW and mean SSB.  
+  
+  * Write a short description of what an F-statistic is from a signal-to-noise perspective.
+  
+2. Calculating the F-statistic took a fair amount of work, but now that we have gone through the different parts, we can put it all in a function and never have to write that code again. Complete the function below by filling in the blanks. Note that since TSS = SSW + SSB, we actually don't need to calculate all three of these. 
+
+```{r}
+#| eval: false
+f_stat <- function(data, values_col, group_col){
+  tss <- data |> 
+    mutate(m = mean({{values_col}}), 
+           dev = ____, 
+           sq = ____) |> 
+    summarise(sum(sq)) |> 
+    pull()
+  
+  ssw <- data |> 
+    group_by({{group_col}}) |> 
+    mutate(m = ____, 
+           dev = ____, 
+           sq = ____) |> 
+    summarise(ssq = ____) |> 
+    summarise(sum(ssq)) |> 
+    pull()
+  
+  ssb <- tss - ____
+  
+  n_gr <- data |> 
+    group_by(____) |> 
+    n_groups()
+  
+  n_obs <- data |> 
+    count() |> 
+    pull()
+  
+  tibble(f = (____ / (n_gr - 1)) / (____ / (n_obs - n_gr)))
+}
+```
+
+  * Check that the function is working as it should by making sure it outputs the same F-statistic as your previous calculation (using the `d1` data). Then use the function to calculate the F-statistic for the `d2` and `d3` data sets. 
+
+  * Revisit your guesses regarding the F-statistic for `d1`, `d2` and `d3`. Did you get the order right? 
+
+3. In the *zedstatistics* video, Justin skips over the part where an F-statistic is turned into a p-value. But that is not an issue for us because we have a statistical inference superpower that lets us calculate p-values in almost any situation. Yes, we are referring to permutation. Before we get to this part however, spend some time thinking about how you would state the null hypothesis for an ANOVA test and what the null distribution represents in this case.  
+
+  * Use `map()` and the `break_assoc()` function from before to generate 10,000 permuted samples based on `d1`. Call the new object `perms` and leave is as a list object (meaning you can skip the `list_rbind()` step).
+
+  * Next we will use `map()` to cycle through the permuted data sets and apply our very own F-statistic generating function to each of them: 
+
+```{r}
+#| eval: false
+fs <- perms |>
+  map(\(i) f_stat(i, values, shuffled)) |> 
+  list_rbind()
+```
+
+  * Plot the distribution of F-values. What do notice about the shape of the distribution and how does it compare to null distributions we have looked at before? Remember that the F-statistic is the ratio between the mean SSB and mean SSW. Explain how the fact that the plotted statistic is a ratio affects the shape of the distribution. 
+  
+  * Calculate the p-value. We have previously mentioned that the idea of a two-sided p-value is predicated on the null distribution being symmetric. Ask the internet if a two-sided p-value makes sense for ANOVA tests. What is your conclusion about the group means in `d1`. 
+  
+4. Use the same permutation method to investigate if the mean flipper length of Adelie penguins differ significantly depending on which island they come from. 
+
+  * Replicate your analysis using functions from the `infer` package, as described [here](https://infer.tidymodels.org/articles/anova.html){target="_blank"}. What is the difference between randomization-based and theoretical null distributions? How do they compare in this case? 
+
+5. Recently, we introduced the idea of *effect size*, a measure of the strength or magnitude of relationships. When comparing two group means, the most commonly used effect size metric is *Cohen's d*. In the ANOVA case, the go-to effect size is called *eta-squared* ($\eta^2$). Check out this short [video](https://youtu.be/UBc66fo1Mpw?si=ZMsjvRTopC_h_0h6){target="_blank"}. 
+
+  * Fill in the blanks in the code window below so that the function correctly calculates $\eta^2$. You can copy code from the `f_stat()` function we wrote a little while ago. 
+  
+```{r}
+#| eval: false
+eta_sq <- function(data, values_col, group_col){
+  tss <- ____
+  
+  ssw <- ____
+  
+  ssb <- ____ - ____
+  
+  tibble(eta_sq = ____ / tss)
+}
+```  
+
+* Use the function to calculate $\eta^2$ for the `d1`, `d2` and `d3` data sets. How do the results compare to what you found when you calculated the F-statistics?
+
+* Copy the code used to generate `d1` and change the numeric values to make the mean differences between the groups very large, but the spread of the values around each group mean small. Calculate both the F-statistic and $\eta^2$. What do you observe? What happens if you make the mean differences small? 
+
+6. Now that we know what effect size metric to use when working with ANOVAs, we can calculate statistical power. We help you with the code for this. First, here is a way to simulate data with specified values for total sample size, $\eta^2$ and number of groups. Note that the `rnorm_exact()` function is just a helper, the main work is done by `sim_eta()`. 
+
+```{r}
+#| eval: false
+rnorm_exact <- function(n, mean, sd) { 
+  mean + sd * scale(rnorm(n)) |> 
+    as.vector()
+  }
+
+sim_eta <- function(total_n, eta_sq, n_grps){
+  ssqw <- 100 * (1 - eta_sq)
+  ssqb <- 100 * eta_sq
+  sample_means <- rnorm_exact(n = n_grps, 
+                              mean = 0, 
+                              sd = sqrt(ssqb / (total_n * ((n_grps - 1) / n_grps))))
+  
+  map(sample_means, \(i){
+    d <- rnorm(n = total_n / n_grps, 
+               mean = i, 
+               sd = sqrt(ssqw / (total_n - n_grps)))
+    
+    tibble(values = d)
+  }) |> 
+    list_rbind(names_to = "group") |> 
+    mutate(group = as.factor(group))
+}
+```
+
+This code may look a bit intimidating, but the concept is actually quite simple. All we do is create a number of samples equal to `n_grps` and the sample means and standard deviations are set to values so that the true population $\eta^2$ equals the argument `eta_sq` in the function.   
+
+  * As we know, the next step in a power calculation/simulation is to sample many times. Use `map()` to generate 10,000 data sets, with `total_n` (the total sample size = sum of the number of observations per group) set to 40, `eta_sq` set to 0.1, and and `n_grps` set to 4. Assign the data generated to an object named `sims`. Let's keep the output as a list, meaning you don't have to include the `list_rbind()` step like we often do. 
+
+Great, now that we have a collection of data sets, the next step is to analyze them all using an appropriate statistical model. We show you how this can be done below. Here we create a tibble storing $\eta^2$ and p-values for each of the 10,000 data sets analyzed. We use the `aov()` function to run the ANOVAs (read more about the function [here](https://www.geeksforgeeks.org/r-language/when-to-use-aov-vs-anova-in-r/){target="_blank"}). As mentioned last week, we do not rely on permutation for significance testing in this case because it would take too long to run. Further, we use the `eta_squared()` function from the `rstatix` package to calculate $\eta^2$. The rstatix package can be worth looking at more closely as it "provides a simple and intuitive pipe-friendly framework, coherent with the 'tidyverse' design philosophy, for performing basic statistical tests".  Read more [here](https://rpkgs.datanovia.com/rstatix/){target="_blank"}.
+
+```{r}
+#| eval: false
+library(rstatix)
+sims_ep <- sims |> 
+  map(\(i) {
+    fit <- aov(values ~ group, data = i)
+    tibble(eta = eta_squared(fit), 
+           p = summary(fit)[[1]][["Pr(>F)"]][1])
+  }) |> 
+  list_rbind()
+
+```
+ 
+  * Now calculate the power using the p-values stored in `sims_ep`. Think about the parameters we used for the simulation. Is an $\eta^2$ of 0.1 small or large (you may want to ask the internet)? How about the sample size? 
+
+  * How bad is the winner's curse in this case? How much greater (in terms of proportion) is the smallest $\eta^2$ associated with a significant p-value than the true $\eta^s$ (what you set `eta_sq` to in the simulation)? 
+  
+  * Show, by running multiple power simulations, if the power of an ANOVA test is affected by the number of groups in the data analyzed. Keep `total_n` the same and change `n_grps`. Make sure `total_n / n_grps` is an integer, otherwise somewhat unpredictable things can happen.
+  
+  * You are asked by your PI to perform a power calculation for them. They have a study design where they want to compare 3 groups (representing different ages) regarding scores on a specific cognitive task. Data will be collected in a way to make sure group sizes are equal. Previous research has shown that an reasonable effects size in this case is $\eta^2 = 0.08$. Your PI wants to know the sample size to put in their grant application. The statistical power should be no less than 80%. What is your answer? We want you to use `map()` to loop through different sample sizes and, for each sample size, calculate the power. One way to achieve this is to first create a function that includes the code from above to generate the `sims` and `sims_ep` objects, and then uses `sims_ep` to calculate the power. Next, use this function within a `map()` call to compute the power for different sample sizes. Finally, summarize your results in a plot showing the relationship between sample size and power as a curve.
+  
+7. When we extracted the p-values that went into the `sims_ep` object, we used this ugly line of code: `p = summary(fit)[[1]][["Pr(>F)"]][1]`. Often times, the output from functions running statistical models in R is stored in a way that makes it a bit tricky to extract what you want. Luckily, there is a package called `broom` that helps you clean up model output. Run an ANOVA using the `aov()` function and use the `tidy()` function as shown [here](https://broom.tidymodels.org/reference/tidy.aov.html){target="_blank"} to pull out model output in a tidy format. 
+
+
