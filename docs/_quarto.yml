@@ -3,13 +3,13 @@ project:
 
 website:
   title: "Data Science and Statistics in R for Fellowship"
-  repo-url: https://caius-gibeily.github.io/r4dss25/
+  repo-url: https://caius-gibeily.github.io/r4dss26/
   repo-actions: [edit, issue]
   repo-subdir: "docs"
   page-navigation: true
   sidebar:
     contents:
-      - section: R for Data Science 2025-26
+      - section: R for Data Science 2026-27
         contents:
           - intro.qmd
           - Session_1.qmd
@@ -19,7 +19,7 @@ website:
           - Session 5.qmd
           - Session_6.qmd
           - Session_7.qmd
-      - section: R for Statistics 2026
+      - section: R for Statistics 2026-2027
         contents: 
           - Variance_2025.qmd
           - cov.qmd
