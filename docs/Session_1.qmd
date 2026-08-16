@@ -28,18 +28,18 @@ Below are some useful pieces of information to help you navigate the tutorials.
 
 * The tutorials occasionally diverge from the corresponding book chapters. For instance, Exercise 8 introduces the pipe (`|>`) operator, which does not appear in the book until Chapter 3.
 
-* At the end of the tutorial, once you have completed all the exercises, you will be asked to indicate how long it took you to complete the tutorial. The same “Try Again” bug mentioned earlier occurs here again and can be disregarded. 
+* At the end of the tutorial, once you have completed all the exercises, you will be asked to indicate how long it took you to complete the tutorial. The same "Try Again" bug mentioned earlier occurs here again and can be disregarded. 
 
 * The last thing you need to do before exiting the tutorial is download an HTML file containing your answers. 
 
 **Step 3: Book chapter exercises.** Now revisit the [book chapter](https://r4ds.hadley.nz/data-visualize.html){target="_blank"}. By this point, you should be quite familiar with this week’s R coding topics and well equipped to complete the book exercises. There are `10 + 4 + 7 + 2 = 23` exercises in total in chapter 1. Store you answers in an R script and call this file *Session_1.R*. In cases where an exercise asks you to provide an answer that is not code-based (for example, a question like “What does the `bins` argument in `geom_histogram()` do?”), you should still record your response directly in the script file. To do this, add your answer as a comment — that is, on a line beginning with `#`. This ensures that all your work, both code and written explanations, is saved in one place and easy to review later. 
 
-**Step 3.5: One-on-one meetings.** If what is described above makes it sound like you will be learning the material all on your own, don’t worry. You will have a one-on-one mentoring meeting with Hasse to go over your work when you have completed about the first half of the book chapter exercises. These meetings are mandatory for fellows but optional for graduate students.
+**Step 3.5: One-on-one meetings.** If what is described above makes it sound like you will be learning the material all on your own, don’t worry. You will have a one-on-one mentoring meeting with Hasse to go over your work when you have completed about the first half of the book chapter exercises. These meetings are mandatory.
 
-Meeting on Tuesday works best — it gives you some time to work on the exercises beforehand, and still finish the rest afterward, before we meet again as a group on Thursday to continue discussing the materials. Try to schedule the meeting for Tuesday morning, since Hasse is based in Sweden and earlier times work best with the time difference. If Tuesday doesn’t work, Monday or Wednesday are acceptable alternatives.
+Meeting on Tuesday works best — it gives you some time to work on the exercises beforehand, and still finish the rest afterward, before we meet again as a group on Thursday to continue discussing the materials. Try to schedule the meeting for Tuesday morning, since Hasse is based in Sweden and earlier times work best with the time difference. If Tuesday doesn’t work, Monday or Wednesday would be acceptable alternatives.
 
 To schedule your meeting, just send Hasse a message on Slack with some times when you are available. The meeting is a chance for you to get help with the exercises, ask questions, and a chance for you and Hasse to get to know each other better. We’ll aim for about 30 minutes, but if you need more help/time, you can request a longer meeting.
 
-**Step 4: Send Answers.** Send Hasse both the HTML file containing the tutorial exercise answers and the R script file with the book chapter exercise answers via Slack no later than the end of the day on Tuesday. 
+**Step 4: Send Answers.** Send Hasse and Caius both your HTML file containing the tutorial exercise answers and the R script file with the book chapter exercise answers via Slack no later than the end of the day on Wednesday. 
 
-**Step 5: Thursday group discussion.** We’ll meet as a group every Thursday to discuss what you’ve been learning and reflect on your progress. 
+**Step 5: Thursday group discussion.** We’ll meet as a group every Thursday at 9-10:30 to discuss what you’ve been learning and reflect on your progress. 
