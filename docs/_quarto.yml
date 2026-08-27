@@ -13,6 +13,7 @@ website:
         contents:
           - intro.qmd
           - Session_1.qmd
+          - Session 2.qmd
           
 theme:
   light: cosmo

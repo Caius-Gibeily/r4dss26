@@ -8,7 +8,7 @@ As we did last week, we will continue our R training by reading the *R for Data 
 
 Again, the following order of activities is recommended:
 
-**Step 1: Book chapter reading.** Read [chapter 3](https://r4ds.hadley.nz/data-transform.html){target="_blank"} in the *R for Data Science*. We are skipping chapter 2 because we already talked about most of its content last Wednesday. Leave the exercises for later.    
+**Step 1: Book chapter reading.** Read [chapter 3](https://r4ds.hadley.nz/data-transform.html){target="_blank"} in the *R for Data Science*. We are skipping chapter 2 because we already talked about most of its content last Thursday. Leave the exercises for later.    
 
 **Step 2: Interactive tutorial.** Go through the *r4ds.tutorials: 03-data-transformation* interactive tutorial. 
 
@@ -16,9 +16,9 @@ There is not much to add about this week’s tutorial, as the process for comple
 
 **Step 3: Book chapter exercises.** Go back to the [book chapter](https://r4ds.hadley.nz/data-transform.html){target="_blank"} and complete the exercises. This week, there are `6 + 7 + 6 = 19` exercises in total. Store you answers in an R script and call this file *Session_2.R*. 
 
-**Step 3.5: One-on-one meetings.** As we did last week, we’ll hold individual check-ins on Monday, with each meeting scheduled for about 30 minutes. If you need more time or extra help, you are welcome to request a longer session.
+**Step 3.5: One-on-one meetings.** We’ll hold option individual check-ins on Monday, with each meeting scheduled for about 30 minutes. If you need more time or extra help, you are welcome to request a longer session.
 
-**Step 4: Send Answers.** Please send both your tutorial exercise answers (the HTML file) and your book chapter exercise answers (as an R script) to Hasse on Slack by the end of the day Tuesday. 
+**Step 4: Send Answers.** Please send both your tutorial exercise answers (the HTML file) and your book chapter exercise answers (as an R script) to Hasse and Caius on Slack by the end of the day (23:59) on Wednesday. 
 
-**Step 5: Wednesday group discussion.** We will meet as a group on Wednesday to review the material covered, address any questions, and reflect on your progress. 
+**Step 5: Thursday group discussion.** We will meet as a group on Thursday to review the material covered, address any questions, and reflect on your progress. 
 

@@ -48,6 +48,8 @@ Here are some useful cheatsheets and resources to have handy as you continue you
 
 -   [RStudio IDE cheatsheet](https://rstudio.github.io/cheatsheets/html/rstudio-ide.html){target="_blank"}
 
+-   [Data transformations with `dplyr`](https://rstudio.github.io/cheatsheets/html/data-transformation.html){target="_blank"}
+
 -   [Data tidying with `tidyr`](https://rstudio.github.io/cheatsheets/html/tidyr.html){target="_blank"}
 
 -   [Data visualization with `ggplot2`](https://rstudio.github.io/cheatsheets/html/data-visualization.html){target="_blank"}
