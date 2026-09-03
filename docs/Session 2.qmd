@@ -16,7 +16,7 @@ There is not much to add about this week’s tutorial, as the process for comple
 
 **Step 3: Book chapter exercises.** Go back to the [book chapter](https://r4ds.hadley.nz/data-transform.html){target="_blank"} and complete the exercises. This week, there are `6 + 7 + 6 = 19` exercises in total. Store you answers in an R script and call this file *Session_2.R*. 
 
-**Step 3.5: One-on-one meetings.** We’ll hold option individual check-ins on Monday, with each meeting scheduled for about 30 minutes. If you need more time or extra help, you are welcome to request a longer session.
+**Step 3.5: One-on-one meetings.** We’ll hold optional individual check-ins on Monday, with each meeting scheduled for about 30 minutes. If you need more time or extra help, you are welcome to request a longer session.
 
 **Step 4: Send Answers.** Please send both your tutorial exercise answers (the HTML file) and your book chapter exercise answers (as an R script) to Hasse and Caius on Slack by the end of the day (23:59) on Wednesday. 
 

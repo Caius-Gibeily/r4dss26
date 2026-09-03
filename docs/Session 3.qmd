@@ -3,7 +3,7 @@ title: "Session 3: Data tidying and import"
 format: html
 ---
 
-The next two weeks (no meetings next week since it is Thanksgiving week), we will focus on two key foundations from *R for Data Science*: tidying data and importing it into R. We begin with data tidying from **Chapter 5**, where you will learn the principles of tidy data — each variable in its own column, each observation in its own row — and practice reshaping datasets using tools like `pivot_longer()` and `pivot_wider()`. We then move to data import from **Chapter 7**, exploring the readr package and its fast, predictable functions for reading common file formats, specifying column types, and handling irregularities in raw data. Together, these chapters build your ability to bring data into R and prepare it for effective analysis.
+Next week, we will focus on two key foundations from *R for Data Science*: tidying data and importing it into R. We begin with data tidying from **Chapter 5**, where you will learn the principles of tidy data — each variable in its own column, each observation in its own row — and practice reshaping datasets using tools like `pivot_longer()` and `pivot_wider()`. We then move to data import from **Chapter 7**, exploring the `readr` package and its fast, predictable functions for reading common file formats, specifying column types, and handling irregularities in raw data. Together, these chapters build your ability to bring data into R and prepare it for effective analysis.
 
 One difference this time is that we will not go through the exercises in the book. The chapters we will read include few exercises, and it is important that you practice data tidying and data import in ways that reflect real-world situations you may encounter when working with data at Marcus and in other scenarios. Therefore, we have prepared custom exercises, which you will find at the bottom of this page.
 
@@ -15,11 +15,11 @@ The following order of activities is recommended:
 
 **Step 3: Complete exercises.** There are eight exercises further down on this webpage. Please complete these exercises *instead* of the ones in the book.
 
-**Step 3.5: One-on-one meetings.** We will not meet during Thanksgiving week, but please schedule a meeting with Hasse for Monday, December 1. If there are things you would like to discuss before then, feel free to schedule a meeting at any time.
+**Step 3.5: One-on-one meetings.**  We’ll hold optional individual check-ins with each meeting scheduled for about 30 minutes. If there are things you would like to discuss before then, feel free to schedule a meeting at any time.
 
-**Step 4: Send Answers.** Send Hasse both HTML files (2) containing the tutorial exercise answers, as well as the R script file with the website exercise answers, via Slack no later than the end of the day on Tuesday, December 2.
+**Step 4: Send Answers.** Send Hasse and Caius both the HTML files (2) containing the tutorial exercise answers, as well as the R script file with the website exercise answers, via Slack no later than the end of the day on Wednesday (23:59).
 
-**Step 5: Wednesday group discussion.**
+**Step 5: Thursday group discussion.**
 
 \
 \
@@ -116,7 +116,7 @@ example_1 |>
 #| warning: false
 
 read_csv("Session-3_files/example1.csv", skip = 2, na = "missing") |>
-  janitor::clean_names() %>% 
+  janitor::clean_names() |> 
   mutate(measure_1 = parse_number(measure_1), 
          age = parse_number(if_else(age == "eleven", "11", age)))
 ```
@@ -132,8 +132,8 @@ read_csv("Session-3_files/example1.csv", skip = 2, na = "missing") |>
 read_csv2("Session-3_files/example2.csv", 
           na = c("-99", "eggs not counted"),
           col_names = c("ID", "age_in_days", "number_eggs"),
-          skip = 4) %>% 
-  mutate(ID = if_else(ID == "ID_number_2", "ID_2", ID)) %>% 
+          skip = 4) |> 
+  mutate(ID = if_else(ID == "ID_number_2", "ID_2", ID)) |>
 ggplot(aes(x = age_in_days, 
            y = number_eggs)) +
   geom_smooth(aes(color = ID), 
@@ -162,24 +162,21 @@ For the next exercises, you will work with real data from Marcus (sent via Slack
 
 </center>
 
-8.  Here you will get to practice creating a summary table from a dataset that closely mimics real world *First Focus* data, stored in the `advanced_pivot.csv` file. The data entry process produced a dataset where each row represents a participant (identified in the `PID` column), and each subsequent column contains assessments of communication (Com), gross motor (GM), and fine motor (FM) skills at 6, 12, and 18 months. As you will see, the assessment type and age are both stored in the column names, making this a pivot problem very similar to example 5.3.4 in *R for Data science*. First read in the data, then use a combination of `pivot_longer()`, `pivot_longer()` (yes, you will need to pivot twice), `group_by()` and `summarize()` (and perhaps another function or two to get everything just right) to generate this output:
+8. Here you will get to practice creating a summary table from a dataset that closely mimics real world *First Focus* data, stored in the `advanced_pivot.csv` file. The data entry process produced a dataset where each row represents a participant (identified in the `PID` column), and each subsequent column contains assessments of gross motor (GM) and fine motor (FM) skills, as well as experimental group, at 6, 12, and 18 months. As you will see, the assessment information and age are both stored in the column names, making this a pivot problem very similar to example 5.3.4 in *R for Data science*. First read in the data, then use a combination of `pivot_longer()`, `pivot_longer()` (yes, you will need to pivot twice), `group_by()` and `summarize()` (and perhaps another function or two to get everything just right) to generate this output:
 
 ```{r}
-#| echo: false 
-#| warning: false
-advanced_pivot <- read_csv("Session-3_files/advanced_pivot.csv", 
+advanced_pivot <- read_csv("advanced_pivot.csv", 
                              skip = 5, 
                              na = "missing")
-
-advanced_pivot %>% 
-  pivot_longer(cols = !PID,
-               names_to = c(".value", "age"),
-               names_sep = "_") %>% 
-  pivot_longer(cols = 3:5,
-               names_to = "measure",
-               values_to = "values") %>% 
-  mutate(age = parse_integer(age)) %>% 
-  group_by(age, measure) %>% 
+advanced_pivot |>  
+  pivot_longer(cols = -PID, 
+               names_to = c(".value", "age"), 
+               names_sep = "_") |> 
+  pivot_longer(cols = GM:FM,
+               names_to = "measure", 
+               values_to = "values") |>  
+  mutate(age = parse_integer(age)) |> 
+  group_by(age, Group, measure) |>  
   summarize(mean_values = mean(values, na.rm = TRUE), .groups = "drop")
-
 ```
+
