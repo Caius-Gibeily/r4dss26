@@ -1,0 +1,13 @@
+"Note: missing data is coded as ""missing"". "
+
+Participant ID,measure.1,measure_2,age
+id1,3,2,6
+id2,3,4,17
+id3,4,3,eleven
+id4,4,2,24
+id5,missing,5,18
+id6,2,4,8
+id7,2,2,9
+id8,2,2,17
+id9,2,missing,13
+id10,score3,5,15

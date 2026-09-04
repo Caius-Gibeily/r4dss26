@@ -115,7 +115,7 @@ example_1 |>
 #| echo: false 
 #| warning: false
 
-read_csv("Session-3_files/example1.csv", skip = 2, na = "missing") |>
+read_csv("example1.csv", skip = 2, na = "missing") |>
   janitor::clean_names() |> 
   mutate(measure_1 = parse_number(measure_1), 
          age = parse_number(if_else(age == "eleven", "11", age)))
@@ -129,7 +129,7 @@ read_csv("Session-3_files/example1.csv", skip = 2, na = "missing") |>
 #| fig-width: 6.5
 #| fig-height: 4.5
 #| fig-align: center
-read_csv2("Session-3_files/example2.csv", 
+read_csv2("example2.csv", 
           na = c("-99", "eggs not counted"),
           col_names = c("ID", "age_in_days", "number_eggs"),
           skip = 4) |> 
