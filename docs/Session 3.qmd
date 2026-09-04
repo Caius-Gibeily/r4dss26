@@ -165,6 +165,8 @@ For the next exercises, you will work with real data from Marcus (sent via Slack
 8. Here you will get to practice creating a summary table from a dataset that closely mimics real world *First Focus* data, stored in the `advanced_pivot.csv` file. The data entry process produced a dataset where each row represents a participant (identified in the `PID` column), and each subsequent column contains assessments of gross motor (GM) and fine motor (FM) skills, as well as experimental group, at 6, 12, and 18 months. As you will see, the assessment information and age are both stored in the column names, making this a pivot problem very similar to example 5.3.4 in *R for Data science*. First read in the data, then use a combination of `pivot_longer()`, `pivot_longer()` (yes, you will need to pivot twice), `group_by()` and `summarize()` (and perhaps another function or two to get everything just right) to generate this output:
 
 ```{r}
+#| warning: false
+#| echo: false
 advanced_pivot <- read_csv("advanced_pivot.csv", 
                              skip = 5, 
                              na = "missing")
