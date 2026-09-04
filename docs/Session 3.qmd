@@ -158,7 +158,7 @@ For the next exercises, you will work with real data from Marcus (sent via Slack
 
 <center>
 
-![ADOS2 dataset](Session-3_files/ados2.png)
+![ADOS2 dataset](ados2.png)
 
 </center>
 
