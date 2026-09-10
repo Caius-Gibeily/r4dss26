@@ -165,17 +165,17 @@ Read in `asd_stats-ET.csv` (containing x and y points of regard (`x pos`/`y pos`
 #| echo: false
 library(tidyverse)
 library(janitor)
-ET <- read_csv("asd_stats-ET.csv",skip=23) |> 
+ET <- read_csv("session_4-files/asd_stats-ET.csv",skip=23) |> 
   janitor::clean_names() |> 
   mutate(dex_id = str_remove(dex_id, "^\\D+")) # alternative solutions possible such as extracting numeric ID
 # str_extract(subject, "\\d+$")
 
-watched_movs  <- read_csv("asd_stats-movies_viewed.csv") |> 
+watched_movs  <- read_csv("session_4-files/asd_stats-movies_viewed.csv") |> 
   clean_names() |> 
   mutate(dex_id = str_remove(dex_id, "^\\D+"),
          movie =  str_remove(movie, "\\..*")) 
 
-dx_status <-  read_csv("asd_stats-dx.csv") |> 
+dx_status <-  read_csv("session_4-files/asd_stats-dx.csv") |> 
   clean_names() |> 
   mutate(dex_id = str_remove(dex_id, "^\\D+"))
 
