@@ -65,6 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./Session 3.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -281,9 +282,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      Data Science and Statistics in R for Fellowship
-      </li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">R for Data Science 2026-27</a></li><li class="breadcrumb-item"><a href="./Session_4.html">Session 4: Regular expressions &amp; Joins</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -344,6 +343,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Session 3: Data tidying and import</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_4.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Session 4: Regular expressions &amp; Joins</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -356,7 +361,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">R for Data Science 2026-27</a></li><li class="breadcrumb-item"><a href="./Session_4.html">Session 4: Regular expressions &amp; Joins</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Session 4: Regular expressions &amp; Joins</h1>
 </div>
@@ -377,14 +382,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>We have now covered the basics of using R and the tidyverse to work with data, meaning we’ve completed the chapters in the <em>Whole Game</em> section of <em>R for Data Science</em>. This first part of the book provides an overview of the core tools of data science — just enough of each major component to let you work with real datasets. Subsequent chapters examine these topics in greater detail, and although reading all (or at least most) of them is beneficial, we will not delve deeply into all of these areas during the training. This will allow us to move on to the statistics portion of the program in a timely manner.</p>
 <p>In addition to giving you the foundation needed for the statistics training to make sense, we want to ensure you have the practical skills required to address the data-science challenges you may encounter while working at Marcus. Therefore, over the next two weeks you will focus on two topics we know you will rely on when working with data collected at the center (and elsewhere): cleaning strings using regular expressions and combining datasets using join functions. <strong>Chapter 15</strong> introduces regular expressions as a tool for cleaning, searching, and extracting information from text using <code>stringr</code> functions such as <code>str_detect()</code>, <code>str_extract()</code>, and <code>str_replace()</code>. <strong>Chapter 19</strong> covers how to combine datasets with <code>dplyr</code> joins, explaining key join types like <code>left_join()</code> and <code>inner_join()</code> and how table keys determine how data is matched and merged.</p>
-<p>Since these two topics are both a bit dense and related, and because exercises that draw on methods from both chapters provide the most effective practice, you will have two weeks to work through the materials.</p>
+<p>Since these two topics are both a bit dense and related, and because exercises that draw on methods from both chapters provide the most effective practice, you will have <strong>two weeks</strong> to work through the materials.</p>
 <p>As with the previous sections, we won’t rely on the book’s exercises. Instead, we provide custom exercises below, tailored to give you practice with scenarios similar to ones you are likely to face when working with real-world data.</p>
 <p><strong>Step 1: Book chapter reading.</strong> Read both <a href="https://r4ds.hadley.nz/regexps.html" target="_blank">chapter 15</a> and <a href="https://r4ds.hadley.nz/joins.html" target="_blank">chapter 19</a> in the R for Data Science book. <strong>Important:</strong> we will not read the full chapters, as the later sections of both become somewhat esoteric and less relevant for day-to-day data-science work. Instead, focus on sub-chapters <strong>15.1–15.4</strong> and <strong>19.1–19.4</strong>. This also means you only need to complete the corresponding portions of the tutorials (more on that below). Skip the book chapter exercises.</p>
 <p><strong>Step 2: Interactive tutorials.</strong> Go through the r4ds.tutorials: <em>15-regular-expressions</em> tutorial, but as mentioned already, you do not need to complete all exercises. We will focus on the exercises that correspond to the sub-chapters listed above, which means the final exercise you need to complete in the regular expressions tutorial is exercise 11 in the <em>Pattern Details</em> section. For the <em>r4ds.tutorials: 19-joins</em> tutorial, the last exercise you need to complete is exercise 2 in the <em>Filtering Joins</em> section. Even though you will skip some exercises, make sure to visit the <em>Download answers</em> section and save the HTML output.</p>
 <p><strong>Step 3: Complete exercises.</strong> You will find a fairly large number of exercises later on this page. Please complete these instead of the exercises in the book. They will take some time, and this is the main reason we are giving you two weeks to complete everything.</p>
-<p><strong>Step 3.5: One-on-one meetings.</strong> Let’s aim to meet on Monday, December 15. Remember you can schedule a meeting with Hasse at any time, if you need help with exercises or want to talk about something else (it doesn’t even have to be completely R related!).</p>
-<p><strong>Step 4: Send Answers.</strong> Send Hasse the two HTML files with your tutorial answers and the R script with your website exercise answers via Slack by the end of the day on Tuesday, December 16.</p>
-<p><strong>Step 5: Wednesday group discussion.</strong> The next group meeting will be on December 17.</p>
+<p><strong>Step 3.5: One-on-one meetings.</strong> Hasse will hold optional one-on-one meetings to check in on progress and discuss any questions you might have about the data science training so far.</p>
+<p><strong>Step 4: Send Answers.</strong> Send Hasse and Caius the two HTML files with your tutorial answers and the R script with your website exercise answers via Slack by the end of the day on Wednesday 23rd (23:59). We would advise that you budget your time for this session!</p>
+<p><strong>Step 5: Thursday group discussion.</strong> You will have two weeks to complete this session’s materials. We will therefore meet on Thursday 24th.</p>
 <p><br>
 <br>
 </p>
@@ -437,7 +442,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>The crosswords introduced a regular expression of the type <code>(A)\1</code>, known as a <em>back reference</em>, which means that whatever is inside the parentheses is repeated. You can read more about this in sub-chapter 15.4.6 of <em>R for Data Science</em>. Based on how back references work, explain what the code below does.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>babynames <span class="sc">%&gt;%</span> </span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>babynames <span class="sc">|&gt;</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(name, <span class="st">"([^aeiou])</span><span class="sc">\\</span><span class="st">1"</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -501,8 +506,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Next, remove all individuals with a CBE of developmental delay (“dev-delay”) from your ADOS data set. To do so, first use <code>filter()</code> to keep only individuals with a CBE of “dev-delay” and create an object called <code>CBE_dev_delay</code> that stores these individuals. Then, use <code>anti_join()</code> to return the ADOS data set without any of the individuals in CBE_dev_delay. How do the mean <code>Social</code> and <code>RRB</code> subscale scores change when you calculate them with versus without individuals who later received a CBE of developmental delay?</p></li>
 </ol>
 <ol start="11" type="1">
-<li><p>We would now like you to try joining information from data separated across three different files. In this scenario, we use a toy dataset inspired by a real-world situation of combining raw eye-tracking data from the eye-tracker at FERN with viewed movie clip and session number information pulled from metadata exported after each scan. Read in <code>asd_stats-ET.xlsx</code> (containing x and y points of regard [x pos/y pos], the block number and participant ID), <code>block_movie-correspondence.xlsx</code> (which movie is viewed per block) and <code>block_session-sequence.xlsx</code> (which blocks were viewed per session per participant). Ensure any metadata lines are skipped during import and, using a technique you learned in the previous class, clean the column names by handling spaces and uppercase characters. Try to remove the <code>DEX:</code>/<code>DEX-</code> prefix from each subject ID using <code>str_replace()</code> or <code>str_remove()</code>. The goal will be to create one super-tibble containing participant ID, block and session number, movie viewed and the coordinate data. You will need to perform two successive joins. Think about the keys you will require for each join to ensure unique rows are matched. Finally, use <code>geom_point</code> and facet wrap to have separate plots per movie, overlaying each participants’ points of regard per movie. If matched correctly, you should see similar patterns of viewing within each movie.</p></li>
-<li><p>The zipped directory <code>Exercise_12.zip</code> contains several files that we want you to import, clean, join, transform, and plot. Start by importing all <code>.csv</code> files following the instructions in Chapter 7.4 of <em>R for Data Science</em>. The participant ID is stored somewhere in each filename, so remember to set the <code>id =</code> argument in <code>read_csv()</code> so the filenames are included in the resulting tibble. Next, extract the ID portion from the filenames (hint: check <code>groups.xlsx</code> to see how the IDs are coded) and store this in a new variable. Then work through the steps needed to add the group information to the Age/Volume data. Finally, pivot and transform the data so that you can create the plot shown below. Use <code>geom_line(aes(group = ID))</code> to draw a separate black line for each participant.</p></li>
+<li>We would now like you to try joining information from data separated across three different files. In this scenario, we use a contrived dataset, inspired by a real-world situation of combining raw eye-tracking data from the eye-tracker at FERN with viewed movie clip and session number information pulled from metadata exported after each scan. Read in <code>asd_stats-ET.csv</code> (containing x and y points of regard (<code>x pos</code>/<code>y pos</code>), the DEX participant ID (<code>dex id</code>) and an order of distinct movies watched by the participant (<code>watch_num</code>). Unfortunately, not all the data are contained in this dataset - diagnostic information and the actual movie ids that each participant saw have been recorded in separate datasets: <code>asd_stats-dx.csv</code> and <code>asd_stats-movies_viewed.csv</code>.</li>
+</ol>
+<ul>
+<li>The goal is to stitch together the information across the three datasets and create a super-tibble containing dex ids, movies viewed and fixation coordinate data.</li>
+<li>You will need to perform two successive joins. Think about the keys you will require for each join to ensure unique rows are matched. Finally, try to replicate the plot below:</li>
+</ul>
+<center>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Session_4_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</center>
+<ul>
+<li>If you have any NAs in your final plot, go back to the datasets and think about why they might be present. Without explicitly removing rows containing NA values, try a different approach to rejoining the data to filter out these NA participants.</li>
+</ul>
+<ol start="12" type="1">
+<li>The zipped directory <code>Exercise_12.zip</code> contains several files that we want you to import, clean, join, transform, and plot. Start by importing all <code>.csv</code> files following the instructions in Chapter 7.4 of <em>R for Data Science</em>. The participant ID is stored somewhere in each filename, so remember to set the <code>id =</code> argument in <code>read_csv()</code> so the filenames are included in the resulting tibble. Next, extract the ID portion from the filenames (hint: check <code>groups.xlsx</code> to see how the IDs are coded) and store this in a new variable. Then work through the steps needed to add the group information to the Age/Volume data. Finally, pivot and transform the data so that you can create the plot shown below. Use <code>geom_line(aes(group = ID))</code> to draw a separate black line for each participant.</li>
 </ol>
 <center>
 <p><img src="grand_finale.png" class="img-fluid" style="width:90.0%"></p>
@@ -923,6 +948,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
   });
   </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Session 3.html" class="pagination-link" aria-label="Session 3: Data tidying and import">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Session 3: Data tidying and import</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
 </div> <!-- /content -->
 
 

@@ -161,8 +161,11 @@ c. Next, remove all individuals with a CBE of developmental delay ("dev-delay") 
 Read in `asd_stats-ET.csv` (containing x and y points of regard (`x pos`/`y pos`), the DEX participant ID (`dex id`) and an order of distinct movies watched by the participant (`watch_num`). Unfortunately, not all the data are contained in this dataset - diagnostic information and the actual movie ids that each participant saw have been recorded in separate datasets: `asd_stats-dx.csv` and `asd_stats-movies_viewed.csv`. 
 -   The goal is to stitch together the information across the three datasets and create a super-tibble containing dex ids, movies viewed and fixation coordinate data.
 -   You will need to perform two successive joins. Think about the keys you will require for each join to ensure unique rows are matched. Finally, try to replicate the plot below:
+
+<center>
 ```{r}
 #| echo: false
+#| warning: false
 library(tidyverse)
 library(janitor)
 ET <- read_csv("session_4-files/asd_stats-ET.csv",skip=23) |> 
@@ -195,6 +198,8 @@ ggplot(watched_movs_dx,aes(x=x_pos,y=y_pos,group=interaction(dex_id,movie),
   labs(x = "x position", y = "y position",color="Diagnostic group")
 
 ```
+</center>
+
   -   If you have any NAs in your final plot, go back to the datasets and think about why they might be present. Without explicitly removing rows containing NA values, try a different approach to rejoining the data to filter out these NA participants. 
 
 12. The zipped directory `Exercise_12.zip` contains several files that we want you to import, clean, join, transform, and plot. Start by importing all `.csv` files following the instructions in Chapter 7.4 of *R for Data Science*. The participant ID is stored somewhere in each filename, so remember to set the `id =` argument in `read_csv()` so the filenames are included in the resulting tibble. Next, extract the ID portion from the filenames (hint: check `groups.xlsx` to see how the IDs are coded) and store this in a new variable. Then work through the steps needed to add the group information to the Age/Volume data. Finally, pivot and transform the data so that you can create the plot shown below. Use `geom_line(aes(group = ID))` to draw a separate black line for each participant. 
