@@ -6,7 +6,7 @@ We have now covered the basics of using R and the tidyverse to work with data, m
 
 In addition to giving you the foundation needed for the statistics training to make sense, we want to ensure you have the practical skills required to address the data-science challenges you may encounter while working at Marcus. Therefore, over the next two weeks you will focus on two topics we know you will rely on when working with data collected at the center (and elsewhere): cleaning strings using regular expressions and combining datasets using join functions. **Chapter 15** introduces regular expressions as a tool for cleaning, searching, and extracting information from text using `stringr` functions such as `str_detect()`, `str_extract()`, and `str_replace()`. **Chapter 19** covers how to combine datasets with `dplyr` joins, explaining key join types like `left_join()` and `inner_join()` and how table keys determine how data is matched and merged.
 
-Since these two topics are both a bit dense and related, and because exercises that draw on methods from both chapters provide the most effective practice, you will have two weeks to work through the materials. 
+Since these two topics are both a bit dense and related, and because exercises that draw on methods from both chapters provide the most effective practice, you will have **two weeks** to work through the materials. 
 
 As with the previous sections, we won’t rely on the book’s exercises. Instead, we provide custom exercises below, tailored to give you practice with scenarios similar to ones you are likely to face when working with real-world data. 
 
@@ -16,11 +16,11 @@ As with the previous sections, we won’t rely on the book’s exercises. Instea
 
 **Step 3: Complete exercises.** You will find a fairly large number of exercises later on this page. Please complete these instead of the exercises in the book. They will take some time, and this is the main reason we are giving you two weeks to complete everything. 
 
-**Step 3.5: One-on-one meetings.** Let's aim to meet on Monday, December 15. Remember you can schedule a meeting with Hasse at any time, if you need help with exercises or want to talk about something else (it doesn't even have to be completely R related!).
+**Step 3.5: One-on-one meetings.** Hasse will hold optional one-on-one meetings to check in on progress and discuss any questions you might have about the data science training so far. 
 
-**Step 4: Send Answers.** Send Hasse the two HTML files with your tutorial answers and the R script with your website exercise answers via Slack by the end of the day on Tuesday, December 16.
+**Step 4: Send Answers.** Send Hasse and Caius the two HTML files with your tutorial answers and the R script with your website exercise answers via Slack by the end of the day on Wednesday 23rd (23:59). We would advise that you budget your time for this session!
 
-**Step 5: Wednesday group discussion.** The next group meeting will be on December 17. 
+**Step 5: Thursday group discussion.** You will have two weeks to complete this session's materials. We will therefore meet on Thursday 24th.  
 
 \
 \
@@ -84,7 +84,7 @@ h. Find all baby names starting with `X`, `Y`, or `Z`. How many of these names e
    
 ```{r}
 #| eval: false
-babynames %>% 
+babynames |> 
   filter(str_detect(name, "([^aeiou])\\1")) |> 
   distinct(name)
 ```
@@ -157,9 +157,45 @@ b. Let’s evaluate how our data sets overlap. Use the `inner_join()` function t
 
 c. Next, remove all individuals with a CBE of developmental delay ("dev-delay") from your ADOS data set. To do so, first use `filter()` to keep only individuals with a CBE of "dev-delay" and create an object called `CBE_dev_delay` that stores these individuals. Then, use `anti_join()` to return the ADOS data set without any of the individuals in CBE_dev_delay. How do the mean `Social` and `RRB` subscale scores change when you calculate them with versus without individuals who later received a CBE of developmental delay?
 
-11.  We would now like you to try joining information from data separated across three different files. In this scenario, we use a toy dataset inspired by a real-world situation of combining raw eye-tracking data from the eye-tracker at FERN with viewed movie clip and session number information pulled from metadata exported after each scan. 
-Read in `asd_stats-ET.xlsx` (containing x and y points of regard [x pos/y pos], the block number and participant ID), `block_movie-correspondence.xlsx` (which movie is viewed per block) and `block_session-sequence.xlsx` (which blocks were viewed per session per participant). Ensure any metadata lines are skipped during import and, using a technique you learned in the previous class, clean the column names by handling spaces and uppercase characters. Try to remove the `DEX:`/`DEX-` prefix from each subject ID using `str_replace()` or `str_remove()`. The goal will be to create one super-tibble containing participant ID, block and session number, movie viewed and the coordinate data. You will need to perform two successive joins. Think about the keys you will require for each join to ensure unique rows are matched. Finally, use `geom_point` and facet wrap to have separate plots per movie, overlaying each participants' points of regard per movie. If matched correctly, you should see similar patterns of viewing within each movie.   
-# amend
+11.  We would now like you to try joining information from data separated across three different files. In this scenario, we use a contrived dataset, inspired by a real-world situation of combining raw eye-tracking data from the eye-tracker at FERN with viewed movie clip and session number information pulled from metadata exported after each scan. 
+Read in `asd_stats-ET.csv` (containing x and y points of regard (`x pos`/`y pos`), the DEX participant ID (`dex id`) and an order of distinct movies watched by the participant (`watch_num`). Unfortunately, not all the data are contained in this dataset - diagnostic information and the actual movie ids that each participant saw have been recorded in separate datasets: `asd_stats-dx.csv` and `asd_stats-movies_viewed.csv`. 
+-   The goal is to stitch together the information across the three datasets and create a super-tibble containing dex ids, movies viewed and fixation coordinate data.
+-   You will need to perform two successive joins. Think about the keys you will require for each join to ensure unique rows are matched. Finally, try to replicate the plot below:
+```{r}
+#| echo: false
+library(readr)
+library(janitor)
+ET <- read_csv("asd_stats-ET.csv",skip=23) |> 
+  janitor::clean_names() |> 
+  mutate(dex_id = str_remove(dex_id, "^\\D+")) # alternative solutions possible such as extracting numeric ID
+# str_extract(subject, "\\d+$")
+
+watched_movs  <- read_csv("asd_stats-movies_viewed.csv") |> 
+  clean_names() |> 
+  mutate(dex_id = str_remove(dex_id, "^\\D+"),
+         movie =  str_remove(movie, "\\..*")) 
+
+dx_status <-  read_csv("asd_stats-dx.csv") |> 
+  clean_names() |> 
+  mutate(dex_id = str_remove(dex_id, "^\\D+"))
+
+watched_movs_dx <- watched_movs  |> 
+  left_join(ET,join_by(dex_id,watch_num)) |>
+  inner_join(dx_status, join_by(dex_id)) 
+
+ggplot(watched_movs_dx,aes(x=x_pos,y=y_pos,group=interaction(dex_id,movie),
+                        color=dx)) + 
+  geom_line(linewidth=1) + 
+  geom_point() + 
+  facet_wrap(~movie,scales = "free") +
+  theme_minimal() +
+  theme(strip.background = element_rect(fill="black"), 
+        strip.text = element_text(colour = "white")) +
+  scale_color_manual(values=c("asd" = "green", "td" = "blue")) +
+  labs(x = "x position", y = "y position",color="Diagnostic group")
+
+```
+  -   If you have any NAs in your final plot, go back to the datasets and think about why they might be present. Without explicitly removing rows containing NA values, try a different approach to rejoining the data to filter out these NA participants. 
 
 12. The zipped directory `Exercise_12.zip` contains several files that we want you to import, clean, join, transform, and plot. Start by importing all `.csv` files following the instructions in Chapter 7.4 of *R for Data Science*. The participant ID is stored somewhere in each filename, so remember to set the `id =` argument in `read_csv()` so the filenames are included in the resulting tibble. Next, extract the ID portion from the filenames (hint: check `groups.xlsx` to see how the IDs are coded) and store this in a new variable. Then work through the steps needed to add the group information to the Age/Volume data. Finally, pivot and transform the data so that you can create the plot shown below. Use `geom_line(aes(group = ID))` to draw a separate black line for each participant. 
 
