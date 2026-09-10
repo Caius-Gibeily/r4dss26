@@ -163,7 +163,7 @@ Read in `asd_stats-ET.csv` (containing x and y points of regard (`x pos`/`y pos`
 -   You will need to perform two successive joins. Think about the keys you will require for each join to ensure unique rows are matched. Finally, try to replicate the plot below:
 ```{r}
 #| echo: false
-library(readr)
+library(tidyverse)
 library(janitor)
 ET <- read_csv("asd_stats-ET.csv",skip=23) |> 
   janitor::clean_names() |> 
