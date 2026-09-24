@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -309,6 +344,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Session 3: Data tidying and import</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 4: Regular expressions &amp; Joins</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -345,9 +386,9 @@ ul.task-list li input[type="checkbox"] {
 <p><strong>Book chapter reading.</strong> We will learn about Quarto by reading <strong>Chapter 28</strong> in <em>R for Data Science</em>. You are not required to complete any exercises this week (though if you find working in Quarto a bit confusing, it may be a good idea to work through the exercises in the chapter).</p>
 <p><strong>Tutorials.</strong> There is no <em>r4ds.tutorials</em> Quarto tutorial. Instead, we will use Quarto’s own web tutorials. There are three, rather short, parts; <a href="https://quarto.org/docs/get-started/hello/rstudio.html" target="_blank">Hello, Quarto</a>, <a href="https://quarto.org/docs/get-started/computations/rstudio.html" target="_blank">Computations</a>, and <a href="https://quarto.org/docs/get-started/authoring/rstudio.html" target="_blank">Authoring</a>. These tutorials are not interactive, but you can follow along step by step in your own environment by downloading the <code>.qmd</code> file for each tutorial.</p>
 <p>Again, we are not asking you to complete any exercises, and you do not need to show your work from the tutorials. Instead, your task is to create a report by populating a <code>.qmd</code> document and rendering it as an HTML file. More details are provided below.</p>
-<p><strong>One-on-one meetings.</strong> Individual meetings are no longer a mandatory requirement, but as always, you can schedule a meeting with Hasse at any time.</p>
-<p><strong>Wednesday group meeting.</strong> We will meet next on Wednesday, January 21, and during this meeting you will each have 10–15 minutes to <strong>present</strong> your Quarto report. You do not need to send anything to Hasse beforehand.</p>
-<p><strong>Create a report.</strong> This is the most important part of the Quarto training. We want you to use real Marcus data and create a report that includes real-world, meaningful analyses. If using real data is not possible for some reason, it is acceptable to work with one of the datasets used during the training (such as <code>palmerpenguins</code> or <code>babynames</code>). While the main goal is to familiarize you with creating reports for your Marcus work, we also want to ensure that you gain exposure to, and practice with, the various useful features of Quarto and HTML rendering. Therefore, we have put together a list of elements that we want you to include in your report. Note that this is not an exhaustive list, and you should add headers, text, code, and output as you see fit to generate a complete report.</p>
+<p><strong>One-on-one meetings.</strong> Individual meetings are optional, but as always, you can schedule a meeting with Hasse at any time.</p>
+<p><strong>Wednesday group meeting.</strong> We will meet next Thursday, during which you will each have 10–15 minutes to <strong>present</strong> your Quarto report. You do not need to send anything to Hasse or Caius beforehand.</p>
+<p><strong>Create a report.</strong> This is the most important part of the Quarto training. We want you to use real Marcus data and create a report that includes real-world, meaningful analyses. If using real data is not possible, it would be fine to work with any online dataset or one of the R datasets used during the training (such as <code>palmerpenguins</code> or <code>babynames</code>). While the main goal is to familiarize you with creating reports for your Marcus work, we also want to ensure that you gain exposure to, and practice with, the various useful features of Quarto and HTML rendering. Therefore, we have put together a list of elements that we want you to include in your report. Note that this is not an exhaustive list, and you should add headers, text, code, and output as you see fit to generate a complete report.</p>
 <ul>
 <li><p>Begin by creating a new Quarto document using <em>File &gt; New File &gt; Quarto Document</em>.</p></li>
 <li><p>As described in subchapters 28.3 and 28.4, there are two different ways of working with Quarto documents; the <em>visual editor</em> and the <em>source editor</em>. It is up to you to decide which one you prefer, but if you end up primarily using the <em>visual editor</em> it is a good idea to occasionally take a look at what the raw code looks like in the <em>source editor</em>.</p></li>
@@ -367,7 +408,7 @@ ul.task-list li input[type="checkbox"] {
 <li><p>In a separate code chunk, clean/wrangle your data so that it is ready for downstream analyses.</p></li>
 <li><p>Edit the YAML to include the <a href="https://quarto.org/docs/output-formats/html-themes.html" target="_blank">theme</a> option and pick a theme from this <a href="https://bootswatch.com" target="_blank">list</a> to control the visual appearance of your rendered document.</p></li>
 <li><p>Display a preview of the data in an interactive table using either the <a href="https://rstudio.github.io/DT/" target="_blank">DT</a> or <a href="https://glin.github.io/reactable/articles/examples.html#sorting" target="_blank">reactable</a> package. Interactive tables are particularly useful for displaying large tables without taking up excessive space on the page, as they support pagination, searching, and sorting, making the data easier to explore. DT tables are more styled and include a search box by default. Reactable tables are more bare-bones out of the box but can be customized to include a wide range of functionality and can look quite polished (here is one <a href="https://glin.github.io/reactable/articles/womens-world-cup/womens-world-cup.html" target="_blank">example</a>). If you decide to work with reactable, add a search bar as described <a href="https://glin.github.io/reactable/articles/examples.html#searching" target="_blank">here</a>. Regardless of which type of interactive table you choose, remember to install the package and load it in the code chunk dedicated to this purpose, and use a separate code chunk to generate the table.</p></li>
-<li><p>Use a code chunk to calculate some summary statistics and present the results in a table. Summaries of this kind typically do not contain a large number of rows or columns, so using an interactive table is usually not necessary. However, the default table output from a code chunk often looks rather unattractive, so it is worthwhile to learn how to create better-looking static tables. There are several options for doing this, but we recommend working with either the <a href="https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html" target="_blank">kableExtra</a> or <a href="https://gt.rstudio.com/articles/gt.html" target="_blank">gt</a> package.</p></li>
+<li><p>Use a code chunk to calculate some summary statistics and present the results in a table. Summaries of this kind typically do not contain a large number of rows or columns, so using an interactive table is usually not necessary. However, the default table output from a code chunk often looks rather unattractive, so it is worthwhile to learn how to create better-looking static tables. There are several options for doing this, but we recommend working with either the <a href="https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html" target="_blank">kableExtra</a> or <a href="https://gt.rstudio.com/articles/gt.html" target="_blank">gt</a> package. If you do decide to use <code>kableExtra</code>, bear in mind that when rendering kable tables in Quarto, table width settings will be overridden, resulting in the table occupying the full width of the page. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>[^1]</p></li>
 <li><p><a href="https://quarto.org/docs/output-formats/html-basics.html#tabsets" target="_blank">Tabsets</a> are useful when you want to organize related content without making a document long or cluttered. They let readers switch between views while keeping everything in the same place. Include a tabset in your report and let for example each tab show different plots of the same data or table view vs.&nbsp;a plot.</p></li>
 <li><p>When working with plots in Quarto, it is important to use chunk options to ensure that aspect ratios and the sizes of visual elements are set correctly. How to do this is described well in the <a href="https://r4ds.hadley.nz/quarto.html#figure-sizing" target="_blank">book chapter</a>. Try different options until you are happy with how your plots are displayed in the HTML output.</p></li>
 <li><p>When you render your report as HTML, it will appear in the <em>Viewer pane</em>. Make sure to click the <em>Show in new window</em> button to open it in a web browser, which makes it easier to check that everything looks the way you want.</p></li>
@@ -382,7 +423,21 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-</main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>A work-around has been identified to this issue <a href="https://github.com/quarto-dev/quarto-cli/issues/6089" target="_blank">here</a>. If you wish to modify the width of your kable table, try adding this to your YAML header, beneath your title:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="sc">---</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>title<span class="sc">:</span> your title </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">:</span>    </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  opts_chunk<span class="sc">:</span>      </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    R.options<span class="sc">:</span>        </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>      knitr.table.html.attr<span class="sc">:</span> <span class="st">"quarto-disable-processing=true"</span> </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="sc">---</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right

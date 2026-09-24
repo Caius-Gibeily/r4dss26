@@ -16,6 +16,7 @@ website:
           - Session 2.qmd
           - Session 3.qmd
           - Session_4.qmd
+          - Session 5.qmd
           
 theme:
   light: cosmo
