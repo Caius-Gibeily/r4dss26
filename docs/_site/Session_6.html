@@ -30,6 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./Session 5.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -246,9 +247,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      Data Science and Statistics in R for Fellowship
-      </li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">R for Data Science 2026-27</a></li><li class="breadcrumb-item"><a href="./Session_6.html">Session 6: Functions</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -309,6 +308,24 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Session 3: Data tidying and import</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 4: Regular expressions &amp; Joins</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session 5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 5: Quarto</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_6.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Session 6: Functions</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -321,7 +338,7 @@ ul.task-list li input[type="checkbox"] {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">R for Data Science 2026-27</a></li><li class="breadcrumb-item"><a href="./Session_6.html">Session 6: Functions</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Session 6: Functions</h1>
 </div>
@@ -344,10 +361,11 @@ ul.task-list li input[type="checkbox"] {
 <p>We do not expect you to master every aspect of writing functions in R at this stage. Instead, the goal is for you to become familiar with the idea of functions and understand how they are structured and used. This exposure is important because we will rely on writing and using custom functions during the upcoming statistics training, where they will play a central role in helping us understand the mechanics of statistical analysis.</p>
 <p><strong>Book chapter reading.</strong> We will learn about functions by reading <strong>Chapter 25</strong> in <em>R for Data Science</em>. Ignore the exercises in the book, instead we want you to write a few exercises yourself (more about this below).</p>
 <p><strong>Tutorials.</strong> Go through the <em>r4ds.tutorials: 25-functions</em> tutorial.</p>
-<p><strong>Exercises.</strong> You should come up with three exercises of your own. One exercise should focus on a data transformation task, one on summarizing data, and one on creating a plot helper function. For each exercise, the solution should involve writing a custom R function, and you should clearly describe the problem and state what the function is expected to do. At least one of your exercises must require the use of <a href="https://r4ds.github.io/bookclub-r4ds/tidy-evaluation-and-embracing.html" target="_blank">tidy evaluation with embracing</a> (<code>{{ … }}</code>). Your functions should be realistic and preferably motivated by real data analysis tasks you have encountered at Marcus.</p>
-<p>The aim is not only to write functions that work, but to reflect on why a function is useful, how to choose good inputs, and when and why embracing is needed. You should complete all of this work in a Quarto document, including both the exercise descriptions and their solutions. Use <em>code folding</em> to hide solutions and display them only when the code chunk is actively expanded. The button used to expand the code should say <em>Show Solution</em>.</p>
-<p>Be prepared to briefly <strong>present</strong> your exercises and functions during the group meeting next Wednesday (January 28).</p>
-<p><strong>Send</strong> Hasse your tutorial answers, along with both the <code>.qmd</code> file and the rendered HTML output containing your own exercises and solutions, by the end of the day Tuesday.</p>
+<p><strong>Exercises.</strong> You should come up with <em>three</em> exercises of your own. These exercises could focus on a data transformation task, summarizing data, or creating a plot helper function that may be relevant to your own work. For each exercise, the solution should involve writing a custom R function, and you should clearly describe the problem and state what the function is expected to do. At least one of your exercises must require the use of <a href="https://r4ds.github.io/bookclub-r4ds/tidy-evaluation-and-embracing.html" target="_blank">tidy evaluation with embracing</a> (<code>{{ … }}</code>). Your functions should be realistic and preferably motivated by real data analysis tasks you have encountered at Marcus. Please then choose which one of your function exercises to send to the rest of the group. Please ensure that the exercise you send doesn’t require any custom dataset or is sufficiently generic to be soluble on someone else’s PC. You could, for example, use one of R’s built-in datasets, including <code>palmerpenguins</code>, for this exercise.</p>
+<p>The aim is not only to write functions that work, but to reflect on why a function is useful, how to choose good inputs, and when and why embracing may be needed. You should complete all of this work in a Quarto document, including both the exercise descriptions and their solutions. Use <em>code folding</em> to hide solutions and display them only when the code chunk is actively expanded. The button used to expand the code should say <em>Show Solution</em>.</p>
+<p><strong>Solving other fellows’ exercises.</strong> Once you and your peers have submitted your function exercise to the rest of the group on the <em>r4dss26</em> Slack channel, please attempt to complete your peers’ exercises before we meet on Thursday. Also be prepared to go over your solution to the exercise.</p>
+<p>Be prepared to briefly <strong>present</strong> your exercises and functions during the group meeting on <strong>October Thursday 15th</strong>. We will be cancelling the session on October 8th due to the Gatlinberg conference.</p>
+<p><strong>Send</strong> Hasse and Caius your tutorial answers by the end of day on <strong>Wednesday 14th</strong>. By <strong>Monday 12th</strong>, we would like you to copy and paste your chosen function exercise in the r4dss26 Slack channel for other fellows to complete. Please also attempt to complete your peers’ exercises before we meet on Thursday. You do not need to send your answers to these exercises in advance, but just be prepared to discuss them on the day!</p>
 
 
 
@@ -764,6 +782,15 @@ ul.task-list li input[type="checkbox"] {
     }
   });
   </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Session 5.html" class="pagination-link" aria-label="Session 5: Quarto">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Session 5: Quarto</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
 </div> <!-- /content -->
 
 
