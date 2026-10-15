@@ -344,6 +344,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Session 3: Data tidying and import</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 4: Regular expressions &amp; Joins</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session 5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 5: Quarto</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 6: Functions</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -375,42 +393,112 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This session will build on last week’s methods for writing efficient code and reducing needless copy-and-paste through another pillar of programming: iteration. You are likely already familiar with using iteration, perhaps in the form of <code>for</code> or <code>while</code> loops in base R or another programming language. By building and then applying functions in Excel to multiple cells, you have also performed iteration. As with function writing, the goal is not to become fully proficient in the minutiae of iteration but rather to support thinking programmatically about writing efficient code. We will also be relying on iteration in the upcoming statistics sessions.</p>
-<p><strong>Extract examples from your previous work</strong> Before reading the book chapter, we’d like you to try recalling any examples of how you might have used iteration in your past work, whether in R, MATLAB, Excel or another language. What problem were you attempting to address and how did you use iteration to address it? Be prepared to share these examples in class.</p>
+<p>This session will build on last week’s methods for writing efficient code and reducing needless copy-and-paste through another pillar of programming: iteration. You are likely already familiar with using iteration, perhaps in the form of <code>for</code> or <code>while</code> loops in base R or another programming language. The tidyverse offers its own tools for iteration that can make using iterations within tibbles or vectors quite intuitive. We will also be relying on iteration in the upcoming statistics sessions.</p>
+<p><strong>Extract examples from your previous work</strong> Before reading the book chapter, we’d like you to try recalling any examples of how you might have used iteration in your past work, whether in R, MATLAB, Python or another language. What problem were you attempting to address and how did you use iteration to address it? Be prepared to share these examples in class.</p>
+<p><strong>Tutorial</strong> We will not be using the iterations tutorial from r4ds.tutorials</p>
 <p><strong>Book chapter reading.</strong> Please read <a href="https://r4ds.hadley.nz/iteration.html" target="_blank">Chapter 26</a> in <em>R for Data Science</em> and then complete the exercises in the chapter.</p>
-<p><strong>Tutorials.</strong> Go through the <em>r4ds.tutorials: 26-iteration</em> tutorial. <em>Warning</em>: there is a bug in the tutorial in <em>Exercise 2, Save your work</em>. You will need to copy and paste the code block where you initialized <code>gapminder</code> in the previous exercise to get the code to run. Unfortunately, the tutorial does not maintain the object between tabs.</p>
-<p><strong>Exercises.</strong></p>
+<p><strong>Exercises.</strong> The most fundamental elements of iteration are choosing a range, specifying what function(s) you wish to perform on each element of that range and formatting the output appropriately. This is true in <code>across</code> where one is performing a function on each column in a tibble in some range, and <code>map</code>, where the iterables could be anything, including rows in a tibble, elements in a vector or ggplots in a list.</p>
 <ol type="1">
-<li>As we will be especially drawing on <code>map()</code> iteration during the statistics training, let’s focus on writing them.</li>
+<li>Thinking about range selection in iteration, the tidyverse offers a number of ways of filtering and selecting columns you wish to iterate over. You have encountered many before, including <code>starts_with</code>, <code>ends_with</code>, <code>contains</code>. The book chapter has also introduced <code>everything</code> and <code>where</code>.</li>
 </ol>
 <ul>
-<li><p>Take the simple <code>vec</code> object below and try writing a <code>map()</code> function to return the square of each element. Use <code>list_c()</code> instead of <code>list_rbind()</code>. Of course, using a map iteration here is rather inefficient since many of R’s base functions are already ‘vectorized’, allowing them to perform multi-element operations without an explicit iteration. How should you square each element without using iteration? Knowing when to avoid explicit iteration will also improve the efficiency of your code.</p></li>
-<li><p>Within the <code>map()</code>, now save the output of vec when squared, cubed, and raised to the power of 4 in a tibble and collapse the output into a single tibble object.</p></li>
+<li>Using the <code>nycflights</code> dataset, find variables containing <code>time</code>. How many variables does this return?</li>
+<li>Now we are only interested in finding information on the actual arrival and departure times relative to when they were scheduled. Selecting variables by those that end in <code>_time</code> gets us close, but we also end up with unnecessary variables like <code>air_time</code> and <code>time_hour</code>. Try creating a regex pattern to select only <code>dep_time</code>, <code>arr_time</code>, <code>sched_dep_time</code> and <code>sched_arr_time</code>. You can supply your regex pattern to <code>matches</code> to select columns containing your regex pattern.</li>
+<li>These columns store clock time as hhmm (e.g.&nbsp;517 = 5:17am). Use <code>across</code> with your regex pattern to convert them to minutes since midnight, saving the results as new columns named <code>*_min</code> (where * is the original column name). Hint: be careful about times scheduled at midnight.</li>
 </ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>vec <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <ol start="2" type="1">
-<li>Let’s now consider a basic tibble, <code>dat</code> with three normally distributed random variables, <code>x1</code>, <code>x2</code> and <code>x3</code>.</li>
+<li>The power of tidyverse iteration is the ability to combine multiple selections and functions within a single <code>mutate</code> call. Let’s try this now! In a single <code>mutate</code> call</li>
 </ol>
 <ul>
-<li>Use a map to return the mean and standard deviation for each variable. Compare the output with the use of <code>across()</code> instead.</li>
-<li>How could you transform the output using <code>across()</code> into the same structure as the first, with separate columns for the mean and standard deviation?</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x1 =</span> <span class="fu">rnorm</span>(<span class="dv">100</span>,<span class="at">mean=</span> <span class="dv">4</span>, <span class="at">sd =</span> <span class="dv">1</span>),</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x2 =</span> <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="at">mean =</span> <span class="dv">2</span>,<span class="at">sd =</span> <span class="dv">10</span>),</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">x3 =</span> <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="at">mean=</span> <span class="dv">8</span>, <span class="at">sd =</span> <span class="dv">2</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ul>
-<li>Let’s now plot a histogram for each variable. Map through <code>dat</code>, using <code>ggplot</code> to construct histogram objects. Since you’re creating a list of ggplot objects, <code>list_rbind()</code> won’t work here. Use <code>patchwork::wrap_plots</code> to show the plots side-by-side.</li>
+<li>Convert both delay columns <code>dep_delay</code> and <code>arr_delay</code> into hours, attaching a <code>_hr</code> suffix to your new columns. Your hours need not be integers (e.g.&nbsp;2h / 5 = 0.4h)</li>
+<li>Transform <code>origin</code>, <code>carrier</code> and <code>dest</code> into factors. You can overwrite the original versions rather than attaching a suffix to each modified variable</li>
+<li>Round each newly created delay column in hours to 1 decimal point</li>
 </ul>
 <ol start="3" type="1">
-<li>Finally, come up with two of your own exercises, one involving modifying columns of a tibble (i.e.&nbsp;using <code>across()</code>, <code>if_any()</code> or <code>if_all()</code>) and the other, involving a map function. If you’re feeling adventurous, you could also try experimenting with <code>map2()</code> or integrating your exercises into functions. Like last week, please try embedding them into a Quarto document, using code folding to hide the solutions. Your exercise could also be based on the iterations example from your previous work.</li>
+<li><code>across</code> is not limited to mutate calls of course but is also a natural bedfellow of <code>summarize</code>. It also enables one to pass multiple functions via <code>list</code>. For this exercise, we’ll use the <code>babynames</code> dataset.</li>
 </ol>
-<p>You do <em>not</em> need to send your answers ahead of time but please be prepared to briefly <strong>present</strong> your exercises during the group meeting next Wednesday (February 4). You do <em>not</em> need to send answers to the r4ds tutorials or book chapter exercises.</p>
+<ul>
+<li>Filter babynames to return only births after 2000. Using <code>across</code>, summarize the mean and maximum of the number of babies born with a given name (in column <code>n</code>) and the proportion of babies given that name (in column <code>prop</code>). You will therefore have four summary fields: mean n, mean prop, max n and max prop.</li>
+<li>Pivot to longer format to have a variable column containing <code>n</code> or <code>prop</code>, a stat column containing the stat value, <code>mean</code> or <code>max</code> and a value column. You may find <code>names_sep =</code> a helpful argument here</li>
+</ul>
+<p>We have mainly been talking about performing operations on columns, mutating or summarizing information from a tibble. When we wish to do the same thing on tibble rows or other data types, like vectors or lists, <code>across()</code> is less helpful. Here, you may hear map purrring (twice sometimes, if it’s the Matrix, or if you’re using map2).</p>
+<ol start="4" type="1">
+<li>Take the simple <code>num</code> object below. What type of object is it?</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>num <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>Try writing a <code>map()</code> function to take the log of each element in <code>num</code>.</li>
+<li>Print the output of map. What type of object does it return?</li>
+<li>As stated above, map can work with a variety of object types but outputs a single object type. To format that output appropriately for your purpose, <code>purrr</code> offers a number of helper functions: <code>list_c</code>, <code>list_rbind</code> and <code>list_cbind</code>. You can read more about them <a href="https://purrr.tidyverse.org/reference/list_c.html" target="_blank">here</a>.</li>
+<li>Now format the output of your map into a vector comprising the logged elements of <code>num</code>, choosing the appropriate helper function.</li>
+<li>Now try using <code>map_vec</code>. What output does <code>map_vec</code> generate?</li>
+<li>Of course, using a map iteration here is rather inefficient since many of R’s base functions are already ‘vectorized’, allowing them to perform multi-element operations without an explicit iteration. How should you log each element without using explicit iteration?</li>
+</ul>
+<ol start="5" type="1">
+<li>Let’s now consider a basic tibble, <code>dat</code> with three normally distributed random variables, <code>x1</code>, <code>x2</code> and <code>x3</code>.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x1 =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">mean=</span> <span class="dv">4</span>, <span class="at">sd =</span> <span class="dv">1</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x2 =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">mean =</span> <span class="dv">2</span>,<span class="at">sd =</span> <span class="dv">10</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">x3 =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">mean=</span> <span class="dv">8</span>, <span class="at">sd =</span> <span class="dv">2</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We’ve seen how <code>map</code> could be used to apply a function, like <code>log</code>, to each element of a vector. We will now extend this thinking to each column of a tibble (which applies to dataframes too). Sounding familiar? Think back to what across is doing.</p>
+<p>Our goal is to use a map to calculate the mean and standard deviation for each column within <code>dat</code> and create a summary tibble output. There are quite a few syntactical ways of doing this (we have counted at least 9 ways with map alone) but to understand how the iteration machinery is working, we would recommend starting by breaking the iteration down into the three parts: range [of columns], function [mean, sd] and output [tibble where each row is the summary of the correspond column].</p>
+<ul>
+<li>To iterate over each column, we’ll need a range of columns. You can create this by using the <code>names</code> function.</li>
+<li>Inside the map, you now have a vector of column names as strings - try printing <code>names(dat)</code> in the console to convince yourself. If we pass an element of names(dat) to <code>mean</code>, we’ll get an error since it’s a string rather than a vector of numbers. Instead, we need a way of <em>pulling</em> out the relevant column of data from <code>dat</code>. Let’s try wrapping <code>select</code> around each column name. Inside <code>map</code>, we’d do this by writing <code>\(i) select(i)</code>, though <code>i</code> could be named anything. In case you’re wondering, <code>select</code> can work both with a named column and a character, so <code>dat |&gt; select(x1)</code> and <code>dat |&gt; select("x1")</code> return the same output.</li>
+<li>Inside your map, assign this selected variable to a new object. Just as we discussed last week when we enclosed code in if else statements with <code>{}</code>, you can do the same thing with map:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(range, \(i) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  selected_var <span class="ot">&lt;-</span> ...</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>Try creating a new tibble inside your map. Calculate the mean and sd for each column, assigning them to column names in your tibble</li>
+<li>What error do you run into? To see why this is happening, paste <code>dat |&gt; select(x1)</code> into the console. What data type is returned? If it helps understand the error, try running <code>mean(dat |&gt; select(x1))</code>. To extract the data from the column, we can rely on a helpful tidyverse function, <code>pull()</code> (you can find more information <a href="https://www.rdocumentation.org/packages/lplyr/versions/0.1.6/topics/pull" target="_blank">here</a>).</li>
+<li>Now try running <code>glimpse(dat |&gt; pull(x1))</code>. Given what pull does, incorporate <code>pull</code> into the map function, replacing <code>select</code></li>
+<li>Look at the output from the map in the console. What type of object is it? Just as you did for Q. 4, choose the appropriate helper function to collapse each tibble into one tibble containing the mean and standard deviations of each column per row.</li>
+<li>You will see, however, that the output lacks information on column id. How might you add this information back into your output? We would like you to consider at least three different ways of doing this. For one of these approaches, read about the <code>set_names</code> <a href="https://r-statistics.co/purrr-set_names-in-R.html" target="_blank">function</a> and <code>names_to =</code> argument.</li>
+<li>Although we asked you to pass <code>names(dat)</code> into your map, by default, <code>map</code> will iterate over columns when a tibble is passed to it, essentially doing <code>dat |&gt; pull(x1)</code>, <code>dat |&gt; pull(x2)</code>, etc. Try modifying your code to iterate over dat directly, replicating the same summary tibble output</li>
+<li>Now replace your <code>map</code> + helper binding function with <code>map_df</code>. To assign the names of the original variables, you would use an extra argument in your <code>map_df</code> call: <code>.id = "name"</code>. This argument will assign the names to a new column called <code>name</code>. Which should you use - <code>map_df</code> or <code>map</code>? We return to this discussion below</li>
+<li>How could you build the same output using <code>across</code>?</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Earlier, we asked you to compare the output of <code>map</code> with <code>map_vec</code> as applied to <code>num</code> and <code>map</code> with <code>map_df</code> for <code>dat</code> but did not expand on why. Alongside <code>map_df</code> and <code>map_vec</code>, one will find a speciose and dizzying collection of other <code>map_</code> functions: <code>map_dbl</code>, <code>map_lgl</code>, <code>map_int</code>, etc. each built around handling the type of input map is to iterate over. The good news is, you will never need to use them and in fact, we would <em>advise you not to use them</em>. Not only are these functions deprecated (you can find more information <a href="https://purrr.tidyverse.org/reference/map_dfr.html" target="_blank">here</a>), they also needlessly complicate iteration. While LLMs are still prone to recommend them, they have now been superseded by map and will no longer be developed. Instead, we would recommend using the core <code>map</code> function for any iterable: vectors of characters, logicals and numbers; dataframes and tibbles; lists of vectors, tibbles and plots; and more! You only have to keep in mind how to process the list output by selecting from among the helper functions you have seen already in the book chapter and across these exercises.</p>
+</div>
+</div>
+<p>As you might have guessed, running map across columns is essentially what <code>across</code> does under the hood. This exercise should have highlighted the mechanics of iteration.</p>
+<ol start="6" type="1">
+<li>Let’s now plot a histogram for each variable. Map through dat, using ggplot to construct histogram objects for each variable.</li>
+</ol>
+<ul>
+<li>Use <a href="https://www.rdocumentation.org/packages/patchwork/versions/1.3.2" target="_blank">patchwork</a> to show the plots side-by-side, ideally collecting axis labels to avoid duplication. Hint: you can pass a list of ggplot objects into <code>patchwork::wrap_plots</code>.</li>
+</ul>
+<ol start="7" type="1">
+<li>In session 4, exercise 12, we asked you to use the <code>read_csv()</code> function to read multiple <code>.csv</code> files. Now, we want you to replicate this procedure, but instead of relying on the helpful functionality of <code>read_csv()</code> that allows you to read multiple files without using any additional functions, write more verbose code that demonstrates each step of the process from an <em>iteration</em> perspective using <code>purrr</code>.</li>
+</ol>
+<ul>
+<li>To do so, make use of <code>list.files()</code>, <code>set_names()</code> (and think about why it is a good idea to use it in this case), <code>map()</code>, and a helper binding function.</li>
+</ul>
+<ol start="8" type="1">
+<li>Finally, come up with two of your own map exercises. Your iteration exercise could touch on writing multiple csv files to disk, handling more complex plotting outputs or something altogether different. If you’re feeling adventurous, you could also try experimenting with <code>map2()</code> or integrating your exercises into functions. Like last week, please try embedding them into a Quarto document, using code folding to hide the solutions. Your exercise could also be based on an example drawn from your current or previous work.</li>
+</ol>
+<p><strong>Send</strong> your answers to Hasse and Caius on the Wednesday before the session, preferably before 5pm to give Caius time to look at your answers. Please also be prepared to briefly <strong>present</strong> your own exercises on Thursday.</p>
 
 
 
