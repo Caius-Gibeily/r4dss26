@@ -5,7 +5,7 @@ format: html
 
 This week we will begin our statistics adventure by learning about population and estimated parameters (video 1), variance and standard deviation (video 2) and why dividing by N underestimates the variance (video 3). 
 
-You will learn about the topics listed above by first studying the theory, provided via YouTube videos (this week all 3 videos are from StatQuest). Then you will work through some exercises, utilizing the R language to demonstrate various topics in a more "hands on" way, hopefully cementing the ideas presented in the videos. We have designed the exercises in ways we hope will help you to think statistically and generate discussion points. We will use the Wednesday group meetings to discuss the exercises and how conclusions drawn from them relate to the theory presented in the videos. 
+You will learn about the topics listed above by first studying the theory, provided via YouTube videos (this week all 3 videos are from StatQuest). Then you will work through some exercises, utilizing the R language to demonstrate various topics in a more "hands on" way, hopefully cementing the ideas presented in the videos. We have designed the exercises in ways we hope will help you to think statistically and generate discussion points. We will use the Thursday group meetings to discuss the exercises and how conclusions drawn from them relate to the theory presented in the videos. 
 
 Let's jump in and get started with [Video 1](https://youtu.be/vikkiwjQqfU?si=j4jlYP6YbJD6LOgu){target="_blank"} (*Population and Estimated Parameters, Clearly Explained!!!*). 
 
@@ -19,7 +19,7 @@ five_samples <- map(1:5, \(i) tibble(values = rnorm(n = 5,
   list_rbind(names_to = "sample")
 ```
 
-   * Run the code on your own machine in RStudio (be sure to load the `tidyverse` package first). Study the code and make sure you understand what each part does so you can explain it to the group when we meet on Wednesday. Specifically, consider: What does `map()` do in this case? What does the `\(i)` notation indicate? What does the output look like before piping to `list_rbind()`? What does the `names_to` argument in `list_rbind()` do?
+   * Run the code on your own machine in RStudio (be sure to load the `tidyverse` package first). Study the code and make sure you understand what each part does so you can explain it to the group when we meet on Thursday. Specifically, consider: What does `map()` do in this case? What does the `\(i)` notation indicate? What does the output look like before piping to `list_rbind()`? What does the `names_to` argument in `list_rbind()` do?
 
    * Next, calculate the mean and standard deviation of each of the samples in the `five_samples` object (using a combination of `group_by()`, `summarize()`, `mean()` and `sd()`). Take note of these values. How spread out are the values when you compare the estimates from the five different samples? Can you think of a way to quantify the spread? 
 
@@ -37,7 +37,7 @@ five_samples <- map(1:5, \(i) tibble(values = rnorm(n = 5,
 
   * What is the probability of observing a value that is equal to or greater than 35, given population parameters `mean = 20` and `sd = 10` (in other words using the values in `samp_10k`)? This can be calculated in the same way as the histogram example in Video 1 (around the 2:30 mark). 
 
-  * What is the probability of observing a value equal to 35 or *more extreme*? How do you interpret *more extreme* in this case? Is there a difference between *greater than* and *more extreme*? Be prepared to discuss your reasoning when we meet on Wednesday.  
+  * What is the probability of observing a value equal to 35 or *more extreme*? How do you interpret *more extreme* in this case? Is there a difference between *greater than* and *more extreme*? Be prepared to discuss your reasoning when we meet on Thursday.  
 
 
 We will now move on to [Video 2](https://youtu.be/SzZ6GpcfoQY?si=h6xo5NFTmbMbLhxf){target="_blank"} (*Calculating the Mean, Variance and Standard Deviation, Clearly Explained!!!*)

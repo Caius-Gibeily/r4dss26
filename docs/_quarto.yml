@@ -19,6 +19,8 @@ website:
           - Session 5.qmd
           - Session_6.qmd
           - Session_7.qmd
+      - section: R for Statistics 2026-27
+          - Variance_2025.qmd
           
 theme:
   light: cosmo
