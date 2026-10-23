@@ -20,6 +20,7 @@ website:
           - Session_6.qmd
           - Session_7.qmd
       - section: R for Statistics 2026-27
+        contents:
           - Variance_2025.qmd
           
 theme:
