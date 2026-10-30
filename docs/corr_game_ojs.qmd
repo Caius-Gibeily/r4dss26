@@ -1,0 +1,541 @@
+<style>
+:root {
+  --primary: #1982c4;
+  --primary-light: #81c4ef;
+  --primary-dark: #166ca5;
+}
+
+.submit-btn button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.45rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submit-btn button:hover {
+  background: var(--primary-dark);
+}
+
+.submit-btn button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit-btn button:disabled:hover {
+  background: var(--primary);
+  color: white;
+  box-shadow: none;
+}
+
+.new-data-btn button {
+  background: white;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: 6px;
+  padding: 0.45rem 1rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.new-data-btn button:hover {
+  background: #f4faff;
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+
+.guess-label {
+  font-size: 1.00rem;
+  font-weight: 600;
+  margin-bottom: 0.1rem;
+  color: #444;
+}
+
+.feedback {
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+  margin-top: 0.8rem;
+  font-size: 0.95rem;
+}
+
+.feedback.perfect {
+  background: #e6f7e8;
+}
+
+.feedback.excellent {
+  background: #eaf7ec;
+}
+
+.feedback.close {
+  background: #eaf4fb;
+}
+
+.feedback.ok {
+  background: #fff8e6;
+}
+
+.feedback.practice {
+  background: #f3f4f6;
+}
+
+.controls {
+  width: 312px;
+}
+
+.guess-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.slider-container {
+  flex: 0 0 auto;
+}
+
+.section-divider {
+  border-top: 1.5px solid #ddd;
+  margin: 0.8rem 0;
+}
+
+.grid line {
+  stroke: #e6e6e6;
+  stroke-width: 1.5;
+}
+
+.grid .domain {
+  display: none;
+}
+
+.diy-output{
+  font-family: inherit !important;
+  font-size: 1.00rem !important;
+  font-weight: 600 !important;
+  color: #444 !important;
+}
+
+</style>
+
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof newData = Inputs.button("New data")
+round = newData
+
+mutable submitted = false
+mutable submittedGuess = null
+mutable submittedRound = null
+
+{
+  newData;
+  mutable submitted = false;
+}
+
+game = {
+  newData;
+
+  const rho = +(Math.random() * 2 - 1).toFixed(2);
+
+  const normal = d3.randomNormal(0, 1);
+
+  const points = d3.range(40).map(() => {
+    const x = normal();
+    const z = normal();
+    const y = rho * x + Math.sqrt(1 - rho * rho) * z;
+    return {x, y};
+  });
+
+  return {rho, points};
+}
+
+```
+
+```{ojs}
+//| echo: false
+function rescale(values, min = -2.5, max = 2.5) {
+  const lo = d3.min(values);
+  const hi = d3.max(values);
+
+  return values.map(v =>
+    (v - lo) / (hi - lo) * (max - min) + min
+  );
+}
+
+scaled = {
+  const xs = rescale(game.points.map(d => d.x));
+  const ys = rescale(game.points.map(d => d.y));
+
+  return xs.map((x, i) => ({
+    x,
+    y: ys[i]
+  }));
+}
+
+```
+
+```{ojs}
+//| echo: false
+xbar = d3.mean(scaled, d => d.x)
+
+ybar = d3.mean(scaled, d => d.y)
+
+slope =
+  d3.sum(scaled, d => (d.x - xbar) * (d.y - ybar)) /
+  d3.sum(scaled, d => (d.x - xbar) ** 2)
+
+intercept = ybar - slope * xbar
+
+preds = [
+  {x: -2.6, y: intercept + slope * -2.6},
+  {x:  2.6, y: intercept + slope *  2.6}
+]
+```
+
+```{ojs}
+//| echo: false
+correlation = {
+  const mx = d3.mean(scaled, d => d.x);
+  const my = d3.mean(scaled, d => d.y);
+
+  const cov = d3.mean(scaled, d => (d.x - mx) * (d.y - my));
+
+  const sx = Math.sqrt(d3.mean(scaled, d => (d.x - mx) ** 2));
+  const sy = Math.sqrt(d3.mean(scaled, d => (d.y - my) ** 2));
+
+  return cov / (sx * sy);
+}
+```
+
+```{ojs slider}
+//| echo: false
+//| output: false
+
+import {slider} from "@bartok32/diy-inputs"
+
+l = slider({
+sliderStyle: {
+    width: '150px',
+  },
+  min: -1,
+  max: 1,
+  step: 0.01,
+  value: 0,
+  theme: "default-round",
+  background: {
+    type: "double",
+    colors: [theme.primary, theme.primaryLight]
+  }
+})
+
+n = Generators.input(l)
+
+mutable guess = 0
+
+{
+  mutable guess = n;
+}
+```
+
+
+```{ojs}
+//| echo: false
+theme = ({
+  primary: getComputedStyle(document.documentElement)
+    .getPropertyValue("--primary").trim(),
+  primaryLight: getComputedStyle(document.documentElement)
+    .getPropertyValue("--primary-light").trim(),
+  primaryDark: getComputedStyle(document.documentElement)
+    .getPropertyValue("--primary-dark").trim()
+})
+```
+
+
+```{ojs}
+//| echo: false
+
+viewof submit = Inputs.button("Submit", {
+  reduce: () => {
+    mutable submitted = true;
+    mutable submittedGuess = n;
+    mutable submittedRound = round;
+
+    return Date.now();
+  }
+})
+
+roundFinished = submittedRound === round
+
+feedbackVisible = {
+  if (!roundFinished) return false;
+
+  await new Promise(resolve => setTimeout(resolve, 900));
+  return true;
+}
+
+feedback = {
+  if (!feedbackVisible)
+    return html`
+      <div class="feedback"></div>
+    `;
+
+  const err = Math.abs(submittedGuess - correlation);
+  const r = correlation.toFixed(2);
+  const roundedCorrelation = +correlation.toFixed(2);
+
+  if (submittedGuess === roundedCorrelation)
+  return html`
+    <div class="feedback perfect show">
+      <strong>Perfect!</strong><br>
+      You guessed the correlation exactly.
+    </div>
+  `;
+
+if (err < 0.05)
+  return html`
+    <div class="feedback excellent show">
+      <strong>Excellent!</strong><br>
+      You were off by <strong>${err.toFixed(2)}</strong>. The correlation was <strong>${r}</strong>.
+    </div>
+  `;
+
+  if (err < 0.15)
+    return html`
+      <div class="feedback close show">
+        <strong>Very close!</strong><br>
+        You were off by <strong>${err.toFixed(2)}</strong>. The correlation was <strong>${r}</strong>.
+      </div>
+    `;
+
+  if (err < 0.30)
+    return html`
+      <div class="feedback ok show">
+        <strong>Not bad.</strong><br>
+        The correlation was <strong>${r}</strong>.
+      </div>
+    `;
+
+  return html`
+    <div class="feedback practice show">
+      <strong>Keep practicing.</strong><br>
+      The correlation was <strong>${r}</strong>.
+    </div>
+  `;
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+{
+  const button = viewof submit.querySelector("button");
+
+  if (button) {
+    button.disabled = submitted;
+  }
+}
+```
+
+
+
+```{ojs D3 plot1}
+//| echo: false
+//| output: false
+d3 = require("d3@7")
+
+yAccessor = d => d.y
+xAccessor = d => d.x
+
+width = 750 * (6.5 / 11)
+
+dimensions = ({ 
+    width: width, 
+    height: width * 0.75,
+    margin: {
+      top: 23,
+      right: 25,
+      bottom: 45,
+      left: 75,
+   },
+})
+
+dimensions.boundedWidth = dimensions.width
+    - dimensions.margin.left
+    - dimensions.margin.right
+  dimensions.boundedHeight = dimensions.height
+    - dimensions.margin.top
+    - dimensions.margin.bottom
+    
+wrapper = d3.select(DOM.svg(dimensions.width, dimensions.height))
+        .attr("viewBox", [0, 0, dimensions.width, dimensions.height]);
+    
+bounds = wrapper
+    .append("g") 
+    .style("transform", `translate(${
+        dimensions.margin.left
+    }px, ${ 
+     dimensions.margin.top
+    }px)`)
+    
+xScale = d3.scaleLinear() 
+    .domain([-3, 3])
+    .range([0, dimensions.boundedWidth])
+    
+    
+yScale = d3.scaleLinear() 
+    .domain([-3, 3])
+    .range([dimensions.boundedHeight, 0]) 
+    
+xAxisGenerator = d3.axisBottom() 
+    .scale(xScale)
+    .ticks(8);
+
+yAxisGenerator = d3.axisLeft() 
+    .scale(yScale)
+    .ticks(8);
+
+xTicks = [-2.2, -0.733333, 0.733333, 2.2];
+yTicks = [-2.2, -0.733333, 0.733333, 2.2];
+
+bounds.append("g")
+  .attr("class", "grid")
+  .call(
+    d3.axisLeft(yScale)
+      .tickValues(yTicks)
+      .tickSize(-dimensions.boundedWidth)
+      .tickFormat("")
+  );
+
+bounds.append("g")
+  .attr("class", "grid")
+  .attr("transform", `translate(0,${dimensions.boundedHeight})`)
+  .call(
+    d3.axisBottom(xScale)
+      .tickValues(xTicks)
+      .tickSize(-dimensions.boundedHeight)
+      .tickFormat("")
+  );
+    
+<!-- yAxis = bounds.append("g")  -->
+<!--     .call(yAxisGenerator) -->
+<!--     .style("transform", `translateX(${- 10}px)`) -->
+<!--     .style("color", "#888") -->
+
+<!-- xAxis = bounds.append("g") -->
+<!--     .call(xAxisGenerator) -->
+<!--     .style("transform", `translateY(${dimensions.boundedHeight + 10}px)`) -->
+<!--     .style("color", "#888") -->
+    
+lineg = d3.line()
+  .x(d => xScale(d.x))
+  .y(d => yScale(d.y))
+ 
+plot_game =  {
+  const dots = bounds
+    .selectAll(".dots")
+    .data(scaled)
+    
+  dots
+    .join("circle")
+    .classed("dots", true)
+    .transition()
+    .duration(750)
+    .ease(d3.easeQuadOut)
+    .delay(0)
+    .attr("fill", "#1982c4")
+    .attr("opacity", 0.65)
+    .attr("r", 6)
+    .attr("cx", d => xScale(xAccessor(d)))
+    .attr("cy", d => yScale(yAccessor(d)))
+
+  
+  const ll = bounds
+  .selectAll(".ll")
+  .data(roundFinished ? [preds] : []);
+
+ll.join(
+  enter => {
+    const path = enter
+      .append("path")
+      .classed("ll", true)
+      .attr("d", d => lineg(d))
+      .attr("stroke", "#4b5563")
+      .attr("stroke-width", 3)
+      .attr("fill", "none");
+
+    path.each(function() {
+      const length = this.getTotalLength();
+
+      d3.select(this)
+        .attr("stroke-dasharray", `${length} ${length}`)
+        .attr("stroke-dashoffset", length)
+        .transition()
+        .duration(750)
+        .ease(d3.easeQuadOut)
+        .attr("stroke-dashoffset", 0);
+    });
+
+    return path;
+  },
+  update => update,
+  exit => exit.remove()
+);
+    
+  return wrapper.node()
+}
+
+```
+
+
+:::::: grid
+
+::: {.g-col-1}
+:::
+
+::: {.g-col-5}
+
+<div class="new-data-btn">
+${viewof newData}
+</div>
+
+<div class="section-divider"></div>
+
+<div class="controls">
+
+<div class="guess-label">Your guess:</div>
+
+<div class="guess-row">
+
+<div style="display: flex; align-items: center; gap: 1.25rem;">
+
+<div style="flex: 0 0 200px;">
+${l}
+</div>
+
+<div class="submit-btn">
+${viewof submit}
+</div>
+
+</div>
+
+</div>
+
+${feedback}
+
+</div>
+
+:::
+
+::: g-col-6
+
+${plot_game}
+
+
+:::
+::::::
+
+

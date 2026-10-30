@@ -65,6 +65,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./Session_6.html" rel="next">
+<link href="./Session_4.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -281,9 +283,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      Data Science and Statistics in R for Fellowship
-      </li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">R for Data Science 2026-27</a></li><li class="breadcrumb-item"><a href="./Session 5.html">Session 5: Quarto</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -350,6 +350,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Session 4: Regular expressions &amp; Joins</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session 5.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Session 5: Quarto</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 6: Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 7: Iteration</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">R for Statistics 2026-27</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Variance_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 8: Variance &amp; Standard Deviation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./cov.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">test</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -362,7 +403,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">R for Data Science 2026-27</a></li><li class="breadcrumb-item"><a href="./Session 5.html">Session 5: Quarto</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Session 5: Quarto</h1>
 </div>
@@ -408,7 +449,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>In a separate code chunk, clean/wrangle your data so that it is ready for downstream analyses.</p></li>
 <li><p>Edit the YAML to include the <a href="https://quarto.org/docs/output-formats/html-themes.html" target="_blank">theme</a> option and pick a theme from this <a href="https://bootswatch.com" target="_blank">list</a> to control the visual appearance of your rendered document.</p></li>
 <li><p>Display a preview of the data in an interactive table using either the <a href="https://rstudio.github.io/DT/" target="_blank">DT</a> or <a href="https://glin.github.io/reactable/articles/examples.html#sorting" target="_blank">reactable</a> package. Interactive tables are particularly useful for displaying large tables without taking up excessive space on the page, as they support pagination, searching, and sorting, making the data easier to explore. DT tables are more styled and include a search box by default. Reactable tables are more bare-bones out of the box but can be customized to include a wide range of functionality and can look quite polished (here is one <a href="https://glin.github.io/reactable/articles/womens-world-cup/womens-world-cup.html" target="_blank">example</a>). If you decide to work with reactable, add a search bar as described <a href="https://glin.github.io/reactable/articles/examples.html#searching" target="_blank">here</a>. Regardless of which type of interactive table you choose, remember to install the package and load it in the code chunk dedicated to this purpose, and use a separate code chunk to generate the table.</p></li>
-<li><p>Use a code chunk to calculate some summary statistics and present the results in a table. Summaries of this kind typically do not contain a large number of rows or columns, so using an interactive table is usually not necessary. However, the default table output from a code chunk often looks rather unattractive, so it is worthwhile to learn how to create better-looking static tables. There are several options for doing this, but we recommend working with either the <a href="https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html" target="_blank">kableExtra</a> or <a href="https://gt.rstudio.com/articles/gt.html" target="_blank">gt</a> package. If you do decide to use <code>kableExtra</code>, bear in mind that when rendering kable tables in Quarto, table width settings will be overridden, resulting in the table occupying the full width of the page. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>[^1]</p></li>
+<li><p>Use a code chunk to calculate some summary statistics and present the results in a table. Summaries of this kind typically do not contain a large number of rows or columns, so using an interactive table is usually not necessary. However, the default table output from a code chunk often looks rather unattractive, so it is worthwhile to learn how to create better-looking static tables. There are several options for doing this, but we recommend working with either the <a href="https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html" target="_blank">kableExtra</a> or <a href="https://gt.rstudio.com/articles/gt.html" target="_blank">gt</a> package. If you do decide to use <code>kableExtra</code>, bear in mind that when rendering kable tables in Quarto, table width settings will be overridden, resulting in the table occupying the full width of the page. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p></li>
 <li><p><a href="https://quarto.org/docs/output-formats/html-basics.html#tabsets" target="_blank">Tabsets</a> are useful when you want to organize related content without making a document long or cluttered. They let readers switch between views while keeping everything in the same place. Include a tabset in your report and let for example each tab show different plots of the same data or table view vs.&nbsp;a plot.</p></li>
 <li><p>When working with plots in Quarto, it is important to use chunk options to ensure that aspect ratios and the sizes of visual elements are set correctly. How to do this is described well in the <a href="https://r4ds.hadley.nz/quarto.html#figure-sizing" target="_blank">book chapter</a>. Try different options until you are happy with how your plots are displayed in the HTML output.</p></li>
 <li><p>When you render your report as HTML, it will appear in the <em>Viewer pane</em>. Make sure to click the <em>Show in new window</em> button to open it in a web browser, which makes it easier to check that everything looks the way you want.</p></li>
@@ -427,7 +468,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1"><p>A work-around has been identified to this issue <a href="https://github.com/quarto-dev/quarto-cli/issues/6089" target="_blank">here</a>. If you wish to modify the width of your kable table, try adding this to your YAML header, beneath your title:</p>
+<li id="fn1"><p>A work-around has been identified to this issue <a href="https://github.com/quarto-dev/quarto-cli/issues/6089" target="_blank">here</a>. If you wish to modify the width of your kable table, try replacing your YAML header with this:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="sc">---</span> </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>title<span class="sc">:</span> your title </span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">:</span>    </span>
@@ -850,6 +891,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
   });
   </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Session_4.html" class="pagination-link" aria-label="Session 4: Regular expressions &amp; Joins">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Session 4: Regular expressions &amp; Joins</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./Session_6.html" class="pagination-link" aria-label="Session 6: Functions">
+        <span class="nav-page-text">Session 6: Functions</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 
 

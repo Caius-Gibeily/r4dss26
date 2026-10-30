@@ -65,6 +65,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./Variance_2025.html" rel="next">
+<link href="./Session_6.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -281,9 +283,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      Data Science and Statistics in R for Fellowship
-      </li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">R for Data Science 2026-27</a></li><li class="breadcrumb-item"><a href="./Session_7.html">Session 7: Iteration</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -362,6 +362,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Session 6: Functions</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_7.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Session 7: Iteration</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">R for Statistics 2026-27</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Variance_2025.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 8: Variance &amp; Standard Deviation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./cov.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">test</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -374,7 +403,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">R for Data Science 2026-27</a></li><li class="breadcrumb-item"><a href="./Session_7.html">Session 7: Iteration</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Session 7: Iteration</h1>
 </div>
@@ -418,7 +447,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><code>across</code> is not limited to mutate calls of course but is also a natural bedfellow of <code>summarize</code>. It also enables one to pass multiple functions via <code>list</code>. For this exercise, we’ll use the <code>babynames</code> dataset.</li>
 </ol>
 <ul>
-<li>Filter babynames to return only births after 2000. Using <code>across</code>, summarize the mean and maximum of the number of babies born with a given name (in column <code>n</code>) and the proportion of babies given that name (in column <code>prop</code>). You will therefore have four summary fields: mean n, mean prop, max n and max prop.</li>
+<li>Filter babynames to return only births after 2000. Using <code>across</code>, summarize the mean and maximum of the number of babies born with a given name (in column <code>n</code>) and the proportion of babies with that name (in column <code>prop</code>). You will therefore have four summary fields: mean n, mean prop, max n and max prop.</li>
 <li>Pivot to longer format to have a variable column containing <code>n</code> or <code>prop</code>, a stat column containing the stat value, <code>mean</code> or <code>max</code> and a value column. You may find <code>names_sep =</code> a helpful argument here</li>
 </ul>
 <p>We have mainly been talking about performing operations on columns, mutating or summarizing information from a tibble. When we wish to do the same thing on tibble rows or other data types, like vectors or lists, <code>across()</code> is less helpful. Here, you may hear map purrring (twice sometimes, if it’s the Matrix, or if you’re using map2).</p>
@@ -482,7 +511,7 @@ Note
 <p>Earlier, we asked you to compare the output of <code>map</code> with <code>map_vec</code> as applied to <code>num</code> and <code>map</code> with <code>map_df</code> for <code>dat</code> but did not expand on why. Alongside <code>map_df</code> and <code>map_vec</code>, one will find a speciose and dizzying collection of other <code>map_</code> functions: <code>map_dbl</code>, <code>map_lgl</code>, <code>map_int</code>, etc. each built around handling the type of input map is to iterate over. The good news is, you will never need to use them and in fact, we would <em>advise you not to use them</em>. Not only are these functions deprecated (you can find more information <a href="https://purrr.tidyverse.org/reference/map_dfr.html" target="_blank">here</a>), they also needlessly complicate iteration. While LLMs are still prone to recommend them, they have now been superseded by map and will no longer be developed. Instead, we would recommend using the core <code>map</code> function for any iterable: vectors of characters, logicals and numbers; dataframes and tibbles; lists of vectors, tibbles and plots; and more! You only have to keep in mind how to process the list output by selecting from among the helper functions you have seen already in the book chapter and across these exercises.</p>
 </div>
 </div>
-<p>As you might have guessed, running map across columns is essentially what <code>across</code> does under the hood. This exercise should have highlighted the mechanics of iteration.</p>
+<p>As you might have guessed, running map across columns is essentially what <code>across</code> does under the hood.</p>
 <ol start="6" type="1">
 <li>Let’s now plot a histogram for each variable. Map through dat, using ggplot to construct histogram objects for each variable.</li>
 </ol>
@@ -915,6 +944,18 @@ Note
     }
   });
   </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Session_6.html" class="pagination-link" aria-label="Session 6: Functions">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Session 6: Functions</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./Variance_2025.html" class="pagination-link" aria-label="Session 8: Variance &amp; Standard Deviation">
+        <span class="nav-page-text">Session 8: Variance &amp; Standard Deviation</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 
 

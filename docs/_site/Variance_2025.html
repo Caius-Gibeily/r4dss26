@@ -65,6 +65,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./cov.html" rel="next">
+<link href="./Session_7.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -281,9 +283,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      Data Science and Statistics in R for Fellowship
-      </li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Variance_2025.html">R for Statistics 2026-27</a></li><li class="breadcrumb-item"><a href="./Variance_2025.html">Session 8: Variance &amp; Standard Deviation</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -344,6 +344,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Session 3: Data tidying and import</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 4: Regular expressions &amp; Joins</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session 5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 5: Quarto</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 6: Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Session_7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Session 7: Iteration</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">R for Statistics 2026-27</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Variance_2025.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Session 8: Variance &amp; Standard Deviation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./cov.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">test</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -356,7 +403,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Variance_2025.html">R for Statistics 2026-27</a></li><li class="breadcrumb-item"><a href="./Variance_2025.html">Session 8: Variance &amp; Standard Deviation</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Session 8: Variance &amp; Standard Deviation</h1>
 </div>
@@ -376,7 +423,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>This week we will begin our statistics adventure by learning about population and estimated parameters (video 1), variance and standard deviation (video 2) and why dividing by N underestimates the variance (video 3).</p>
-<p>You will learn about the topics listed above by first studying the theory, provided via YouTube videos (this week all 3 videos are from StatQuest). Then you will work through some exercises, utilizing the R language to demonstrate various topics in a more “hands on” way, hopefully cementing the ideas presented in the videos. We have designed the exercises in ways we hope will help you to think statistically and generate discussion points. We will use the Wednesday group meetings to discuss the exercises and how conclusions drawn from them relate to the theory presented in the videos.</p>
+<p>You will learn about the topics listed above by first studying the theory, provided via YouTube videos (this week all 3 videos are from StatQuest). Then you will work through some exercises, utilizing the R language to demonstrate various topics in a more “hands on” way, hopefully cementing the ideas presented in the videos. We have designed the exercises in ways we hope will help you to think statistically and generate discussion points. We will use the Thursday group meetings to discuss the exercises and how conclusions drawn from them relate to the theory presented in the videos.</p>
 <p>Let’s jump in and get started with <a href="https://youtu.be/vikkiwjQqfU?si=j4jlYP6YbJD6LOgu" target="_blank">Video 1</a> (<em>Population and Estimated Parameters, Clearly Explained!!!</em>).</p>
 <ol type="1">
 <li>Probably the most important concept introduced in video 1 is the idea that when estimating population parameters from samples, the sample size affects how confident we can be in the accuracy of the estimates. To illustrate this point, take a look at the code below. This code chunk will draw random samples (5 different samples) from a normally distributed population with population parameters <code>mean = 20</code> and <code>sd = 10</code> (these parameters correspond to the values used by Josh in the video).</li>
@@ -388,7 +435,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list_rbind</span>(<span class="at">names_to =</span> <span class="st">"sample"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
-<li><p>Run the code on your own machine in RStudio (be sure to load the <code>tidyverse</code> package first). Study the code and make sure you understand what each part does so you can explain it to the group when we meet on Wednesday. Specifically, consider: What does <code>map()</code> do in this case? What does the <code>\(i)</code> notation indicate? What does the output look like before piping to <code>list_rbind()</code>? What does the <code>names_to</code> argument in <code>list_rbind()</code> do?</p></li>
+<li><p>Run the code on your own machine in RStudio (be sure to load the <code>tidyverse</code> package first). Study the code and make sure you understand what each part does so you can explain it to the group when we meet on Thursday. Specifically, consider: What does <code>map()</code> do in this case? What does the <code>\(i)</code> notation indicate? What does the output look like before piping to <code>list_rbind()</code>? What does the <code>names_to</code> argument in <code>list_rbind()</code> do?</p></li>
 <li><p>Next, calculate the mean and standard deviation of each of the samples in the <code>five_samples</code> object (using a combination of <code>group_by()</code>, <code>summarize()</code>, <code>mean()</code> and <code>sd()</code>). Take note of these values. How spread out are the values when you compare the estimates from the five different samples? Can you think of a way to quantify the spread?</p></li>
 <li><p>Change the code in the code chunk above so that instead of generating five samples with <code>n = 5</code> the code gives you five samples with <code>n = 50</code>. As before, estimate the mean and standard deviation for each of the five samples. Repeat the process, this time using <code>n = 500</code>. What conclusions can you draw about the relationship between sample size and the confidence we can have regarding the accuracy of estimates? How about the relationship between samples size and how spread out estimates are across different samples?</p></li>
 </ul>
@@ -401,7 +448,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Use <code>ggplot()</code> to draw a histogram of the values in <code>samp_10k</code>. Make a density plot using <code>geom_density()</code> and adjust the <code>bw =</code> argument to make the curve look smooth and bell shaped. Compare the y-axis of these two plots. What is the difference?</p></li>
 <li><p>Calculate the proportion of values in <code>samp_10k</code> that fall within the range defined by the mean plus or minus 1, 2, and 3 standard deviations. How do your findings align with the so-called <a href="https://en.wikipedia.org/wiki/68–95–99.7_rule" target="_blank">68–95–99.7 rule</a>? Use <code>ggplot</code> to create a visualization of your findings.</p></li>
 <li><p>What is the probability of observing a value that is equal to or greater than 35, given population parameters <code>mean = 20</code> and <code>sd = 10</code> (in other words using the values in <code>samp_10k</code>)? This can be calculated in the same way as the histogram example in Video 1 (around the 2:30 mark).</p></li>
-<li><p>What is the probability of observing a value equal to 35 or <em>more extreme</em>? How do you interpret <em>more extreme</em> in this case? Is there a difference between <em>greater than</em> and <em>more extreme</em>? Be prepared to discuss your reasoning when we meet on Wednesday.</p></li>
+<li><p>What is the probability of observing a value equal to 35 or <em>more extreme</em>? How do you interpret <em>more extreme</em> in this case? Is there a difference between <em>greater than</em> and <em>more extreme</em>? Be prepared to discuss your reasoning when we meet on Thursday.</p></li>
 </ul>
 <p>We will now move on to <a href="https://youtu.be/SzZ6GpcfoQY?si=h6xo5NFTmbMbLhxf" target="_blank">Video 2</a> (<em>Calculating the Mean, Variance and Standard Deviation, Clearly Explained!!!</em>)</p>
 <ol start="3" type="1">
@@ -871,6 +918,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
   });
   </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Session_7.html" class="pagination-link" aria-label="Session 7: Iteration">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Session 7: Iteration</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./cov.html" class="pagination-link" aria-label="test">
+        <span class="nav-page-text">test</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 
 

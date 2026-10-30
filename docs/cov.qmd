@@ -1,15 +1,7 @@
 ---
-title: "Session 9: Covariance & Correlation"
-format: live-html
-engine: knitr
-webr:
-  packages:
-    - dplyr
-    - ggplot2
-    - MASS
+title: "Session 9: Covariance and Correlation"
+format: html
 ---
-
-{{< include ../_extensions/live/_knitr.qmd >}}
 
 This week we will continue our statistics adventure by learning about covariance (video 1) and Pearson’s correlation (video 2). These concepts build directly on variance and standard deviation, helping us quantify the relationship between two variables.
 
@@ -98,7 +90,7 @@ cov_meanshift <- map(seq(1,100,10),
                                                       
 ```
 
--   Given the sensitivity of the covariance to the scale of the data data, reporting a single covariance value would be meaningless. Instead, we need a _standardized_ value that is scale-invariant. Think about how you might devise an equation to standardize the covariance. Hint: try pre-standardizing the variables before calculating covariance. 
+-   Given the sensitivity of the covariance to the scale of the data data, reporting a single covariance value would be meaningless. Instead, we need a _standardized_ value that is scale-invariant. Think about how you might devise an equation to standardize the covariance. It may help to think back to the session on variance when you transformed the variable `y` to `z` and the properties that `z` had after transformation. 
 
 -   Modify the `find_cov` function to find the standardized covariance and then rerun the `cov_scaling` and `cov_meanshift` code blocks. Did your function behave as expected? What range of values do the covariances for your mean-shifted and rescaled variables take?
 
@@ -108,39 +100,8 @@ cov_meanshift <- map(seq(1,100,10),
 
 -   Josh explained how correlations offer a simple means of testing the linear relationship between two variables, falling between -1 and 1. To get an intuition for detecting linear correlation values in data, let's start with a fun correlation guessing game. Run the following code block online and set `my_guess` to your estimate of the data's correlation. Try re-running the code a few times until you feel confident estimating correlation.
 
-```{webr}
-#| echo: FALSE
-corr_samples <- function(n = 100){
-  corr <- sample(seq(-1,1,0.1), 1)
-  m <- mvrnorm(n = n, 
-               mu = c(0,0),
-               Sigma = matrix(c(1, corr, corr, 1), nrow = 2))
-  df <- tibble(x = m[,1], y = m[,2])
-  
-  return(list(corr, df))
-}
 
-check_value <- function(guess, corr) {
-  if (!is.na(guess) && abs(guess - corr) <= 0.1) {
-    cat("Correct! The true correlation is", corr)
-  } else {
-    cat("Nice try. The true correlation is", corr)
-  }
-}
-```
-
-```{webr}
-samples <- corr_samples(n=100)
-ggplot(samples[[2]], aes(x = x, y = y)) +
-  geom_point() +
-  geom_smooth(method="lm", se = FALSE)
-```
-
-```{webr}
-# Replace 0 with your guess between -1 and 1
-my_guess <- 0
-check_value(my_guess,samples[[1]])
-```
+{{< include corr_game_ojs.qmd >}}
 
 5.   An important concept to parse out is the difference between covariance and correlation. We saw above how scaling the data influenced the covariance between two variables and how, by normalizing your variables, your covariance values always fell between -1 and 1. You have just calculated correlation! Pearson's correlation is simply the normalized covariance or said another way, covariance between two z-scored variables.
 
@@ -178,3 +139,8 @@ generate_corr_hist <- function(n, nruns = 1000) {
 -    Now set `n` to 30 and rerun this process. You may wish to create a function to calculate the probability.
 -    Set `n` to 100 and rerun it one final time. What do you notice about the shape of the histogram and density plots? How are the probability values changing and why is this occurring?
 -    As a bonus exercise, create a plot that overlays all of the density plots onto one graph.
+
+
+
+
+

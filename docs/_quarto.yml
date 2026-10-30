@@ -22,6 +22,7 @@ website:
       - section: R for Statistics 2026-27
         contents:
           - Variance_2025.qmd
+          - cov.qmd
           
 theme:
   light: cosmo
