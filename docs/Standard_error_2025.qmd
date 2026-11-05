@@ -13,7 +13,7 @@ Start by watching [Video 1](https://youtu.be/XNgt7F6FqDU?si=XZe8zkm1IDDxvwfl){ta
 
   * Study the code in the code chunk below and explain each part (it may help to run the code one section at a time and inspect the output). What does the `set_names()` function do and why is it important to use it in this case? Why do we include two (nested) `map()` functions? 
 
-  * Run the code (it will take a minute or two) and continue the pipe to recreate the plot, as closely as possible, shown below the code chunk. Make sure the x-axis is formatted correctly. Be prepared to share your plot when we meet on Wednesday. 
+  * Run the code (it will take a minute or two) and continue the pipe to recreate the plot, as closely as possible, shown below the code chunk. Make sure the x-axis is formatted correctly. Be prepared to share your plot when we meet on Thursday.
   
   * Copy and paste your final code, and add `set.seed(12345)` at the very beginning before all other functions. Then rerun the code and compare the output to your previous results and the plot shown below. Explain what the `set.seed()` function does and why it is a helpful tool when working with simulations or random sampling.
   
