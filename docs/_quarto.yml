@@ -23,6 +23,7 @@ website:
         contents:
           - Variance_2025.qmd
           - cov.qmd
+          - Standard_error_2025.qmd
           
 theme:
   light: cosmo
