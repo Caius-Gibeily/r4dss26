@@ -119,7 +119,7 @@ Josh explains that a 95% confidence interval is just an interval that covers 95%
   
   * Which species has the widest confidence intervals (look at both mean and correlation)? Think about why this is the case. 
   
-7. We have defined 95% confidence intervals as an interval that contains 95% of the means calculated when bootstrapping the sample. While this is correct and provides an intuitive way to think about confidence intervals, the formal definition is somewhat different (and more general). We do not want you to get bogged down in the minutiae of definitions here, but it might be useful to look at a visualization that illustrates the more general way of defining confidence intervals. Check out the visualization found here: [https://rpsychologist.com/d3/ci/](https://rpsychologist.com/d3/ci/){target="_blank"}. Can you infer the definition of confidence intervals from this visualization?
+7. We have defined 95% confidence intervals as an interval that contains 95% of the means calculated when bootstrapping the sample. While this is correct and provides an intuitive way to think about confidence intervals, the formal definition is somewhat different (and more general). We do not want you to get bogged down in the minutiae of definitions here, but it might be useful to look at a visualization that illustrates the more general way of defining confidence intervals. Check out the visualization found here: [https://rpsychologist.com/d3/CI/](https://rpsychologist.com/d3/CI/){target="_blank"}. Can you infer the definition of confidence intervals from this visualization?
  
 
 
