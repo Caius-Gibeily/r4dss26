@@ -25,6 +25,7 @@ website:
           - cov.qmd
           - Standard_error_2025.qmd
           - Permutation_2025.qmd
+          - power_2025.qmd
           
 theme:
   light: cosmo

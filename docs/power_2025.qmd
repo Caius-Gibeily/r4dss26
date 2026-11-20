@@ -60,7 +60,7 @@ d_vals |>
 
 2 - Let's now turn back to Josh and watch this [video](https://www.youtube.com/watch?v=Rsc5znwR5FA){target="_blank"} (**Statistical Power, Clearly Explained!!!)** explaining power and then this [video](https://www.youtube.com/watch?v=VX_M3tIyiYk){target="_blank"} (**Power Analysis, Clearly Explained!!!**) on power analyses. 
 
--   Check out this visualization too of [power analysis](https://rpsychologist.com/d3/nhst/){target="_blank"}. How would you explain statistical power to a fellow researcher? What do the different colored regions correspond to in the RPsychologist visualization?
+-   Check out this visualization too of [power analysis](https://rpsychologist.com/d3/NHST/){target="_blank"}. How would you explain statistical power to a fellow researcher? What do the different colored regions correspond to in the RPsychologist visualization?
 
 -   We'll now try to empirically calculate the statistical power on simulated variables `x1` and `x2` with known population means and sds. Like before, we'll run 10000 iterations. For each sample, we will run a t-test (if you're thinking we could also use permutation between the two variables, you're right! For computational speed, however, the t-test will be faster). While we used `t_test` from the infer package last week, it runs more slowly than the base R `t.test`. For single t-tests, this is fine but given the 10k simulations we'll be running, `t.test` will come in handy. Study the following code, using `generate_data` from our covariance session:
 
