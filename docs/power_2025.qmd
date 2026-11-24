@@ -93,7 +93,7 @@ pvals <- map(1:10000, \(i) {
 
 - How many observations would you need for approximately 0.8 (80%) power?
 
-4 - It's now time to introduce `pwr`, a helpful package for running power analyses. When running such analyses, you will have precisely three out of the four parameters: power, n, d and alpha with an interest in computing the unknown parameter. Use `install.packages("pwr")` and load `library(pwr)` if the package isn't installed on your device. You can find more information about `pwr`  [here](https://cran.r-project.org/web/packages/pwr/vignettes/pwr-vignette.html){target="_blank"}.
+3 - It's now time to introduce `pwr`, a helpful package for running power analyses. When running such analyses, you will have precisely three out of the four parameters: power, n, d and alpha with an interest in computing the unknown parameter. Use `install.packages("pwr")` and load `library(pwr)` if the package isn't installed on your device. You can find more information about `pwr`  [here](https://cran.r-project.org/web/packages/pwr/vignettes/pwr-vignette.html){target="_blank"}.
 
 -   Let's start by reusing the value of Cohen's d (0.3) and sample size (n=20) from Q2. Use the code below to calculate the theoretical power you'd achieve. How does it compare with the value you empirically calculated?
 
@@ -112,7 +112,7 @@ theoretical_power <- pwr.t.test(n = n, d = d, sig.level = alpha,
 -   If it's cheaper and faster, why shouldn't we always just opt for a quick and easy `n = 12` for every animal experiment or `n = 40` in psychological research? As we will see, underpowered studies don't just risk increasing the chance that we miss a true effect entirely (namely, falsely failing to reject the null hypothesis when the alternative was in fact true). It also risks something else...
 -   To understand this, let's put statistics aside for a moment. Imagine you're at a Sotherby's auction and Article 66 on the list has caught your eye. You, as well as everyone else at the auction, is an expert auctioneer. You can't be sure of its exact market value but you've formed a valid estimate of its value. Besides, you've now set your eye (and wallet) on it. After you've estimated what you think the true value is, you place your bid, consistent with that best guess. But so have 19 other expert auctioneers. You manage to outbid the others, congratulations! Going once, twice and the gavel declares you the winner of Article 66. The hapless losers file out of the auction house, while you proudly march to the platform to collect your expensive prize. However, upon further research, you discover the amount you paid grossly exceeded the intrinsic value of the item. You realize then that you have fallen into the dreaded *winner's curse*.
 
-5 - Let's start by adapting the code block that outputted `pvals` for $10^4$ simulations to also return the observed Cohen's d. This will give us a distribution of Cohen's d and the p-value after running a t-test.
+4 - Let's start by adapting the code block that outputted `pvals` for $10^4$ simulations to also return the observed Cohen's d. This will give us a distribution of Cohen's d and the p-value after running a t-test.
 
 ```{r}
 #| eval: false
@@ -135,7 +135,7 @@ pvals_d <- map(1:10000, \(i) {
 
 -   Given what you've seen now and the allegory of the unfortunate winning auctioneer, explain the winner's curse.
 
-6 - Let's end with a fun visualization that showcases these concepts! Copy the code below and run `visualize_output(n,mu1,mu2,sd_pooled)`, inspecting the plot. Don't worry about the code! Also think about what we said about d values that were both significant and negative (shown as red dots in the plot below). Why do these inverted and significant d values occur at low power? Hint: use the RPsychologist visualization. The code may take awhile to run.
+5 - Let's end with a fun visualization that showcases these concepts! Copy the code below and run `visualize_output(n,mu1,mu2,sd_pooled)`, inspecting the plot. Don't worry about the code! Also think about what we said about d values that were both significant and negative (shown as red dots in the plot below). Why do these inverted and significant d values occur at low power? Hint: use the RPsychologist visualization. The code may take awhile to run.
 ```{webr}
 #| echo: FALSE
 ```
